@@ -1,28 +1,32 @@
 {
-  "version": 5,
-  "authority": "Latest user clarification; SPEC.md v5",
-  "productState": "Single arena per chapter, directional overhead microphone",
+  "version": 6,
+  "authority": "Latest user request; SPEC.md v6",
+  "productState": "Open single arena per chapter; suited Winnie the Pooh in chapter2",
   "removed": [
     "multi-room layout",
     "doors",
     "minimap",
     "cross-room chase and retreat",
-    "room state persistence"
+    "room state persistence",
+    "walls",
+    "crates",
+    "barrels",
+    "solid boss containers"
   ],
   "preserved": [
     "three bosses",
     "six item synergies",
     "boss surviving minions",
     "jump lesson",
-    "walls and interactive props"
+    "amplifier and supply pickups"
   ],
   "verification": {
     "command": "node tests/game.cjs",
-    "result": "20 scenario groups passed",
+    "result": "19 scenario groups passed",
     "syntax": "core.js and game.js pass",
     "browser": "not verified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "nextAction": "After native publication confirmation, human playtest of one arena; no further feature work.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_b5292fa9bae88191848affda24877821"
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_8712520fb70c8191b989fe0a30f3cdd5"
 }
