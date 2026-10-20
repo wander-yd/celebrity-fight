@@ -1,43 +1,997 @@
 'use strict';
-const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict');const env={};vm.createContext(env);vm.runInContext(fs.readFileSync('dist/core.js','utf8'),env);const C=env.VoidArena;let seed=8521,passed=0;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};function fresh(){const g=new C.Arena(random);g.newRun();return g}function ticks(g,n,input={}){for(let i=0;i<n;i++)g.step(1/60,input)}function clear(g){g.room.walls=[];g.room.props=[];g.room.mobs=[];g.room.fields=[];g.room.shots=[];g.player.x=480;g.player.y=360;g.player.inv=999;g.spawnTimer=999;}function test(name,fn){fn();passed++;console.log('PASS '+name)}
-test('single arena has no room-transition or boss-transit API',()=>{const g=fresh();assert.ok(g.arena);assert.equal(g.world,undefined);assert.equal(g.enterRoom,undefined);assert.equal(g.updateBossTransit,undefined);for(let i=1;i<=3;i++){g.chapter=i;g.setupChapter();assert.ok(g.room);assert.equal(g.room.name,'ARENA');assert.equal(g.room.pickup,null);assert.equal(g.waveTotal,[15,21,24][i-1]);}});
-test('overhead hit waits for downswing, occurs once and captures mouse direction',()=>{const g=fresh();clear(g);const east=g.spawnMob('turret',g.room,{x:550,y:360}),north=g.spawnMob('turret',g.room,{x:480,y:290});east.hp=north.hp=30;g.beginSwing(g.player,{x:700,y:360});g.updateMelee(.19);assert.equal(east.hp,30);assert.equal(north.hp,30);g.updateMelee(.011);assert.equal(east.hp,26);assert.equal(north.hp,30);g.updateMelee(.1);assert.equal(east.hp,26);assert.equal(g.beginSwing(g.player,{x:480,y:100}),false);g.updateMelee(.2);assert.ok(g.beginSwing(g.player,{x:480,y:100}));g.updateMelee(.21);assert.equal(north.hp,26);});
-test('hold attack repeats at normal cadence without double hits or skipped cycles',()=>{const g=fresh();clear(g);const e=g.spawnMob('turret',g.room,{x:550,y:360});e.hp=200;for(let i=0;i<120;i++)g.step(1/60,{attack:true,aim:{x:800,y:360}});assert.ok(e.hp<=184&&e.hp>=176);assert.ok(g.room.melee.length<=1);});
-test('no health kit at chapter start; post-Boss kit collects by walking and heals only once',()=>{const g=fresh();for(let chapter=1;chapter<=3;chapter++){g.chapter=chapter;g.setupChapter();assert.equal(g.room.pickup,null);}g.debugJump(1,true);g.player.hp=2;g.boss.grace=0;g.damage(g.boss,999);g.finishIfClear();assert.equal(g.mode,'reward');assert.equal(g.collectSupply(),false);assert.equal(g.player.hp,2);assert.equal(g.interact,undefined);assert.equal(g.soundWave,undefined);ticks(g,80,{my:-1});assert.equal(g.mode,'upgrade');assert.equal(g.player.hp,4);assert.equal(g.collectSupply(),false);g.takeOffer(0);assert.equal(g.chapter,2);assert.equal(g.player.hp,4);assert.equal(g.room.pickup,null);});
-test('all chapters stay obstacle-free after original Boss attacks',()=>{const g=fresh();for(let chapter=1;chapter<=3;chapter++){g.chapter=chapter;g.setupChapter();assert.equal(g.room.walls.length,0);assert.equal(g.room.props.length,0);assert.equal(g.room.pickup,null);g.createBoss();g.boss.phase=2;g.boss.grace=0;g.fireOriginalBoss(g.boss,1);g.updateHazards(3);assert.equal(g.room.props.length,0);const p={x:80,y:336,r:14};C.moveBody(g.room,p,800,0);assert.equal(p.x,880);}assert.equal(C.THEMES[1].name,'xijinping');});
-test('ordinary shield rules unchanged; jump landing stuns and breaks shield',()=>{const g=fresh();clear(g);const e=g.spawnMob('shield',g.room,{x:530,y:360});e.face=Math.PI;g.attack(g.player,e);assert.equal(e.hp,7);assert.equal(e.speed,67);g.land();assert.equal(e.hp,3);assert.equal(e.stun,1.5);assert.equal(e.broken,3);assert.equal(g.shieldBlocks(e,g.player),false);g.player.inv=0;g.jump();g.hurt();assert.equal(g.player.hp,6);});
-test('original boss HP, speed and uninterrupted phases; survivors still gate completion',()=>{const g=fresh();const arena=g.arena;g.spawned=g.waveTotal;g.finishIfClear();const b=g.boss;b.grace=0;assert.equal(b.hp,105);assert.equal(b.speed,30);g.damage(b,40);assert.equal(b.hp,65);assert.equal(b.grace,0);assert.equal(b.phase,1);g.damage(b,40);assert.equal(b.hp,25);assert.equal(b.phase,2);assert.equal(g.arena,arena);g.spawnMob('chaser');const count=g.remaining();g.damage(b,999);assert.ok(b.dead);assert.equal(g.remaining(),count);g.finishIfClear();assert.equal(g.mode,'play');g.room.mobs=[];g.finishIfClear();assert.equal(g.mode,'reward');assert.ok(g.room.pickup);});
-test('restored three original attack patterns and half-health firing intervals',()=>{for(let chapter=1;chapter<=3;chapter++){const g=fresh();g.chapter=chapter;g.setupChapter();clear(g);g.createBoss();const b=g.boss;b.grace=0;assert.equal(b.hp,[105,155,190][chapter-1]);g.fireOriginalBoss(b,0);assert.equal(g.room.bullets.length,[6,15,10][chapter-1]);assert.equal(b.cd,[1.5,1.3,1.5][chapter-1]);if(chapter===1){assert.equal(g.room.bullets.filter(b=>b.kind==='homingPoop').length,1);g.player.y=500;const shot=g.room.bullets.find(b=>b.kind==='homingPoop');const old=shot.vy;g.updateProjectiles(.05);assert.ok(shot.vy>old);assert.equal(shot.r,11);const urine=g.room.bullets.find(b=>b.kind==='urine');assert.equal(urine.r,8);assert.ok(Math.abs(Math.hypot(urine.vx,urine.vy)-135)<1e-8);g.room.bullets=[{x:g.player.x,y:g.player.y,vx:0,vy:0,r:8,life:1,kind:'urine'}];g.updateProjectiles(.01);assert.ok(g.room.effects.some(e=>e.splash));assert.equal(g.room.puddles.length,0);}if(chapter===3){assert.equal(g.room.hazards.length,1);assert.equal(g.room.hazards[0].max,1.45);}g.room.bullets=[];b.hp=b.maxhp*.49;g.fireOriginalBoss(b,0);assert.equal(g.room.bullets.length,[6,15,14][chapter-1]);assert.equal(b.cd,[1,.9,1][chapter-1]);assert.equal(b.cast,null);assert.equal(b.dash,0);assert.equal(g.remaining(),0);}});
-test('Q ability removed; Landing Clause alone slows without stacking and expires',()=>{const g=fresh();clear(g);assert.equal(g.tariff,undefined);assert.equal(g.player.tariffCd,undefined);assert.equal(C.PLAYER_ABILITIES.tariff,undefined);g.items=['landing'];g.land();g.land();assert.equal(g.room.fields.length,2);const e=g.spawnMob('shield',g.room,{x:520,y:360});g.updateTax(e,.1);assert.equal(e.tax,1);const before=e.x;e.stun=0;g.updateMobs(.1);assert.ok(Math.abs((before-e.x)-67*.6*.1)<1e-8);assert.equal(e.mark,0);g.updateFields(2.1);g.updateTax(e,.5);assert.equal(e.tax,.5);g.updateTax(e,.51);assert.equal(e.tax,0);assert.equal(g.room.effects.filter(e=>e.color==='#ffe094').length,0);});
-test('pull works alone, never stacks, and settlement counts actual hit kinds with capped once-only damage',()=>{const g=fresh();clear(g);g.items=['pull'];g.land();g.land();const e=g.spawnMob('turret',g.room,{x:540,y:360});e.hp=50;g.updateTax(e,.5);assert.equal(e.x,500);assert.equal(e.tax,0);g.updateFields(.61);const x=e.x;g.updateTax(e,.5);assert.equal(e.x,x);g.items=['settle'];g.land();const z=g.room.fields.find(z=>z.kind==='settle');assert.equal(z.life,2);assert.equal(z.r,90);for(let i=0;i<30;i++)g.record(e,['melee','echo','clone'][i%3]);g.record(e,'shard');assert.equal(z.hits[e.id],30);g.updateFields(2.1);assert.equal(e.hp,36);g.updateFields(2.1);assert.equal(e.hp,36);});
-test('cash-stack shield-block produces one echo to another target',()=>{const g=fresh();clear(g);g.items=['bounce'];const guard=g.spawnMob('shield',g.room,{x:550,y:360});guard.face=Math.PI;const target=g.spawnMob('turret',g.room,{x:670,y:360});g.beginSwing(g.player,guard);g.updateMelee(.21);assert.equal(guard.hp,7);assert.equal(g.room.shots.length,1);assert.equal(g.room.shots[0].kind,'echo');for(let i=0;i<40;i++)g.updateProjectiles(.016);assert.ok(target.hp<5);});
-test('clones perform delayed melee, face mouse aim and expire',()=>{const g=fresh();clear(g);g.items=['clone'];const e=g.spawnMob('turret',g.room,{x:550,y:360});g.jump();g.updateClones(.01,{x:700,y:360});assert.equal(g.room.melee[0].clone,true);assert.equal(e.hp,5);g.updateMelee(.21);assert.equal(e.hp,1);assert.equal(g.room.shots.length,0);g.updateClones(3,{x:700,y:360});assert.equal(g.room.clones.length,0);});
-test('landing zone plus chain, and boss chain, never recurse from shard kills',()=>{const g=fresh();clear(g);g.items=['landing','chain'];g.spawnMob('chaser',g.room,{x:515,y:360});g.land();g.reap();assert.equal(g.room.shots.length,8);assert.equal(g.room.fields[0].r,90);g.room.shots=[];const e=g.spawnMob('chaser',g.room,{x:520,y:360});e.mark=1;g.damage(e,9,'shard');g.reap();assert.equal(g.room.shots.length,0);g.createBoss();g.boss.phase=2;g.boss.mark=1;g.boss.grace=0;g.damage(g.boss,999);assert.equal(g.room.shots.length,8);});
-test('item offers remain unique and guarantee a compatible option',()=>{for(const item of C.ITEMS){const g=fresh();g.items=[item.id];for(let n=0;n<30;n++){const offer=g.makeOffer();assert.equal(offer.length,3);assert.equal(new Set(offer.map(x=>x.id)).size,3);assert.ok(offer.every(x=>x.id!==item.id));assert.ok(offer.some(x=>C.synergy(item.id,x.id)));}}});
-test('all15 item pairs simulate with the actual melee-only loadout',()=>{for(let a=0;a<C.ITEMS.length;a++)for(let b=a+1;b<C.ITEMS.length;b++){const g=fresh();g.items=[C.ITEMS[a].id,C.ITEMS[b].id];g.player.inv=999;for(let i=0;i<600&&g.mode==='play';i++){if(i%95===0)g.jump();g.step(1/60,{attack:true,autoAim:true,mx:Math.sin(i/80)*.3,my:Math.cos(i/80)*.3});assert.ok(Number.isFinite(g.player.x));assert.ok(g.room.shots.length<250);assert.ok(g.room.melee.length<8);}}});
-test('safe tutorial survives repeated jumps, then requires a delayed melee hit',()=>{const g=fresh();g.practice();g.jump();ticks(g,38,{aim:{x:480,y:370}});g.player.jumpCd=0;g.jump();ticks(g,38,{aim:{x:480,y:370}});assert.ok(g.room.mobs[0].hp>0);assert.equal(g.mode,'tutorial');ticks(g,1,{attack:true,aim:{x:480,y:370}});assert.equal(g.mode,'tutorial');ticks(g,14,{aim:{x:480,y:370}});assert.equal(g.mode,'tutorialSuccess');ticks(g,75);assert.equal(g.mode,'tutorialDone');g.skipLesson();assert.ok(g.taught);assert.equal(g.mode,'play');});
-test('pause freezes pending strike and all timers; restart clears attack and item state',()=>{const g=fresh();clear(g);g.beginSwing(g.player,{x:700,y:360});g.updateMelee(.05);g.pause();const elapsed=g.room.melee[0].elapsed;ticks(g,60);assert.equal(g.room.melee[0].elapsed,elapsed);assert.equal(g.jump(),false);g.pause();ticks(g,3);assert.ok(g.room.melee[0].elapsed>elapsed);g.newRun();assert.equal(g.room.melee.length,0);assert.equal(g.items.length,0);assert.equal(g.soundWave,undefined);});
-test('full three-arena campaign requires clearing boss survivors, no room visits',()=>{const g=fresh();for(let chapter=1;chapter<=3;chapter++){assert.equal(g.chapter,chapter);g.spawned=g.waveTotal;g.room.mobs=[];g.finishIfClear();for(let phase=0;phase<3;phase++){g.boss.grace=0;g.damage(g.boss,999);}assert.ok(g.boss.dead);g.spawnMob('chaser');g.finishIfClear();assert.equal(g.mode,'play');g.room.mobs=[];g.finishIfClear();if(chapter<3){assert.equal(g.mode,'reward');Object.assign(g.player,{x:g.room.pickup.x,y:g.room.pickup.y});g.step(.01);assert.equal(g.mode,'upgrade');g.takeOffer(0);}else assert.equal(g.mode,'win');}assert.equal(g.items.length,2);assert.equal(g.score,3000);});
-test('Boss entrance clears hostile leftovers and grants player entry safety',()=>{const g=fresh();clear(g);g.player.inv=0;g.bullet(g.player,0);g.hazard(480,360,70,1);g.room.puddles.push({x:480,y:360,r:50,life:3});g.createBoss();assert.equal(g.room.bullets.length,0);assert.equal(g.room.hazards.length,0);assert.equal(g.room.puddles.length,0);assert.equal(g.player.inv,2);g.hurt();assert.equal(g.player.hp,6);});
-test('fatal third-chapter hit never triggers a fresh escalation bombardment',()=>{const g=fresh();g.chapter=3;g.setupChapter();g.createBoss();g.boss.grace=0;g.damage(g.boss,999);assert.ok(g.boss.dead);assert.equal(g.room.hazards.length,0);const score=g.score;g.damage(g.boss,999);assert.equal(g.score,score);});
-test('live third-chapter threshold escalation still works without invincibility',()=>{const g=fresh();g.chapter=3;g.setupChapter();g.createBoss();const b=g.boss;b.grace=0;g.damage(b,70);assert.equal(b.phase,1);assert.equal(g.room.hazards.length,4);assert.equal(b.grace,0);g.damage(b,60);assert.equal(b.phase,2);assert.equal(g.room.hazards.length,9);});
-test('Boss follows the chapter2 conveyor just like other grounded bodies',()=>{const g=fresh();g.chapter=2;g.setupChapter();g.createBoss();const b=g.boss;b.grace=0;b.cd=10;b.x=480;b.y=176;g.player.x=480;g.player.y=380;g.updateBoss(.1);assert.equal(b.x,487);assert.equal(b.y,179);});
-test('current item descriptions and product help never advertise removed upgrades',()=>{for(const item of C.ITEMS)assert.ok(!/sound waves|amplifier/i.test(item.desc));const html=fs.readFileSync('dist/index.html','utf8'),ui=fs.readFileSync('dist/game.js','utf8');assert.ok(!/AMPLIFIER|扩音器|SOUND WAVES|PHASE BREAK|soundWave/.test(html+ui));});
-test('original wave counts, spawn cadence and chapter-specific rosters restored',()=>{const rosters=[['chaser','shooter','charger','shield'],['charger','turret','shield','shooter','splitter','chaser'],['shooter','turret','charger','splitter','shield','chaser']];for(let chapter=1;chapter<=3;chapter++){const g=fresh();g.chapter=chapter;g.setupChapter();g.player.inv=999;assert.equal(g.waveTotal,[15,21,24][chapter-1]);assert.equal(g.spawnTimer,1);const types=[];g.spawnMob=(type)=>types.push(type);for(let i=0;i<rosters[chapter-1].length*2;i++){g.spawnTimer=0;g.step(.01);assert.ok(Math.abs(g.spawnTimer-(1.15-chapter*.12))<1e-9);}assert.deepEqual(types,[...rosters[chapter-1],...rosters[chapter-1]]);}});
-test('original charger speed/duration and shooter projectile speed restored',()=>{const g=fresh();clear(g);const charger=g.spawnMob('charger',g.room,{x:200,y:360});charger.t=0;g.updateMobs(.001);assert.equal(charger.charge,.45);assert.equal(charger.vx,420);const x=charger.x;g.updateMobs(.1);assert.ok(Math.abs(charger.x-(x+42))<1e-9);g.room.mobs=[];const shooter=g.spawnMob('shooter',g.room,{x:700,y:360});shooter.t=0;g.updateMobs(.001);assert.equal(g.room.bullets.length,1);assert.equal(Math.hypot(g.room.bullets[0].vx,g.room.bullets[0].vy),185);assert.equal(shooter.t,1.65);});
-test('natural spawns return to arena edges with a safe player gap',()=>{const g=fresh();for(let i=0;i<80;i++){const e=g.spawnMob('chaser');assert.ok(e.x<=60||e.x>=900||e.y<=110||e.y>=540);assert.ok(C.dist(e,g.player)>170);assert.ok(e.t>=1&&e.t<=1.8);assert.ok(C.free(g.room,e.x,e.y,e.r));}});
-test('all three Khamenei bombardment sources spare their owner but still damage players and minions',()=>{for(const source of ['volley','recurring','escalation']){const g=fresh();g.chapter=3;g.setupChapter();g.createBoss();const b=g.boss;b.grace=0;b.x=g.player.x=480;b.y=g.player.y=300;g.player.inv=2;const mob=g.spawnMob('shield',g.room,{x:480,y:300});mob.hp=100;if(source==='volley')g.fireOriginalBoss(b,0);if(source==='recurring'){b.cd=10;b.hazardCd=0;g.updateBoss(.01);}if(source==='escalation')g.damage(b,70);const hp=b.hp;const count=g.room.hazards.length;assert.ok(count>0);for(const h of g.room.hazards){assert.equal(h.ownerId,b.id);h.x=480;h.y=300;}g.player.inv=0;g.updateHazards(3);assert.equal(b.hp,hp);assert.equal(g.player.hp,5);assert.equal(mob.hp,100-9*count);g.damage(b,4,'melee');assert.equal(b.hp,hp-4);}});
-test('unowned environmental explosions can still damage a Boss',()=>{const g=fresh();g.chapter=3;g.setupChapter();g.createBoss();g.boss.grace=0;g.hazard(g.boss.x,g.boss.y,70,.01);g.updateHazards(.02);assert.equal(g.boss.hp,g.boss.maxhp-5);});
-test('reward pickup is safe, can pause/resume, and works even at full health',()=>{const g=fresh();g.debugJump(2,true);g.boss.grace=0;g.damage(g.boss,999);g.bullet(g.player,0,0);g.hazard(g.player.x,g.player.y,90,.01);g.room.fields.push({life:3});g.room.clones.push({life:2});g.finishIfClear();assert.equal(g.mode,'reward');for(const key of ['bullets','shots','hazards','fields','clones','melee'])assert.equal(g.room[key].length,0);const before=JSON.stringify(g.player);g.pause();g.step(.05,{mx:1});assert.equal(JSON.stringify(g.player),before);g.pause();assert.equal(g.mode,'reward');assert.equal(g.jump(),false);assert.equal(g.tariff,undefined);Object.assign(g.player,{x:g.room.pickup.x,y:g.room.pickup.y});g.step(.01);assert.equal(g.mode,'upgrade');assert.equal(g.player.hp,6);});
-test('health kits wait for survivors; the last Boss ends the run without a kit',()=>{const g=fresh();g.debugJump(1,true);g.boss.grace=0;g.damage(g.boss,999);g.spawnMob('turret');g.finishIfClear();assert.equal(g.mode,'play');assert.equal(g.room.pickup,null);g.room.mobs=[];g.finishIfClear();assert.equal(g.mode,'reward');g.debugJump(3,true);g.boss.grace=0;g.damage(g.boss,999);g.finishIfClear();assert.equal(g.mode,'win');assert.equal(g.room.pickup,null);});
-test('landing-frame projectiles, explosions and contact cannot remove a heart',()=>{for(const kind of ['bullet','blast','contact']){const g=fresh();clear(g);g.createBoss();const b=g.boss;b.x=g.player.x=480;b.y=g.player.y=360;b.grace=0;b.cd=10;b.staggerCd=2;g.player.inv=0;g.player.jump=.001;if(kind==='bullet')g.bullet(g.player,0,0,6);if(kind==='blast')g.hazard(480,360,90,.001);g.step(1/60);assert.equal(g.player.hp,6,kind);assert.equal(g.player.jump,0);assert.ok(g.player.inv>=.29);assert.ok(C.dist(g.player,b)>=g.player.r+b.r+3);assert.equal(b.hp,kind==='blast'?96:101);}});
-test('landing grace expires, preserves longer invulnerability and does not grant permanent immunity',()=>{const g=fresh();clear(g);g.player.inv=1.3;g.land();assert.equal(g.player.inv,1.3);g.player.inv=0;g.land();assert.equal(g.player.inv,.3);g.hurt();assert.equal(g.player.hp,6);ticks(g,19);g.bullet(g.player,0,0,6);g.updateProjectiles(.01);assert.equal(g.player.hp,5);assert.equal(g.player.jumpCd,0);});
-test('landing separation handles exact overlap, arena edges and nearby groups without moving enemies',()=>{for(const point of [{x:480,y:360},{x:55,y:105},{x:905,y:545}]){const g=fresh();clear(g);g.createBoss();const b=g.boss;b.grace=0;Object.assign(b,point);Object.assign(g.player,point);g.player.jumpOrigin={x:point.x-40,y:point.y};const before={x:b.x,y:b.y};g.land();assert.ok(C.free(g.room,g.player.x,g.player.y,g.player.r));assert.ok(C.dist(g.player,b)>=g.player.r+b.r+3);assert.ok(C.dist(g.player,point)<=96);assert.equal(b.x,before.x);assert.equal(b.y,before.y);}const g=fresh();clear(g);for(const x of [465,480,495]){const e=g.spawnMob('shield',g.room,{x,y:360});e.hp=20;}g.land();for(const e of g.targets())assert.ok(C.dist(g.player,e)>=g.player.r+e.r+3);});
-test('non-overlapping landing keeps position and landing zones stay at the true impact point',()=>{const g=fresh();clear(g);g.player.inv=0;const point={x:g.player.x,y:g.player.y};g.land();assert.equal(g.player.x,point.x);assert.equal(g.player.y,point.y);g.items=['landing'];g.createBoss();g.boss.grace=0;g.boss.x=point.x;g.boss.y=point.y;g.land();assert.equal(g.room.fields[0].x,point.x);assert.equal(g.room.fields[0].y,point.y);assert.equal(g.room.fields[0].life,2);assert.equal(g.player.jumpOrigin,null);});
-test('controller boot, three arena draws, overhead pose descends for every aim direction',()=>{const elements={},events={},canvasEvents={},ctx=new Proxy({},{get:(o,k)=>o[k]||(()=>{})});function el(id){return elements[id]??={style:{},classList:{add(){},remove(){}},getContext:()=>ctx,setAttribute(){},focus(){},addEventListener(k,fn){canvasEvents[k]=fn},setPointerCapture(){},getBoundingClientRect:()=>({left:0,top:0,width:960,height:600})}}let frame;const env={console,document:{getElementById:el,addEventListener(){}},window:{addEventListener(k,fn){events[k]=fn}},requestAnimationFrame(fn){frame=fn},assert};vm.createContext(env);vm.runInContext(fs.readFileSync('dist/core.js','utf8'),env);vm.runInContext(fs.readFileSync('dist/debug.js','utf8'),env);vm.runInContext(fs.readFileSync('dist/game.js','utf8'),env);el('start').onclick();el('skip').onclick();canvasEvents.pointerdown({pointerType:'mouse',pointerId:1,clientX:700,clientY:350});frame(16);frame(32);events.blur();assert.ok(el('overlay').innerHTML.includes('PAUSED'));el('resume').onclick();vm.runInContext(`for(const face of [0,Math.PI/2,Math.PI,-Math.PI/2]){game.room.melee=[{origin:game.player,face,elapsed:.12}];const raised=weaponPose(game.player);game.room.melee[0].elapsed=.20;const lowered=weaponPose(game.player);assert.ok(lowered.ty>raised.ty,'head moves down in world space');}for(let c=1;c<=3;c++){game.chapter=c;game.setupChapter();game.createBoss();draw();hud();assert.equal(game.world,undefined);assert.ok(document.getElementById('health').textContent.includes('♥'));assert.ok(!buildDetails().toLowerCase().includes('sound waves'));}`,env);assert.ok(!el('overlay').innerHTML.includes('15 ROOMS'));});
-test('unupgraded landing adds no item fields or marks and keeps all base jump rules',()=>{const g=fresh();clear(g);const e=g.spawnMob('shield',g.room,{x:530,y:360});g.land();assert.equal(e.hp,3);assert.equal(e.mark,0);assert.equal(g.room.fields.length,0);assert.equal(C.PLAYER_ABILITIES.jump.cooldown,1.5);assert.equal(C.PLAYER_ABILITIES.jump.duration,.58);assert.equal(C.PLAYER_ABILITIES.landing.protection,.3);});
-test('Cascade works alone on lethal landing, persists for follow-up kills, and expires',()=>{for(const lethal of [true,false]){const g=fresh();clear(g);g.items=['chain'];const e=g.spawnMob(lethal?'chaser':'shield',g.room,{x:515,y:360});g.land();if(!lethal){assert.equal(e.mark,2);g.damage(e,4,'melee');}g.reap();assert.equal(g.room.shots.length,8);assert.equal(g.room.fields.length,0);}const g=fresh();clear(g);g.items=['chain'];const e=g.spawnMob('shield',g.room,{x:515,y:360});g.land();g.updateTax(e,2.01);assert.equal(e.mark,0);g.damage(e,99);g.reap();assert.equal(g.room.shots.length,0);});
-test('Landing Clause marks later arrivals only with Cascade, settlements alone do not slow',()=>{const g=fresh();clear(g);g.items=['landing','chain'];g.land();const e=g.spawnMob('shield',g.room,{x:565,y:360});g.updateTax(e,.1);assert.equal(e.mark,2);assert.equal(e.tax,1);g.damage(e,99);g.reap();assert.equal(g.room.shots.length,8);g.room.fields=[];g.items=['settle'];g.land();const t=g.spawnMob('turret',g.room,{x:540,y:360});t.hp=20;g.updateTax(t,.1);assert.equal(t.tax,0);assert.equal(t.mark,0);g.updateFields(2.01);assert.equal(t.hp,18);});
-test('pull and slow preserve Boss modifiers without changing firing or body radius',()=>{const g=fresh();clear(g);g.createBoss();const b=g.boss;b.x=540;b.y=360;b.grace=0;b.cd=10;g.items=['pull','landing'];g.land();b.stun=0;g.player.x=400;g.updateBoss(.1);assert.ok(Math.abs(b.x-(540-4-2.4))<1e-8);assert.equal(b.cd,9.9);assert.equal(b.r,27);assert.equal(b.maxhp,105);assert.equal(b.speed,30);});
-test('overlapping settlements expire once each; new fields remain at impact before separation',()=>{const g=fresh();clear(g);g.items=['settle','pull','landing'];g.createBoss();const b=g.boss;b.x=g.player.x;b.y=g.player.y;b.grace=0;const point={x:b.x,y:b.y};g.land();for(const z of g.room.fields){assert.equal(z.x,point.x);assert.equal(z.y,point.y);}assert.ok(C.dist(g.player,b)>41);g.items=['settle'];Object.assign(g.player,point);g.land();const hp=b.hp;g.updateFields(2.1);assert.equal(b.hp,hp-4);g.updateFields(2.1);assert.equal(b.hp,hp-4);});
-console.log(`V22: ${passed} scenario groups passed. Drawing/controller checks use mocks, not a real browser.`);
+
+const fs = require('fs'),
+  vm = require('vm'),
+  assert = require('node:assert/strict');
+const env = {};
+vm.createContext(env);
+vm.runInContext(fs.readFileSync('dist/core.js', 'utf8'), env);
+const C = env.VoidArena;
+let seed = 8521,
+  passed = 0;
+const random = () => {
+  seed = Math.imul(seed, 1664525) + 1013904223 >>> 0;
+  return seed / 4294967296;
+};
+function fresh() {
+  const g = new C.Arena(random);
+  g.newRun();
+  return g;
+}
+function ticks(g, n, input = {}) {
+  for (let i = 0; i < n; i++) g.step(1 / 60, input);
+}
+function clear(g) {
+  g.room.mobs = [];
+  g.room.fields = [];
+  g.room.shots = [];
+  g.player.x = 480;
+  g.player.y = 360;
+  g.player.inv = 999;
+  g.spawnTimer = 999;
+}
+function test(name, fn) {
+  fn();
+  passed++;
+  console.log('PASS ' + name);
+}
+test('single arena has no room-transition or boss-transit API', () => {
+  const g = fresh();
+  assert.ok(g.arena);
+  assert.equal(g.world, undefined);
+  assert.equal(g.enterRoom, undefined);
+  assert.equal(g.updateBossTransit, undefined);
+  for (let i = 1; i <= 3; i++) {
+    g.chapter = i;
+    g.setupChapter();
+    assert.ok(g.room);
+    assert.equal(g.room.name, 'ARENA');
+    assert.equal(g.room.pickup, null);
+    assert.equal(g.waveTotal, [15, 21, 24][i - 1]);
+  }
+});
+test('overhead hit waits for downswing, occurs once and captures mouse direction', () => {
+  const g = fresh();
+  clear(g);
+  const east = g.spawnMob('turret', g.room, {
+      x: 550,
+      y: 360
+    }),
+    north = g.spawnMob('turret', g.room, {
+      x: 480,
+      y: 290
+    });
+  east.hp = north.hp = 30;
+  g.beginSwing(g.player, {
+    x: 700,
+    y: 360
+  });
+  g.updateMelee(.19);
+  assert.equal(east.hp, 30);
+  assert.equal(north.hp, 30);
+  g.updateMelee(.011);
+  assert.equal(east.hp, 26);
+  assert.equal(north.hp, 30);
+  g.updateMelee(.1);
+  assert.equal(east.hp, 26);
+  assert.equal(g.beginSwing(g.player, {
+    x: 480,
+    y: 100
+  }), false);
+  g.updateMelee(.2);
+  assert.ok(g.beginSwing(g.player, {
+    x: 480,
+    y: 100
+  }));
+  g.updateMelee(.21);
+  assert.equal(north.hp, 26);
+});
+test('hold attack repeats at normal cadence without double hits or skipped cycles', () => {
+  const g = fresh();
+  clear(g);
+  const e = g.spawnMob('turret', g.room, {
+    x: 550,
+    y: 360
+  });
+  e.hp = 200;
+  for (let i = 0; i < 120; i++) g.step(1 / 60, {
+    attack: true,
+    aim: {
+      x: 800,
+      y: 360
+    }
+  });
+  assert.ok(e.hp <= 184 && e.hp >= 176);
+  assert.ok(g.room.melee.length <= 1);
+});
+test('no health kit at chapter start; post-Boss kit collects by walking and heals only once', () => {
+  const g = fresh();
+  for (let chapter = 1; chapter <= 3; chapter++) {
+    g.chapter = chapter;
+    g.setupChapter();
+    assert.equal(g.room.pickup, null);
+  }
+  g.debugJump(1, true);
+  g.player.hp = 2;
+  g.boss.grace = 0;
+  g.damage(g.boss, 999);
+  g.finishIfClear();
+  assert.equal(g.mode, 'reward');
+  assert.equal(g.collectSupply(), false);
+  assert.equal(g.player.hp, 2);
+  assert.equal(g.interact, undefined);
+  assert.equal(g.soundWave, undefined);
+  ticks(g, 80, {
+    my: -1
+  });
+  assert.equal(g.mode, 'upgrade');
+  assert.equal(g.player.hp, 4);
+  assert.equal(g.collectSupply(), false);
+  g.takeOffer(0);
+  assert.equal(g.chapter, 2);
+  assert.equal(g.player.hp, 4);
+  assert.equal(g.room.pickup, null);
+});
+test('all chapters stay obstacle-free after original Boss attacks', () => {
+  const g = fresh();
+  for (let chapter = 1; chapter <= 3; chapter++) {
+    g.chapter = chapter;
+    g.setupChapter();
+    assert.equal(g.room.walls, undefined);
+    assert.equal(g.room.props, undefined);
+    assert.equal(g.room.pickup, null);
+    g.createBoss();
+    g.boss.phase = 2;
+    g.boss.grace = 0;
+    g.fireOriginalBoss(g.boss, 1);
+    g.updateHazards(3);
+    assert.equal(g.room.props, undefined);
+    const p = {
+      x: 80,
+      y: 336,
+      r: 14
+    };
+    C.moveBody(g.room, p, 800, 0);
+    assert.equal(p.x, 880);
+  }
+  assert.equal(C.THEMES[1].name, 'xijinping');
+});
+test('ordinary shield rules unchanged; jump landing stuns and breaks shield', () => {
+  const g = fresh();
+  clear(g);
+  const e = g.spawnMob('shield', g.room, {
+    x: 530,
+    y: 360
+  });
+  e.face = Math.PI;
+  g.attack(g.player, e);
+  assert.equal(e.hp, 7);
+  assert.equal(e.speed, 67);
+  g.land();
+  assert.equal(e.hp, 3);
+  assert.equal(e.stun, 1.5);
+  assert.equal(e.broken, 3);
+  assert.equal(g.shieldBlocks(e, g.player), false);
+  g.player.inv = 0;
+  g.jump();
+  g.hurt();
+  assert.equal(g.player.hp, 6);
+});
+test('original boss HP, speed and uninterrupted phases; survivors still gate completion', () => {
+  const g = fresh();
+  const arena = g.arena;
+  g.spawned = g.waveTotal;
+  g.finishIfClear();
+  const b = g.boss;
+  b.grace = 0;
+  assert.equal(b.hp, 105);
+  assert.equal(b.speed, 30);
+  g.damage(b, 40);
+  assert.equal(b.hp, 65);
+  assert.equal(b.grace, 0);
+  assert.equal(b.phase, 1);
+  g.damage(b, 40);
+  assert.equal(b.hp, 25);
+  assert.equal(b.phase, 2);
+  assert.equal(g.arena, arena);
+  g.spawnMob('chaser');
+  const count = g.remaining();
+  g.damage(b, 999);
+  assert.ok(b.dead);
+  assert.equal(g.remaining(), count);
+  g.finishIfClear();
+  assert.equal(g.mode, 'play');
+  g.room.mobs = [];
+  g.finishIfClear();
+  assert.equal(g.mode, 'reward');
+  assert.ok(g.room.pickup);
+});
+test('restored three original attack patterns and half-health firing intervals', () => {
+  for (let chapter = 1; chapter <= 3; chapter++) {
+    const g = fresh();
+    g.chapter = chapter;
+    g.setupChapter();
+    clear(g);
+    g.createBoss();
+    const b = g.boss;
+    b.grace = 0;
+    assert.equal(b.hp, [105, 155, 190][chapter - 1]);
+    g.fireOriginalBoss(b, 0);
+    assert.equal(g.room.bullets.length, [6, 15, 10][chapter - 1]);
+    assert.equal(b.cd, [1.5, 1.3, 1.5][chapter - 1]);
+    if (chapter === 1) {
+      assert.equal(g.room.bullets.filter(b => b.kind === 'homingPoop').length, 1);
+      g.player.y = 500;
+      const shot = g.room.bullets.find(b => b.kind === 'homingPoop');
+      const old = shot.vy;
+      g.updateProjectiles(.05);
+      assert.ok(shot.vy > old);
+      assert.equal(shot.r, 11);
+      const urine = g.room.bullets.find(b => b.kind === 'urine');
+      assert.equal(urine.r, 8);
+      assert.ok(Math.abs(Math.hypot(urine.vx, urine.vy) - 135) < 1e-8);
+      g.room.bullets = [{
+        x: g.player.x,
+        y: g.player.y,
+        vx: 0,
+        vy: 0,
+        r: 8,
+        life: 1,
+        kind: 'urine'
+      }];
+      g.updateProjectiles(.01);
+      assert.ok(g.room.effects.some(e => e.splash));
+      assert.equal(g.room.puddles.length, 0);
+    }
+    if (chapter === 3) {
+      assert.equal(g.room.hazards.length, 1);
+      assert.equal(g.room.hazards[0].max, 1.45);
+    }
+    g.room.bullets = [];
+    b.hp = b.maxhp * .49;
+    g.fireOriginalBoss(b, 0);
+    assert.equal(g.room.bullets.length, [6, 15, 14][chapter - 1]);
+    assert.equal(b.cd, [1, .9, 1][chapter - 1]);
+    assert.equal(b.cast, undefined);
+    assert.equal(b.dash, undefined);
+    assert.equal(g.remaining(), 0);
+  }
+});
+test('Q ability removed; Landing Clause alone slows without stacking and expires', () => {
+  const g = fresh();
+  clear(g);
+  assert.equal(g.tariff, undefined);
+  assert.equal(g.player.tariffCd, undefined);
+  assert.equal(C.PLAYER_ABILITIES.tariff, undefined);
+  g.items = ['landing'];
+  g.land();
+  g.land();
+  assert.equal(g.room.fields.length, 2);
+  const e = g.spawnMob('shield', g.room, {
+    x: 520,
+    y: 360
+  });
+  g.updateStatus(e, .1);
+  assert.equal(e.slow, 1);
+  const before = e.x;
+  e.stun = 0;
+  g.updateMobs(.1);
+  assert.ok(Math.abs(before - e.x - 67 * .6 * .1) < 1e-8);
+  assert.equal(e.mark, 0);
+  g.updateFields(2.1);
+  g.updateStatus(e, .5);
+  assert.equal(e.slow, .5);
+  g.updateStatus(e, .51);
+  assert.equal(e.slow, 0);
+  assert.equal(g.room.effects.filter(e => e.color === '#ffe094').length, 0);
+});
+test('pull works alone, never stacks, and settlement counts actual hit kinds with capped once-only damage', () => {
+  const g = fresh();
+  clear(g);
+  g.items = ['pull'];
+  g.land();
+  g.land();
+  const e = g.spawnMob('turret', g.room, {
+    x: 540,
+    y: 360
+  });
+  e.hp = 50;
+  g.updateStatus(e, .5);
+  assert.equal(e.x, 500);
+  assert.equal(e.slow, 0);
+  g.updateFields(.61);
+  const x = e.x;
+  g.updateStatus(e, .5);
+  assert.equal(e.x, x);
+  g.items = ['settle'];
+  g.land();
+  const z = g.room.fields.find(z => z.kind === 'settle');
+  assert.equal(z.life, 2);
+  assert.equal(z.r, 90);
+  for (let i = 0; i < 30; i++) g.record(e, ['melee', 'echo', 'clone'][i % 3]);
+  g.record(e, 'shard');
+  assert.equal(z.hits[e.id], 30);
+  g.updateFields(2.1);
+  assert.equal(e.hp, 36);
+  g.updateFields(2.1);
+  assert.equal(e.hp, 36);
+});
+test('cash-stack shield-block produces one echo to another target', () => {
+  const g = fresh();
+  clear(g);
+  g.items = ['bounce'];
+  const guard = g.spawnMob('shield', g.room, {
+    x: 550,
+    y: 360
+  });
+  guard.face = Math.PI;
+  const target = g.spawnMob('turret', g.room, {
+    x: 670,
+    y: 360
+  });
+  g.beginSwing(g.player, guard);
+  g.updateMelee(.21);
+  assert.equal(guard.hp, 7);
+  assert.equal(g.room.shots.length, 1);
+  assert.equal(g.room.shots[0].kind, 'echo');
+  for (let i = 0; i < 40; i++) g.updateProjectiles(.016);
+  assert.ok(target.hp < 5);
+});
+test('clones perform delayed melee, face mouse aim and expire', () => {
+  const g = fresh();
+  clear(g);
+  g.items = ['clone'];
+  const e = g.spawnMob('turret', g.room, {
+    x: 550,
+    y: 360
+  });
+  g.jump();
+  g.updateClones(.01, {
+    x: 700,
+    y: 360
+  });
+  assert.equal(g.room.melee[0].clone, true);
+  assert.equal(e.hp, 5);
+  g.updateMelee(.21);
+  assert.equal(e.hp, 1);
+  assert.equal(g.room.shots.length, 0);
+  g.updateClones(3, {
+    x: 700,
+    y: 360
+  });
+  assert.equal(g.room.clones.length, 0);
+});
+test('landing zone plus chain, and boss chain, never recurse from shard kills', () => {
+  const g = fresh();
+  clear(g);
+  g.items = ['landing', 'chain'];
+  g.spawnMob('chaser', g.room, {
+    x: 515,
+    y: 360
+  });
+  g.land();
+  g.reap();
+  assert.equal(g.room.shots.length, 8);
+  assert.equal(g.room.fields[0].r, 90);
+  g.room.shots = [];
+  const e = g.spawnMob('chaser', g.room, {
+    x: 520,
+    y: 360
+  });
+  e.mark = 1;
+  g.damage(e, 9, 'shard');
+  g.reap();
+  assert.equal(g.room.shots.length, 0);
+  g.createBoss();
+  g.boss.phase = 2;
+  g.boss.mark = 1;
+  g.boss.grace = 0;
+  g.damage(g.boss, 999);
+  assert.equal(g.room.shots.length, 8);
+});
+test('item offers remain unique and guarantee a compatible option', () => {
+  for (const item of C.ITEMS) {
+    const g = fresh();
+    g.items = [item.id];
+    for (let n = 0; n < 30; n++) {
+      const offer = g.makeOffer();
+      assert.equal(offer.length, 3);
+      assert.equal(new Set(offer.map(x => x.id)).size, 3);
+      assert.ok(offer.every(x => x.id !== item.id));
+      assert.ok(offer.some(x => C.synergy(item.id, x.id)));
+    }
+  }
+});
+test('all15 item pairs simulate with the actual melee-only loadout', () => {
+  for (let a = 0; a < C.ITEMS.length; a++) for (let b = a + 1; b < C.ITEMS.length; b++) {
+    const g = fresh();
+    g.items = [C.ITEMS[a].id, C.ITEMS[b].id];
+    g.player.inv = 999;
+    for (let i = 0; i < 600 && g.mode === 'play'; i++) {
+      if (i % 95 === 0) g.jump();
+      g.step(1 / 60, {
+        attack: true,
+        autoAim: true,
+        mx: Math.sin(i / 80) * .3,
+        my: Math.cos(i / 80) * .3
+      });
+      assert.ok(Number.isFinite(g.player.x));
+      assert.ok(g.room.shots.length < 250);
+      assert.ok(g.room.melee.length < 8);
+    }
+  }
+});
+test('safe tutorial survives repeated jumps, then requires a delayed melee hit', () => {
+  const g = fresh();
+  g.practice();
+  g.jump();
+  ticks(g, 38, {
+    aim: {
+      x: 480,
+      y: 370
+    }
+  });
+  g.player.jumpCd = 0;
+  g.jump();
+  ticks(g, 38, {
+    aim: {
+      x: 480,
+      y: 370
+    }
+  });
+  assert.ok(g.room.mobs[0].hp > 0);
+  assert.equal(g.mode, 'tutorial');
+  ticks(g, 1, {
+    attack: true,
+    aim: {
+      x: 480,
+      y: 370
+    }
+  });
+  assert.equal(g.mode, 'tutorial');
+  ticks(g, 14, {
+    aim: {
+      x: 480,
+      y: 370
+    }
+  });
+  assert.equal(g.mode, 'tutorialSuccess');
+  ticks(g, 75);
+  assert.equal(g.mode, 'tutorialDone');
+  g.skipLesson();
+  assert.ok(g.taught);
+  assert.equal(g.mode, 'play');
+});
+test('pause freezes pending strike and all timers; restart clears attack and item state', () => {
+  const g = fresh();
+  clear(g);
+  g.beginSwing(g.player, {
+    x: 700,
+    y: 360
+  });
+  g.updateMelee(.05);
+  g.pause();
+  const elapsed = g.room.melee[0].elapsed;
+  ticks(g, 60);
+  assert.equal(g.room.melee[0].elapsed, elapsed);
+  assert.equal(g.jump(), false);
+  g.pause();
+  ticks(g, 3);
+  assert.ok(g.room.melee[0].elapsed > elapsed);
+  g.newRun();
+  assert.equal(g.room.melee.length, 0);
+  assert.equal(g.items.length, 0);
+  assert.equal(g.soundWave, undefined);
+});
+test('full three-arena campaign requires clearing boss survivors, no room visits', () => {
+  const g = fresh();
+  for (let chapter = 1; chapter <= 3; chapter++) {
+    assert.equal(g.chapter, chapter);
+    g.spawned = g.waveTotal;
+    g.room.mobs = [];
+    g.finishIfClear();
+    for (let phase = 0; phase < 3; phase++) {
+      g.boss.grace = 0;
+      g.damage(g.boss, 999);
+    }
+    assert.ok(g.boss.dead);
+    g.spawnMob('chaser');
+    g.finishIfClear();
+    assert.equal(g.mode, 'play');
+    g.room.mobs = [];
+    g.finishIfClear();
+    if (chapter < 3) {
+      assert.equal(g.mode, 'reward');
+      Object.assign(g.player, {
+        x: g.room.pickup.x,
+        y: g.room.pickup.y
+      });
+      g.step(.01);
+      assert.equal(g.mode, 'upgrade');
+      g.takeOffer(0);
+    } else assert.equal(g.mode, 'win');
+  }
+  assert.equal(g.items.length, 2);
+  assert.equal(g.score, 3000);
+});
+test('Boss entrance clears hostile leftovers and grants player entry safety', () => {
+  const g = fresh();
+  clear(g);
+  g.player.inv = 0;
+  g.bullet(g.player, 0);
+  g.hazard(480, 360, 70, 1);
+  g.room.puddles.push({
+    x: 480,
+    y: 360,
+    r: 50,
+    life: 3
+  });
+  g.createBoss();
+  assert.equal(g.room.bullets.length, 0);
+  assert.equal(g.room.hazards.length, 0);
+  assert.equal(g.room.puddles.length, 0);
+  assert.equal(g.player.inv, 2);
+  g.hurt();
+  assert.equal(g.player.hp, 6);
+});
+test('fatal third-chapter hit never triggers a fresh escalation bombardment', () => {
+  const g = fresh();
+  g.chapter = 3;
+  g.setupChapter();
+  g.createBoss();
+  g.boss.grace = 0;
+  g.damage(g.boss, 999);
+  assert.ok(g.boss.dead);
+  assert.equal(g.room.hazards.length, 0);
+  const score = g.score;
+  g.damage(g.boss, 999);
+  assert.equal(g.score, score);
+});
+test('live third-chapter threshold escalation still works without invincibility', () => {
+  const g = fresh();
+  g.chapter = 3;
+  g.setupChapter();
+  g.createBoss();
+  const b = g.boss;
+  b.grace = 0;
+  g.damage(b, 70);
+  assert.equal(b.phase, 1);
+  assert.equal(g.room.hazards.length, 4);
+  assert.equal(b.grace, 0);
+  g.damage(b, 60);
+  assert.equal(b.phase, 2);
+  assert.equal(g.room.hazards.length, 9);
+});
+test('Boss follows the chapter2 conveyor just like other grounded bodies', () => {
+  const g = fresh();
+  g.chapter = 2;
+  g.setupChapter();
+  g.createBoss();
+  const b = g.boss;
+  b.grace = 0;
+  b.cd = 10;
+  b.x = 480;
+  b.y = 176;
+  g.player.x = 480;
+  g.player.y = 380;
+  g.updateBoss(.1);
+  assert.equal(b.x, 487);
+  assert.equal(b.y, 179);
+});
+test('current item descriptions and product help never advertise removed upgrades', () => {
+  for (const item of C.ITEMS) assert.ok(!/sound waves|amplifier/i.test(item.desc));
+  const html = fs.readFileSync('dist/index.html', 'utf8'),
+    ui = fs.readFileSync('dist/game.js', 'utf8');
+  assert.ok(!/AMPLIFIER|扩音器|SOUND WAVES|PHASE BREAK|soundWave/.test(html + ui));
+});
+test('original wave counts, spawn cadence and chapter-specific rosters restored', () => {
+  const rosters = [['chaser', 'shooter', 'charger', 'shield'], ['charger', 'turret', 'shield', 'shooter', 'splitter', 'chaser'], ['shooter', 'turret', 'charger', 'splitter', 'shield', 'chaser']];
+  for (let chapter = 1; chapter <= 3; chapter++) {
+    const g = fresh();
+    g.chapter = chapter;
+    g.setupChapter();
+    g.player.inv = 999;
+    assert.equal(g.waveTotal, [15, 21, 24][chapter - 1]);
+    assert.equal(g.spawnTimer, 1);
+    const types = [];
+    g.spawnMob = type => types.push(type);
+    for (let i = 0; i < rosters[chapter - 1].length * 2; i++) {
+      g.spawnTimer = 0;
+      g.step(.01);
+      assert.ok(Math.abs(g.spawnTimer - (1.15 - chapter * .12)) < 1e-9);
+    }
+    assert.deepEqual(types, [...rosters[chapter - 1], ...rosters[chapter - 1]]);
+  }
+});
+test('original charger speed/duration and shooter projectile speed restored', () => {
+  const g = fresh();
+  clear(g);
+  const charger = g.spawnMob('charger', g.room, {
+    x: 200,
+    y: 360
+  });
+  charger.t = 0;
+  g.updateMobs(.001);
+  assert.equal(charger.charge, .45);
+  assert.equal(charger.vx, 420);
+  const x = charger.x;
+  g.updateMobs(.1);
+  assert.ok(Math.abs(charger.x - (x + 42)) < 1e-9);
+  g.room.mobs = [];
+  const shooter = g.spawnMob('shooter', g.room, {
+    x: 700,
+    y: 360
+  });
+  shooter.t = 0;
+  g.updateMobs(.001);
+  assert.equal(g.room.bullets.length, 1);
+  assert.equal(Math.hypot(g.room.bullets[0].vx, g.room.bullets[0].vy), 185);
+  assert.equal(shooter.t, 1.65);
+});
+test('natural spawns return to arena edges with a safe player gap', () => {
+  const g = fresh();
+  for (let i = 0; i < 80; i++) {
+    const e = g.spawnMob('chaser');
+    assert.ok(e.x <= 60 || e.x >= 900 || e.y <= 110 || e.y >= 540);
+    assert.ok(C.dist(e, g.player) > 170);
+    assert.ok(e.t >= 1 && e.t <= 1.8);
+    assert.ok(C.free(g.room, e.x, e.y, e.r));
+  }
+});
+test('all three Khamenei bombardment sources spare their owner but still damage players and minions', () => {
+  for (const source of ['volley', 'recurring', 'escalation']) {
+    const g = fresh();
+    g.chapter = 3;
+    g.setupChapter();
+    g.createBoss();
+    const b = g.boss;
+    b.grace = 0;
+    b.x = g.player.x = 480;
+    b.y = g.player.y = 300;
+    g.player.inv = 2;
+    const mob = g.spawnMob('shield', g.room, {
+      x: 480,
+      y: 300
+    });
+    mob.hp = 100;
+    if (source === 'volley') g.fireOriginalBoss(b, 0);
+    if (source === 'recurring') {
+      b.cd = 10;
+      b.hazardCd = 0;
+      g.updateBoss(.01);
+    }
+    if (source === 'escalation') g.damage(b, 70);
+    const hp = b.hp;
+    const count = g.room.hazards.length;
+    assert.ok(count > 0);
+    for (const h of g.room.hazards) {
+      assert.equal(h.ownerId, b.id);
+      h.x = 480;
+      h.y = 300;
+    }
+    g.player.inv = 0;
+    g.updateHazards(3);
+    assert.equal(b.hp, hp);
+    assert.equal(g.player.hp, 5);
+    assert.equal(mob.hp, 100 - 9 * count);
+    g.damage(b, 4, 'melee');
+    assert.equal(b.hp, hp - 4);
+  }
+});
+test('unowned environmental explosions can still damage a Boss', () => {
+  const g = fresh();
+  g.chapter = 3;
+  g.setupChapter();
+  g.createBoss();
+  g.boss.grace = 0;
+  g.hazard(g.boss.x, g.boss.y, 70, .01);
+  g.updateHazards(.02);
+  assert.equal(g.boss.hp, g.boss.maxhp - 5);
+});
+test('reward pickup is safe, can pause/resume, and works even at full health', () => {
+  const g = fresh();
+  g.debugJump(2, true);
+  g.boss.grace = 0;
+  g.damage(g.boss, 999);
+  g.bullet(g.player, 0, 0);
+  g.hazard(g.player.x, g.player.y, 90, .01);
+  g.room.fields.push({
+    life: 3
+  });
+  g.room.clones.push({
+    life: 2
+  });
+  g.finishIfClear();
+  assert.equal(g.mode, 'reward');
+  for (const key of ['bullets', 'shots', 'hazards', 'fields', 'clones', 'melee']) assert.equal(g.room[key].length, 0);
+  const before = JSON.stringify(g.player);
+  g.pause();
+  g.step(.05, {
+    mx: 1
+  });
+  assert.equal(JSON.stringify(g.player), before);
+  g.pause();
+  assert.equal(g.mode, 'reward');
+  assert.equal(g.jump(), false);
+  assert.equal(g.tariff, undefined);
+  Object.assign(g.player, {
+    x: g.room.pickup.x,
+    y: g.room.pickup.y
+  });
+  g.step(.01);
+  assert.equal(g.mode, 'upgrade');
+  assert.equal(g.player.hp, 6);
+});
+test('health kits wait for survivors; the last Boss ends the run without a kit', () => {
+  const g = fresh();
+  g.debugJump(1, true);
+  g.boss.grace = 0;
+  g.damage(g.boss, 999);
+  g.spawnMob('turret');
+  g.finishIfClear();
+  assert.equal(g.mode, 'play');
+  assert.equal(g.room.pickup, null);
+  g.room.mobs = [];
+  g.finishIfClear();
+  assert.equal(g.mode, 'reward');
+  g.debugJump(3, true);
+  g.boss.grace = 0;
+  g.damage(g.boss, 999);
+  g.finishIfClear();
+  assert.equal(g.mode, 'win');
+  assert.equal(g.room.pickup, null);
+});
+test('landing-frame projectiles, explosions and contact cannot remove a heart', () => {
+  for (const kind of ['bullet', 'blast', 'contact']) {
+    const g = fresh();
+    clear(g);
+    g.createBoss();
+    const b = g.boss;
+    b.x = g.player.x = 480;
+    b.y = g.player.y = 360;
+    b.grace = 0;
+    b.cd = 10;
+    b.staggerCd = 2;
+    g.player.inv = 0;
+    g.player.jump = .001;
+    if (kind === 'bullet') g.bullet(g.player, 0, 0, 6);
+    if (kind === 'blast') g.hazard(480, 360, 90, .001);
+    g.step(1 / 60);
+    assert.equal(g.player.hp, 6, kind);
+    assert.equal(g.player.jump, 0);
+    assert.ok(g.player.inv >= .29);
+    assert.ok(C.dist(g.player, b) >= g.player.r + b.r + 3);
+    assert.equal(b.hp, kind === 'blast' ? 96 : 101);
+  }
+});
+test('landing grace expires, preserves longer invulnerability and does not grant permanent immunity', () => {
+  const g = fresh();
+  clear(g);
+  g.player.inv = 1.3;
+  g.land();
+  assert.equal(g.player.inv, 1.3);
+  g.player.inv = 0;
+  g.land();
+  assert.equal(g.player.inv, .3);
+  g.hurt();
+  assert.equal(g.player.hp, 6);
+  ticks(g, 19);
+  g.bullet(g.player, 0, 0, 6);
+  g.updateProjectiles(.01);
+  assert.equal(g.player.hp, 5);
+  assert.equal(g.player.jumpCd, 0);
+});
+test('landing separation handles exact overlap, arena edges and nearby groups without moving enemies', () => {
+  for (const point of [{
+    x: 480,
+    y: 360
+  }, {
+    x: 55,
+    y: 105
+  }, {
+    x: 905,
+    y: 545
+  }]) {
+    const g = fresh();
+    clear(g);
+    g.createBoss();
+    const b = g.boss;
+    b.grace = 0;
+    Object.assign(b, point);
+    Object.assign(g.player, point);
+    g.player.jumpOrigin = {
+      x: point.x - 40,
+      y: point.y
+    };
+    const before = {
+      x: b.x,
+      y: b.y
+    };
+    g.land();
+    assert.ok(C.free(g.room, g.player.x, g.player.y, g.player.r));
+    assert.ok(C.dist(g.player, b) >= g.player.r + b.r + 3);
+    assert.ok(C.dist(g.player, point) <= 96);
+    assert.equal(b.x, before.x);
+    assert.equal(b.y, before.y);
+  }
+  const g = fresh();
+  clear(g);
+  for (const x of [465, 480, 495]) {
+    const e = g.spawnMob('shield', g.room, {
+      x,
+      y: 360
+    });
+    e.hp = 20;
+  }
+  g.land();
+  for (const e of g.targets()) assert.ok(C.dist(g.player, e) >= g.player.r + e.r + 3);
+});
+test('non-overlapping landing keeps position and landing zones stay at the true impact point', () => {
+  const g = fresh();
+  clear(g);
+  g.player.inv = 0;
+  const point = {
+    x: g.player.x,
+    y: g.player.y
+  };
+  g.land();
+  assert.equal(g.player.x, point.x);
+  assert.equal(g.player.y, point.y);
+  g.items = ['landing'];
+  g.createBoss();
+  g.boss.grace = 0;
+  g.boss.x = point.x;
+  g.boss.y = point.y;
+  g.land();
+  assert.equal(g.room.fields[0].x, point.x);
+  assert.equal(g.room.fields[0].y, point.y);
+  assert.equal(g.room.fields[0].life, 2);
+  assert.equal(g.player.jumpOrigin, null);
+});
+test('controller boot, three arena draws, overhead pose descends for every aim direction', () => {
+  const {
+    harness
+  } = require('./harness.cjs');
+  const h = harness();
+  h.click('start');
+  h.click('skip');
+  h.frame(0);
+  h.canvasListeners.pointerdown({
+    pointerType: 'mouse',
+    pointerId: 1,
+    clientX: 700,
+    clientY: 350
+  });
+  h.frame(16);
+  h.frame(32);
+  h.listeners.blur();
+  assert.ok(h.el('overlay').innerHTML.includes('PAUSED'));
+  h.click('resume');
+  h.run(`for(const face of [0,Math.PI/2,Math.PI,-Math.PI/2]){game.room.melee=[{origin:game.player,face,elapsed:.12}];const raised=weaponPose(game.player);game.room.melee[0].elapsed=.20;const lowered=weaponPose(game.player);assert.ok(lowered.ty>raised.ty,'head moves down in world space');}for(let c=1;c<=3;c++){game.chapter=c;game.setupChapter();game.createBoss();draw();hud();assert.equal(game.world,undefined);assert.ok(document.getElementById('health').textContent.includes('♥'));assert.ok(!buildDetails().toLowerCase().includes('sound waves'));}`);
+  assert.ok(!h.el('overlay').innerHTML.includes('15 ROOMS'));
+});
+test('unupgraded landing adds no item fields or marks and keeps all base jump rules', () => {
+  const g = fresh();
+  clear(g);
+  const e = g.spawnMob('shield', g.room, {
+    x: 530,
+    y: 360
+  });
+  g.land();
+  assert.equal(e.hp, 3);
+  assert.equal(e.mark, 0);
+  assert.equal(g.room.fields.length, 0);
+  assert.equal(C.PLAYER_ABILITIES.jump.cooldown, 1.5);
+  assert.equal(C.PLAYER_ABILITIES.jump.duration, .58);
+  assert.equal(C.PLAYER_ABILITIES.landing.protection, .3);
+});
+test('Cascade works alone on lethal landing, persists for follow-up kills, and expires', () => {
+  for (const lethal of [true, false]) {
+    const g = fresh();
+    clear(g);
+    g.items = ['chain'];
+    const e = g.spawnMob(lethal ? 'chaser' : 'shield', g.room, {
+      x: 515,
+      y: 360
+    });
+    g.land();
+    if (!lethal) {
+      assert.equal(e.mark, 2);
+      g.damage(e, 4, 'melee');
+    }
+    g.reap();
+    assert.equal(g.room.shots.length, 8);
+    assert.equal(g.room.fields.length, 0);
+  }
+  const g = fresh();
+  clear(g);
+  g.items = ['chain'];
+  const e = g.spawnMob('shield', g.room, {
+    x: 515,
+    y: 360
+  });
+  g.land();
+  g.updateStatus(e, 2.01);
+  assert.equal(e.mark, 0);
+  g.damage(e, 99);
+  g.reap();
+  assert.equal(g.room.shots.length, 0);
+});
+test('Landing Clause marks later arrivals only with Cascade, settlements alone do not slow', () => {
+  const g = fresh();
+  clear(g);
+  g.items = ['landing', 'chain'];
+  g.land();
+  const e = g.spawnMob('shield', g.room, {
+    x: 565,
+    y: 360
+  });
+  g.updateStatus(e, .1);
+  assert.equal(e.mark, 2);
+  assert.equal(e.slow, 1);
+  g.damage(e, 99);
+  g.reap();
+  assert.equal(g.room.shots.length, 8);
+  g.room.fields = [];
+  g.items = ['settle'];
+  g.land();
+  const t = g.spawnMob('turret', g.room, {
+    x: 540,
+    y: 360
+  });
+  t.hp = 20;
+  g.updateStatus(t, .1);
+  assert.equal(t.slow, 0);
+  assert.equal(t.mark, 0);
+  g.updateFields(2.01);
+  assert.equal(t.hp, 18);
+});
+test('pull and slow preserve Boss modifiers without changing firing or body radius', () => {
+  const g = fresh();
+  clear(g);
+  g.createBoss();
+  const b = g.boss;
+  b.x = 540;
+  b.y = 360;
+  b.grace = 0;
+  b.cd = 10;
+  g.items = ['pull', 'landing'];
+  g.land();
+  b.stun = 0;
+  g.player.x = 400;
+  g.updateBoss(.1);
+  assert.ok(Math.abs(b.x - (540 - 4 - 2.4)) < 1e-8);
+  assert.equal(b.cd, 9.9);
+  assert.equal(b.r, 27);
+  assert.equal(b.maxhp, 105);
+  assert.equal(b.speed, 30);
+});
+test('overlapping settlements expire once each; new fields remain at impact before separation', () => {
+  const g = fresh();
+  clear(g);
+  g.items = ['settle', 'pull', 'landing'];
+  g.createBoss();
+  const b = g.boss;
+  b.x = g.player.x;
+  b.y = g.player.y;
+  b.grace = 0;
+  const point = {
+    x: b.x,
+    y: b.y
+  };
+  g.land();
+  for (const z of g.room.fields) {
+    assert.equal(z.x, point.x);
+    assert.equal(z.y, point.y);
+  }
+  assert.ok(C.dist(g.player, b) > 41);
+  g.items = ['settle'];
+  Object.assign(g.player, point);
+  g.land();
+  const hp = b.hp;
+  g.updateFields(2.1);
+  assert.equal(b.hp, hp - 4);
+  g.updateFields(2.1);
+  assert.equal(b.hp, hp - 4);
+});
+console.log(`V23: ${passed} scenario groups passed. Drawing/controller checks use mocks, not a real browser.`);

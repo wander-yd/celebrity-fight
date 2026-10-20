@@ -1,7 +1,7 @@
 {
-  "version": 22,
-  "authority": "User approved Q removal, landing item rework and in-arena UI; SPEC.md v22",
-  "productState": "Movement/melee/jump only; six independent landing/melee items; in-arena health, equipped icons and jump cooldown; pause carries details",
+  "version": 23,
+  "authority": "User approved bounded refactor and timing fix; SPEC.md v23",
+  "productState": "v22 rules and art with fixed60Hz scheduling, readable browser modules, strict HTML-backed test fixture, obsolete obstacle/CSS cleanup and generated numeric item descriptions",
   "removed": [
     "multi-room layout",
     "doors",
@@ -18,7 +18,9 @@
     "E interaction key/button/prompts",
     "chapter-start supply kits",
     "Q active ability and touch button",
-    "external combat sidebar"
+    "external combat sidebar",
+    "unreachable obstacle/pathfinding/barrel code and inert Boss fields",
+    "unused sidebar CSS"
   ],
   "preserved": [
     "three bosses",
@@ -28,12 +30,12 @@
     "automatic health kits after Boss1/2"
   ],
   "verification": {
-    "command": "node tests/game.cjs; node tests/debug.cjs",
-    "result": "40 game +15 Debug/Codex groups pass; 12 seeded simulations without Q and reworked items match v21 frame by frame",
-    "syntax": "core.js, debug.js, game.js, HTML nesting/unique IDs and whitespace checks pass",
-    "browser": "No supported browser QA available; canvas/DOM checks are mocks, visual/device playtest pending"
+    "command": "node tests/run.cjs",
+    "result": "40 game +15 Debug/Codex +10 refactor groups pass;48 seeded900-step core comparisons and3 Boss canvas command/style comparisons match v22; CSS order preserved with101 unused/overridden declarations removed",
+    "syntax": "All8 browser scripts and diff whitespace checks pass; shipped HTML/assets load through strict DOM fixture",
+    "browser": "No supported browser QA; native layout/device input/performance/feel remain unverified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Play one full run: check hearts and jump readiness without looking away; assess landing item clarity and combat feel.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_0589ae41650c8191ae54210f75f39770"
+  "nextAction": "Play one full run on the usual device: check timing at low FPS, menu/input recovery and unchanged visuals/feel.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_a4d947b363b4819182a0bf2261a32efb"
 }
