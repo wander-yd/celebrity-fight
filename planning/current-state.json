@@ -1,7 +1,7 @@
 {
-  "version": 16,
-  "authority": "User requested red-shirt Pooh named xijinping; SPEC.md v16",
-  "productState": "v15 gameplay; chapter2 Boss has classic red-shirt bear art and name xijinping",
+  "version": 17,
+  "authority": "User approved first landing fix only; SPEC.md v17",
+  "productState": "0.3s landing protection and local overlap separation; projectile layers unchanged",
   "removed": [
     "multi-room layout",
     "doors",
@@ -27,11 +27,11 @@
   ],
   "verification": {
     "command": "node tests/game.cjs; node tests/debug.cjs",
-    "result": "31 game + 10 Debug/Codex groups pass; combat core unchanged outside Boss-name strings",
+    "result": "35 game + 10 Debug/Codex groups pass; landing immunity, expiry, body separation and unchanged layering",
     "syntax": "core.js, debug.js and game.js pass",
     "browser": "not verified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "After publication: inspect chapter2 Boss and Codex portrait using Debug/Codex.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_346d695a4bec81918827e0f876b8853a"
+  "nextAction": "After publication: user tests landing on a Boss through Debug; projectile visibility remains a separate proposed change.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_3febe20d337081919fc3a741aef362be"
 }
