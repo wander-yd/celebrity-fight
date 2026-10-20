@@ -1,7 +1,7 @@
 {
-  "version": 24,
-  "authority": "User approved first UI/UX pass; SPEC.md v24",
-  "productState": "v23 combat unchanged; viewport-fit reversible Play mode, fixed-size DOM HUD and touch footer, Resume-first Pause, mobile stacked upgrade cards",
+  "version": 25,
+  "authority": "User approved removal of following jump text and bomb countdown number; SPEC.md v25",
+  "productState": "v24 UI and combat preserved; following jump caption removed; bomb warning retains animated circle and exclamation without number",
   "removed": [
     "multi-room layout",
     "doors",
@@ -31,11 +31,11 @@
   ],
   "verification": {
     "command": "node tests/run.cjs",
-    "result": "40 game +15 Debug/Codex +10 refactor +11 UX groups pass; core byte-identical to v23;48 seeded historical combat comparisons and3 world/art/effect/projectile traces match (intentional DOM HUD relocations excluded)",
+    "result": "40 game +15 Debug/Codex +10 refactor +12 UX groups pass; core unchanged;48 seeded combat comparisons and3 world rendering comparisons pass; animated warning radius and jump ring/ready flash checked",
     "syntax": "Changed JS syntax, HTML nesting/unique IDs, stylesheet contracts and diff whitespace pass",
     "browser": "No supported browser QA; viewport math/DOM are fixtures, native layout/touch/visual polish remain unverified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "On desktop and phone, start a run, pause/resume, and inspect an upgrade choice; check readable HUD and comfortable touch input.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_77c58c46c3048191bd1e6d98bb6fa1f9"
+  "nextAction": "Playtest the cleaner jump and bomb indicators on the normal device.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_ded5f7ccb7788191a5a12167185ae20e"
 }

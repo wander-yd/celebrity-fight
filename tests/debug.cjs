@@ -303,8 +303,8 @@ test('guide and shipped UI stay English and new script assets are present', () =
   assert.ok(html.includes('aria-labelledby="debug-title"'));
   assert.ok(!html.includes('id="interact"'));
   assert.ok(!/E: SUPPLY|<kbd>E<|E to interact/.test(html));
-  assert.ok(html.includes('debug.js?v=24'));
-  assert.ok(html.indexOf('debug.js?v=24') < html.indexOf('game.js?v=24'));
+  assert.ok(html.includes('debug.js?v=25'));
+  assert.ok(html.indexOf('debug.js?v=25') < html.indexOf('game.js?v=25'));
 });
 test('in-arena HUD, cooldown ring and touch readiness agree; pause holds details and Q does nothing', () => {
   const h = harness();
@@ -315,8 +315,7 @@ test('in-arena HUD, cooldown ring and touch readiness agree; pause holds details
   assert.equal(h.el('equipped').textContent, '◎  ✴');
   assert.equal(h.el('jump').textContent, 'JUMP 0.8s');
   assert.ok(h.el('jump')['aria-label'].includes('0.8'));
-  assert.equal(h.el('jump-caption').textContent, 'JUMP 0.8s');
-  assert.equal(h.el('jump-caption').hidden, false);
+  assert.equal(h.el('jump-caption'), null);
   const before = h.run('JSON.stringify(game.room.fields)');
   h.listeners.keydown({
     key: 'q',

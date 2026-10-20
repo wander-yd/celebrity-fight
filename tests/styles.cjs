@@ -55,8 +55,7 @@ function last(selector, property) {
 assert.equal(last('.arena-vitals #health', 'font-size'), '20px');
 assert.equal(last('.arena-progress', 'font-size'), '12px');
 assert.equal(last('#boss-label', 'font-size'), '12px');
-assert.match(last('.jump-caption', 'font'), /12px/);
-assert.equal(last('.jump-caption', 'background'), 'transparent');
+assert.ok(!declarations.some(d => d.selector === '.jump-caption'));
 assert.equal(last('.arena-actions .small', 'min-height'), '44px');
 assert.equal(last('.touch', 'width'), '56px');
 assert.equal(last('.touch', 'height'), '56px');
@@ -70,5 +69,5 @@ assert.equal(last('body.play-mode .overlay', 'position'), 'fixed');
 console.log('PASS readable HUD sizes, touch targets, stacked cards, sticky Resume and Play-mode CSS contracts');
 const html = fs.readFileSync('dist/index.html', 'utf8');
 assert.ok(!html.includes('<style>'));
-assert.ok(html.includes('styles.css?v=24'));
+assert.ok(html.includes('styles.css?v=25'));
 console.log('PASS stylesheet structure and shipped link');

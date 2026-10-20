@@ -75,7 +75,7 @@ test('Pause puts Resume before collapsed Controls and Build, with keyboard focus
   h.click('resume');
   assert.equal(h.run('game.mode'), 'play');
 });
-test('HUD keeps health, Boss health and jump countdown as readable DOM text', () => {
+test('HUD keeps readable health and Boss health without a following jump caption', () => {
   const h = start();
   h.run('game.debugJump(2,true);game.boss.hp=77.5;game.player.hp=3;game.player.jumpCd=.75;hud()');
   assert.equal(h.el('chapter-label').textContent, '02 / xijinping');
@@ -83,10 +83,29 @@ test('HUD keeps health, Boss health and jump countdown as readable DOM text', ()
   assert.equal(h.el('boss-meter').hidden, false);
   assert.equal(h.el('boss-meter').getAttribute('aria-valuenow'), '50');
   assert.equal(h.el('boss-fill').style.width, '50%');
-  assert.equal(h.el('jump-caption').textContent, 'JUMP 0.8s');
-  assert.equal(h.el('jump-caption').hidden, false);
+  assert.equal(h.el('jump-caption'), null);
   h.run('game.player.jumpCd=0;hud()');
-  assert.equal(h.el('jump-caption').hidden, true);
+  assert.equal(h.el('jump-caption'), null);
+});
+test('bomb warnings animate without countdown numbers; jump ring and ready flash remain', () => {
+  const h = start();
+  h.run('game.room.hazards=[{x:321,y:234,r:80,t:1,max:2,done:false}]');
+  for (const [time, radius] of [[1, 40], [.5, 60]]) {
+    h.run(`game.room.hazards[0].t=${time}`);
+    h.drawCalls.length = 0;
+    h.run('draw()');
+    assert.ok(h.drawCalls.some(c => c[0] === 'arc' && c[1] === 321 && c[2] === 234 && c[3] === radius));
+    const labels = h.drawCalls.filter(c => c[0] === 'fillText' && c[2] === 321 && c[3] === 238);
+    assert.deepEqual(labels.map(c => c[1]), ['!']);
+  }
+  for (const [cooldown, flash, color] of [[.75, 0, '#e9edc5'], [0, .2, '#d9fb76']]) {
+    h.run(`game.player.jumpCd=${cooldown};jumpFlash=${flash}`);
+    h.drawCalls.length = 0;
+    h.run('drawJumpCharge()');
+    assert.equal(h.drawCalls.filter(c => c[0] === 'arc').length, 2);
+    assert.ok(h.drawCalls.some(c => c[0] === 'set' && c[1] === 'strokeStyle' && c[2] === color));
+    assert.ok(!h.drawCalls.some(c => c[0] === 'fillText'));
+  }
 });
 test('clipping the covered top margin preserves pointer-to-world mapping', () => {
   const h = start({
@@ -112,9 +131,6 @@ test('clipping the covered top margin preserves pointer-to-world mapping', () =>
   });
   assert.equal(h.run('pointer.x'), 480);
   assert.equal(h.run('pointer.y'), 300);
-  h.run('game.player.x=480;game.player.y=300;game.player.jumpCd=.75;hud()');
-  assert.equal(h.el('jump-caption').style.left, '240px');
-  assert.equal(h.el('jump-caption').style.top, '142px');
 });
 test('tutorial instructions remain readable and the safe lesson still completes', () => {
   const h = harness();

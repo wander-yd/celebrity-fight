@@ -419,7 +419,7 @@ function draw() {
     ctx.arc(h.x, h.y, h.r * (h.done ? 1 : clamp(1 - h.t / h.max, .05, 1)), 0, Math.PI * 2);
     ctx.stroke();
     if (!h.done) {
-      text('!' + ' ' + Math.max(0, h.t).toFixed(1), h.x, h.y + 4, 11, '#ffe1a4', 'center', true);
+      text('!', h.x, h.y + 4, 11, '#ffe1a4', 'center', true);
     }
   }
   for (const s of r.shots) {

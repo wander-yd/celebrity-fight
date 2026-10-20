@@ -117,7 +117,6 @@ function hud() {
   if (jump.textContent !== (p.jumpCd > 0 ? 'JUMP ' + p.jumpCd.toFixed(1) + 's' : 'JUMP')) jump.textContent = p.jumpCd > 0 ? 'JUMP ' + p.jumpCd.toFixed(1) + 's' : 'JUMP';
   jump.style.opacity = p.jumpCd > 0 ? '.65' : '1';
   jump.setAttribute('aria-label', p.jumpCd > 0 ? 'Jump ready in ' + p.jumpCd.toFixed(1) + ' seconds' : 'Jump ready');
-  updateJumpCaption();
   updateTutorialInstruction();
 }
 function itemAction(id) {
@@ -161,17 +160,6 @@ function setPlayMode(enabled) {
   frameClock.reset();
   fitPlayMode();
   if (['play', 'tutorial', 'reward'].includes(game.mode)) canvas.focus();
-}
-function updateJumpCaption() {
-  const caption = document.getElementById('jump-caption'),
-    p = game.player;
-  caption.hidden = !['play', 'tutorial', 'tutorialSuccess'].includes(game.mode) || p.jumpCd <= 0;
-  if (caption.hidden) return;
-  const bounds = document.getElementById('arena-viewport').getBoundingClientRect(),
-    scale = bounds.width / W;
-  setHudText('jump-caption', 'JUMP ' + p.jumpCd.toFixed(1) + 's');
-  caption.style.left = clamp(p.x * scale, 46, Math.max(46, bounds.width - 46)) + 'px';
-  caption.style.top = clamp((p.y - 72) * scale + 28, 12, Math.max(12, bounds.height - 26)) + 'px';
 }
 function updateTutorialInstruction() {
   const el = document.getElementById('arena-instruction'),
