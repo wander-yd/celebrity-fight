@@ -1,0 +1,28 @@
+{
+  "version": 5,
+  "authority": "Latest user clarification; SPEC.md v5",
+  "productState": "Single arena per chapter, directional overhead microphone",
+  "removed": [
+    "multi-room layout",
+    "doors",
+    "minimap",
+    "cross-room chase and retreat",
+    "room state persistence"
+  ],
+  "preserved": [
+    "three bosses",
+    "six item synergies",
+    "boss surviving minions",
+    "jump lesson",
+    "walls and interactive props"
+  ],
+  "verification": {
+    "command": "node tests/game.cjs",
+    "result": "20 scenario groups passed",
+    "syntax": "core.js and game.js pass",
+    "browser": "not verified"
+  },
+  "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
+  "nextAction": "After native publication confirmation, human playtest of one arena; no further feature work.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_b5292fa9bae88191848affda24877821"
+}

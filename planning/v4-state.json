@@ -35,5 +35,8 @@
     "sourceCommit": "ebb8878451d73ec0a5acbaf9db903e0deae3ea53",
     "versionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_b5292fa9bae88191848affda24877821",
     "deploymentId": "appgdep_6ad750b7abcc81918b16bc0da54a32ba"
-  }
+  },
+  "status": "historical-superseded",
+  "supersededBy": "SPEC.md v5 and planning/current-state.json",
+  "nextActionOverride": "Do not resume multi-room work; user cancelled all multi-room design."
 }
