@@ -1,7 +1,7 @@
 {
-  "version": 8,
-  "authority": "User requested regression cleanup; SPEC.md v8",
-  "productState": "v7 combat with regression fixes and consistent current UI",
+  "version": 9,
+  "authority": "User requested small-enemy rollback; SPEC.md v9",
+  "productState": "Original small-enemy wave pressure plus current melee, items, skins and empty arenas",
   "removed": [
     "multi-room layout",
     "doors",
@@ -25,11 +25,11 @@
   ],
   "verification": {
     "command": "node tests/game.cjs",
-    "result": "24 scenario groups passed; actual melee-only build coverage",
+    "result": "27 scenario groups passed including original wave baseline and actual melee-only item pairs",
     "syntax": "core.js and game.js pass",
     "browser": "not verified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "nextAction": "After native publication confirmation, human playtest of one arena; no further feature work.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_95a4b632cbd88191836fd2077ace6f1a"
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_7db3481fa0708191bb8ae69619c5d78a"
 }
