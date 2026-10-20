@@ -165,3 +165,6 @@ Remove the Player Current Status explanatory paragraph and five base-ability exp
 
 # v29 — remove page footer (user requested)
 Remove the page footer containing the duplicated SPACE/HOLD CLICK controls and FICTIONAL SATIRE credit line below the game screen. Preserve the in-game Boss footer, Jump button and all gameplay. Validate HTML-backed Debug and stylesheet checks plus exact footer removal. Rollback v28 source511bdbf6d03e4aa079b5e7cf0cc7b5d70b89e430. Stop after same-site publication.
+
+# v30 — keep player visible during health-supply phase (user approved)
+Reproduced: reward mode freezes the invulnerability timer; if its blink phase hides the player when a Boss dies, the renderer hides him indefinitely despite movement and health-kit collection remaining active. Always draw the player and weapon in reward mode. Preserve combat blink, protection values, cooldowns, health, damage and progression. Regression first reproduces invisible reward entry, then checks visible entry/continued reward drawing for levels1/2 at protection0.1/0.22/0.3 with full hearts, unchanged combat blink/timer, actual movement to kit, choice and next level. Core simulation unchanged. Browser/device visual QA unavailable. Rollback v29 source3e6c57fc5d4b842d97a06c37e6b9433d8e502da2. Stop after same-site publication.

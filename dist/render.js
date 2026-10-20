@@ -462,7 +462,7 @@ function draw() {
     ctx.setLineDash([]);
   }
   const jumpHeight = Math.sin(p.jump / PLAYER_ABILITIES.jump.duration * Math.PI) * 34;
-  if (p.inv <= 0 || Math.floor(p.inv * 14) % 2 === 0 || g.mode.startsWith('tutorial')) {
+  if (g.mode === 'reward' || p.inv <= 0 || Math.floor(p.inv * 14) % 2 === 0 || g.mode.startsWith('tutorial')) {
     person(p.x, p.y - jumpHeight);
     downwardCash(p, jumpHeight);
   }

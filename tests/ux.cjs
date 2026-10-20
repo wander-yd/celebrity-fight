@@ -235,4 +235,25 @@ test('touch Jump stays in the footer instead of covering the playfield', () => {
   assert.ok(h.run('game.player.jump') > 0);
   assert.equal(h.run('game.player.hp'), hp);
 });
+test('reward phase always draws the player and full hearts can reach the kit and next level', () => {
+  for (const level of [1, 2]) for (const protection of [.1, .22, .3]) {
+    const h = start();
+    h.run(`game.debugJump(${level},true);game.boss.grace=0;game.player.hp=game.player.maxhp;game.player.x=180;game.player.y=500;game.player.inv=${protection};
+      var playerDraws=0;var originalPerson=person;person=function(...args){if(args[0]===game.player.x&&args[1]===game.player.y)playerDraws++;return originalPerson(...args)};`);
+    h.run('draw()');
+    assert.equal(h.run('playerDraws'), protection === .3 ? 1 : 0, 'combat flashing must stay unchanged');
+    h.run('game.damage(game.boss,999);game.finishIfClear();syncOverlay();playerDraws=0;draw()');
+    assert.equal(h.run('game.mode'), 'reward');
+    assert.equal(h.run('playerDraws'), 1, 'player must be visible on entering reward');
+    h.run('for(let i=0;i<120;i++)game.step(1/60,{});playerDraws=0;draw()');
+    assert.equal(h.run('playerDraws'), 1, 'player must remain visible');
+    assert.equal(h.run('game.player.inv'), protection, 'render fix must not change protection');
+    h.run(`for(let i=0;i<600&&game.mode==='reward';i++){const kit=game.room.pickup;const dx=kit.x-game.player.x,dy=kit.y-game.player.y;const d=Math.max(1,Math.hypot(dx,dy));game.step(1/60,{mx:dx/d,my:dy/d});}syncOverlay()`);
+    assert.equal(h.run('game.mode'), 'upgrade');
+    assert.equal(h.run('game.player.hp'), 6);
+    h.click('pick0');
+    assert.equal(h.run('game.mode'), 'play');
+    assert.equal(h.run('game.chapter'), level + 1);
+  }
+});
 console.log(`${passed} UI/UX scenario groups passed. Geometry/DOM checks are fixtures, not browser layout/device verification.`);

@@ -1,7 +1,7 @@
 {
-  "version": 29,
-  "authority": "User requested removal of text below the game; SPEC.md v29",
-  "productState": "v28 preserved; redundant page footer removed",
+  "version": 30,
+  "authority": "User approved reward-phase visibility fix; SPEC.md v30",
+  "productState": "v29 preserved; player always drawn during reward despite frozen invulnerability blink",
   "removed": [
     "multi-room layout",
     "doors",
@@ -31,11 +31,11 @@
   ],
   "verification": {
     "command": "node tests/run.cjs",
-    "result": "HTML-backed Debug/Codex and stylesheet suites pass; exact page footer removed; game scripts unchanged",
+    "result": "Regression reproduces hidden reward player before fix; full suite checks level1/2 reward visibility, original combat blink and actual full-heart kit\u2192choice\u2192next level flow; simulation unchanged",
     "syntax": "Changed JS syntax, HTML nesting/unique IDs, stylesheet contracts and diff whitespace pass",
     "browser": "No supported browser QA; viewport math/DOM are fixtures, native layout/touch/visual polish remain unverified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Refresh to view the game without the page footer.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_40db46831ed08191b8d8ae572ff800a4"
+  "nextAction": "Defeat Biden and walk to the health kit; Donald should remain visible.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_52bb0c34b160819188169c1ff446f49b"
 }

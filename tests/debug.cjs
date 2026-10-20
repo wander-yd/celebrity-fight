@@ -321,8 +321,8 @@ test('guide and shipped UI stay English and new script assets are present', () =
   assert.ok(html.includes('aria-labelledby="debug-title"'));
   assert.ok(!html.includes('id="interact"'));
   assert.ok(!/E: SUPPLY|<kbd>E<|E to interact/.test(html));
-  assert.ok(html.includes('debug.js?v=28'));
-  assert.ok(html.indexOf('debug.js?v=28') < html.indexOf('game.js?v=28'));
+  assert.ok(html.includes('debug.js?v=30'));
+  assert.ok(html.indexOf('debug.js?v=30') < html.indexOf('game.js?v=30'));
 });
 test('in-arena HUD, cooldown ring and touch readiness agree; pause holds details and Q does nothing', () => {
   const h = harness();
