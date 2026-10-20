@@ -1,7 +1,7 @@
 {
-  "version": 10,
-  "authority": "User approved Biden projectile reskin; SPEC.md v10",
-  "productState": "v9 mechanics; urine fans and homing cartoon poop",
+  "version": 11,
+  "authority": "User requested all-English game; SPEC.md v11",
+  "productState": "v10 gameplay; all player-facing text in English",
   "removed": [
     "multi-room layout",
     "doors",
@@ -25,11 +25,11 @@
   ],
   "verification": {
     "command": "node tests/game.cjs",
-    "result": "27 scenario groups passed; unchanged Biden parameters and no slow puddles",
+    "result": "27 scenario groups passed; English-only scan; combat source unchanged outside string literals",
     "syntax": "core.js and game.js pass",
     "browser": "not verified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "nextAction": "After native publication confirmation, human playtest of one arena; no further feature work.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_7c26ae3640c88191aa3ff9907b09d287"
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_4ab7d62c23a88191ae5f9430cb035622"
 }

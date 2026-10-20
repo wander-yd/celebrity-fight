@@ -66,3 +66,8 @@ Evidence:27 scenario groups pass, including baseline wave counts/cadence/rosters
 # v10 — Biden projectile appearance only (user approved)
 Biden fan bullets become yellow urine droplets with brief cosmetic hit splashes. Slow homing scoop becomes stacked cartoon poop. Keep counts5+1, speeds135/105, radii8/11, homing blend.7, half-health intervals1.5/1s and normal player damage. Use kind homingPoop rather than legacy poop to prevent accidentally enabling old slow-puddle behavior. No slow zones or added damage; other gameplay unchanged.
 Rollback: v9 source9085c3ec16bf80632b0e37a468fe59cc4785e9d3. Evidence: existing scenario suite extended to check unchanged projectile radii/speed, retained homing, cosmetic splash and no puddle. Browser appearance unverified.
+
+# v11 — English-only localization (user requested)
+Translate every player-facing string to English: page controls, menus, tutorial, combat HUD, feedback labels, supplies, Boss names, six item descriptions and pair synergies. Remove repeated English item subtitles after names become English. Preserve all mechanics and visual assets.
+Evidence: no Han characters in shipped HTML/JS. Combat-core source matches prior version exactly after string literals are masked. Existing regression suite checks current English help. Browser typography/layout and physical input remain unverified. Rollback: v10 source95df7b6345590423fb56e28c39fe6ff37a5117ae.
+Final check:27 scenario groups pass, including English HUD/controller checks and all15 item pairs. Both JS syntax checks pass.
