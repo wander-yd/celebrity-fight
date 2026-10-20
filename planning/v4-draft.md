@@ -96,22 +96,22 @@ Open Decisions: None
 Only Necessary Question: None
 
 ## Execution Control
-Current Stage: Build M2 and requested review verified
+Current Stage: M3 published; human playtest pending
 Gate Result: Pass
-Next Stage: Publish M3
-Exact Next Action: Package the exact tested source, save a version and deploy only the existing public Site appgprj_6ad740f9f07081918e87fce2aa1f3a9f; stop at native A10 success and hand off for human playtest.
-Destination: Current Codex agent in /workspace/sites/trump-void-arena
+Next Stage: Human playtest
+Exact Next Action: Open the deployed game, complete the safe jump/microphone lesson and play one five-room chapter; report readability, controls and combat feel. No further product changes.
+Destination: User browser at https://trump-void-arena-jj.grassy-fawn-9947.chatgpt.site
 Handoff Packet/paths: /workspace/sites/trump-void-arena/planning/v4-plan.md and /workspace/sites/trump-void-arena/planning/v4-state.json
-Build Instructions: Preserve tested product source and Site audience; update only SPEC.md and planning evidence, package/push the tested checkout, save and deploy only appgprj_6ad740f9f07081918e87fce2aa1f3a9f, and stop at A10 native success for human playtest.
-Current Action Evidence: A1-A9 and four user-requested review regressions pass, 26 unique scenario groups. Exact next action publishes the approved tested version to the existing public Site; user has authorized the complete implementation and publication scope.
-Risk Tags: publish, release_gate
+Build Instructions: Product implementation and publication are complete. Only the user browser playtest remains; no further code, hosting or access mutations are authorized by this next action.
+Current Action Evidence: A1-A9 and four review regressions pass, 26 unique scenario groups; native A10 deployment succeeded at2026-10-20T11:30:19.458703+00:00 with saved version4 and source ebb8878451d73ec0a5acbaf9db903e0deae3ea53. Next action is reversible human playtest only.
+Risk Tags: bounded_reversible
 High Failures on Same Action: 0
 Interacting M-class Risks: 0
 Named Max Failure: None
-Automatic Handoff Available: yes
+Automatic Handoff Available: no
 DeepSeek Effort: not-applicable
-Manual UI Action: None
-Manual Prompt: None
+Manual UI Action: Open https://trump-void-arena-jj.grassy-fawn-9947.chatgpt.site and play one chapter.
+Manual Prompt: In your browser at https://trump-void-arena-jj.grassy-fawn-9947.chatgpt.site, complete the safe microphone/jump lesson, pick up the sound amplifier with E in room3, and play one five-room chapter. Report controls, visibility and combat feel; make no code, hosting or access changes.
 
 ## Durable Stage State
 Locked Decisions: Fifteen rooms, microphone with sound pickup, three distinct bosses with pursuit/retreat, survivors persist, six adapted items and unchanged shield behavior.

@@ -1,30 +1,39 @@
 {
   "schemaVersion": 2,
   "sourcePlan": "/workspace/sites/trump-void-arena/planning/v4-plan.md",
-  "currentStage": "Build M2 and requested review verified",
+  "currentStage": "M3 published; human playtest pending",
   "gateResult": "Pass",
-  "nextStage": "Publish M3",
-  "exactNextAction": "Package the exact tested source, save a version and deploy only the existing public Site appgprj_6ad740f9f07081918e87fce2aa1f3a9f; stop at native A10 success and hand off for human playtest.",
-  "destination": "Current Codex agent in /workspace/sites/trump-void-arena",
+  "nextStage": "Human playtest",
+  "exactNextAction": "Open the deployed game, complete the safe jump/microphone lesson and play one five-room chapter; report readability, controls and combat feel. No further product changes.",
+  "destination": "User browser at https://trump-void-arena-jj.grassy-fawn-9947.chatgpt.site",
   "handoffPacket": "/workspace/sites/trump-void-arena/planning/v4-plan.md and /workspace/sites/trump-void-arena/planning/v4-state.json",
-  "handoffMode": "Automatic",
-  "openAIRecommendation": "Max",
-  "rubricCode": "M1",
+  "handoffMode": "Manual",
+  "openAIRecommendation": "High",
+  "rubricCode": "H1",
   "deepSeekEffort": "not-applicable",
   "lockedDecisions": "Fifteen rooms, microphone with sound pickup, three distinct bosses with pursuit/retreat, survivors persist, six adapted items and unchanged shield behavior.",
   "allowedChanges": "/workspace/sites/trump-void-arena/dist, tests, SPEC.md and planning; package and deploy only this Site with its current public audience.",
   "doNotChange": "Shield turning/arc/HP/speed; six item identities and tariff semantics; Site identity/access; unrelated workspace files or services; no fees, accounts or external messaging.",
-  "buildInstructions": "Preserve tested product source and Site audience; update only SPEC.md and planning evidence, package/push the tested checkout, save and deploy only appgprj_6ad740f9f07081918e87fce2aa1f3a9f, and stop at A10 native success for human playtest.",
+  "buildInstructions": "Product implementation and publication are complete. Only the user browser playtest remains; no further code, hosting or access mutations are authorized by this next action.",
   "remainingBlockers": "None",
   "authoritativeArtifact": "/workspace/sites/trump-void-arena/planning/v4-plan.md",
   "evidencePaths": "/workspace/sites/trump-void-arena/SPEC.md, dist/game.js, tests/game.cjs and planning/v4-state.json",
   "approvedPaths": "None supplied",
   "locationAssumptions": "Reuse existing git-backed Site checkout /workspace/sites/trump-void-arena.",
+  "manualUIAction": "Open https://trump-void-arena-jj.grassy-fawn-9947.chatgpt.site and play one chapter.",
+  "manualPrompt": "In your browser at https://trump-void-arena-jj.grassy-fawn-9947.chatgpt.site, complete the safe microphone/jump lesson, pick up the sound amplifier with E in room3, and play one five-room chapter. Report controls, visibility and combat feel; make no code, hosting or access changes.",
   "semanticDraft": "/workspace/sites/trump-void-arena/planning/v4-draft.md",
-  "evidence": {
-    "M1": "A1-A5 pass,7 groups",
-    "M2": "A6-A9 pass,15 groups",
-    "review": "R1-R4 pass,4 groups",
-    "humanBrowser": "not verified"
+  "moduleStatus": {
+    "M1": "completed",
+    "M2": "completed",
+    "M3": "published",
+    "humanBrowser": "pending"
+  },
+  "deployment": {
+    "status": "succeeded",
+    "url": "https://trump-void-arena-jj.grassy-fawn-9947.chatgpt.site",
+    "sourceCommit": "ebb8878451d73ec0a5acbaf9db903e0deae3ea53",
+    "versionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_b5292fa9bae88191848affda24877821",
+    "deploymentId": "appgdep_6ad750b7abcc81918b16bc0da54a32ba"
   }
 }
