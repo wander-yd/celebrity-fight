@@ -162,3 +162,6 @@ Remove the Infinite hearts helper paragraph and the three Debug level-card descr
 
 # v28 — compact Player reference and start screens (user approved)
 Remove the Player Current Status explanatory paragraph and five base-ability explanatory paragraphs, including unused note arguments. Keep portrait, titles, numerical stats, equipped item effects and synergies. Remove outer promotional intro and edition line, retaining the game name. Main menu: THE DONALD, START and two brief desktop/touch control lines. Tutorial intro: Jump near the shield → land → swing, PRACTICE and SKIP. Completion: Practice complete and PLAY. Keep existing start/tutorial transitions, safe lesson, pause details, debug access, stats, gameplay and progression. Validate existing suites plus compact menu/lesson/Player content. No browser/device visual QA available. Rollback v27 sourcef66c805ed7748fd37b3e6b95857cfafbff44f1a8. Stop after same-site publication.
+
+# v29 — remove page footer (user requested)
+Remove the page footer containing the duplicated SPACE/HOLD CLICK controls and FICTIONAL SATIRE credit line below the game screen. Preserve the in-game Boss footer, Jump button and all gameplay. Validate HTML-backed Debug and stylesheet checks plus exact footer removal. Rollback v28 source511bdbf6d03e4aa079b5e7cf0cc7b5d70b89e430. Stop after same-site publication.

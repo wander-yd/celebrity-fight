@@ -1,7 +1,7 @@
 {
-  "version": 28,
-  "authority": "User approved compact Player and pre-game copy; SPEC.md v28",
-  "productState": "v27 behavior preserved; compact stat-only Player ability cards, concise start/practice/completion screens, promotional intro removed",
+  "version": 29,
+  "authority": "User requested removal of text below the game; SPEC.md v29",
+  "productState": "v28 preserved; redundant page footer removed",
   "removed": [
     "multi-room layout",
     "doors",
@@ -31,11 +31,11 @@
   ],
   "verification": {
     "command": "node tests/run.cjs",
-    "result": "Existing game/guide/refactor/parity/styles/UX suites; compact Player text and start/tutorial flow checks; gameplay sources unchanged",
+    "result": "HTML-backed Debug/Codex and stylesheet suites pass; exact page footer removed; game scripts unchanged",
     "syntax": "Changed JS syntax, HTML nesting/unique IDs, stylesheet contracts and diff whitespace pass",
     "browser": "No supported browser QA; viewport math/DOM are fixtures, native layout/touch/visual polish remain unverified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Refresh, try the shorter start/practice flow and inspect the Player reference.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_b980460103788191967a91faceb3376d"
+  "nextAction": "Refresh to view the game without the page footer.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_40db46831ed08191b8d8ae572ff800a4"
 }
