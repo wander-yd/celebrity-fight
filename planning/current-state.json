@@ -1,7 +1,7 @@
 {
-  "version": 14,
-  "authority": "User requested own-bomb immunity; SPEC.md v14",
-  "productState": "v13 game; Khamenei immune to his own bombardments",
+  "version": 15,
+  "authority": "User requested automatic post-Boss kits and E removal; SPEC.md v15",
+  "productState": "Boss clear \u2192 walk into health kit \u2192 item choice \u2192 next chapter; no E controls",
   "removed": [
     "multi-room layout",
     "doors",
@@ -14,22 +14,24 @@
     "solid boss containers",
     "amplifier pickup",
     "sound-wave gameplay unlock",
-    "later boss casts, dashes and HP gates"
+    "later boss casts, dashes and HP gates",
+    "E interaction key/button/prompts",
+    "chapter-start supply kits"
   ],
   "preserved": [
     "three bosses",
     "six item synergies",
     "boss surviving minions",
     "jump lesson",
-    "chapter2/3 supply pickups"
+    "automatic health kits after Boss1/2"
   ],
   "verification": {
     "command": "node tests/game.cjs; node tests/debug.cjs",
-    "result": "29 game + 10 debug/codex groups pass; all three own-bomb sources verified",
+    "result": "31 game + 10 debug/codex groups pass; post-Boss pickup flow and no double heal",
     "syntax": "core.js, debug.js and game.js pass",
     "browser": "not verified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "After publication: use Debug/Codex to test chapter3 Boss; own bombs no longer reduce his HP.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_a576b14bd3248191afcb4a52a960ace9"
+  "nextAction": "After publication: defeat Boss1 via Debug, walk into its kit, choose an item and enter chapter2.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_55ad41632184819197aef4911f789b5d"
 }
