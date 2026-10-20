@@ -134,7 +134,11 @@ test('clipping the covered top margin preserves pointer-to-world mapping', () =>
 });
 test('tutorial instructions remain readable and the safe lesson still completes', () => {
   const h = harness();
+  assert.match(h.el('overlay').innerHTML, /id="start">START<\/button>/);
+  assert.ok(!h.el('overlay').innerHTML.includes('Biden →'));
   h.click('start');
+  assert.ok(h.el('overlay').innerHTML.includes('Jump near the shield → land → swing.'));
+  assert.ok(!h.el('overlay').innerHTML.includes('damage protection'));
   h.click('practice');
   assert.equal(h.el('arena-instruction').hidden, false);
   assert.ok(h.el('arena-instruction').textContent.includes('Press SPACE'));
@@ -143,6 +147,8 @@ test('tutorial instructions remain readable and the safe lesson still completes'
   h.run('for(let i=0;i<20;i++)game.step(1/60,{attack:true,aim:{x:480,y:370}});hud()');
   assert.ok(h.el('arena-instruction').textContent.includes('HIT!'));
   h.run('for(let i=0;i<80;i++)game.step(1/60,{});syncOverlay();hud()');
+  assert.ok(h.el('overlay').innerHTML.includes('Practice complete'));
+  assert.match(h.el('overlay').innerHTML, /id="lessonDone">PLAY<\/button>/);
   h.click('lessonDone');
   assert.equal(h.run('game.mode'), 'play');
   assert.equal(h.el('arena-instruction').hidden, true);

@@ -47,17 +47,17 @@ function syncOverlay() {
     return;
   }
   if (game.mode === 'menu') {
-    show('<div class="tag">3 ARENAS · ONE STACK OF DOLLARS</div><h2>The art of<br><em>the cash slap.</em></h2><p>Biden → xijinping → Mojtaba Khamenei<br>Swing your dollar stack. Jump to break shields. Land to activate your equipped items.<br>Clear each arena, then face its boss.<br>Surviving minions keep fighting after the boss falls.</p><button class="primary" id="start">START THE CAMPAIGN ↗</button><div class="hint">WASD MOVE · HOLD CLICK: MELEE · SPACE: JUMP<br>WALK INTO HEALTH KITS<br><br>TOUCH: DRAG + AUTO ATTACK · TAP JUMP</div>');
+    show('<h2>THE DONALD</h2><button class="primary" id="start">START</button><div class="hint">WASD: Move · Hold click: Attack · Space: Jump<br>Touch: Drag to move · Tap Jump</div>');
     button('start', () => {
       setPlayMode(true);
       game.start();
     });
   } else if (game.mode === 'tutorialIntro') {
-    show('<div class="tag">A SHORT SAFE LESSON · SKIPPABLE</div><h2>Break shields.<br><em>Then swing.</em></h2><p>Aim with your mouse. Hold left click for overhead cash-stack swings.<br><b>SPACE</b> Jump to avoid damage. Land nearby to stun and break shields.<br>Normal enemies are stunned for ' + PLAYER_ABILITIES.landing.stun + 's; shields break for ' + PLAYER_ABILITIES.landing.shieldBreak + 's.<br>Landing gives ' + PLAYER_ABILITIES.landing.protection + 's of damage protection.<br>Practice: land near the shield dummy, then hit it with your dollar stack.</p><button class="primary" id="practice">PRACTICE JUMP + SWING ↗</button><button class="small tutorials" id="skip">SKIP LESSON</button>');
+    show('<h2>Jump. Land. Swing.</h2><p>Jump near the shield → land → swing.</p><button class="primary" id="practice">PRACTICE</button><button class="small tutorials" id="skip">SKIP</button>');
     button('practice', () => game.practice());
     button('skip', () => game.skipLesson());
   } else if (game.mode === 'tutorialDone') {
-    show('<div class="tag">SHIELD BROKEN · CASH SLAP LANDED ✓</div><h2>Use the<br><em>opening.</em></h2><p>Jump close → land to break shields → swing your dollar stack.<br>Bosses stagger briefly and resist repeated stuns.<br>After each Boss, walk into the health kit to heal and continue.<br>In level 3, red circles warn you before explosions.</p><button class="primary" id="lessonDone">ENTER THE ARENA ↗</button>');
+    show('<h2>Practice complete</h2><button class="primary" id="lessonDone">PLAY</button>');
     button('lessonDone', () => game.newRun());
   } else if (game.mode === 'paused') {
     show('<div class="pause-primary"><div class="tag">ARENA PAUSED</div><button class="primary" id="resume">RESUME ↗</button></div><p class="pause-summary">Level ' + game.chapter + ' / 3 · Score ' + game.score + ' · ' + Math.floor(game.time) + ' seconds</p><details class="pause-section" id="pause-controls"><summary>Controls &amp; help</summary><p>WASD / arrows: move<br>Mouse: aim + hold click to swing<br>SPACE: jump · P / ESC: pause<br>Touch: drag to move + auto attack, tap JUMP<br>After a Boss, walk into the health kit to heal and choose an item.</p><p class="landscape-tip">On a phone, landscape gives you a larger arena.</p></details><details class="pause-section" id="pause-build"><summary>Your build · ' + game.items.length + ' items</summary><div class="pause-build"><b>YOUR BUILD · DOLLAR STACK</b>' + buildDetails() + '</div></details><div class="pause-settings"><button class="small" id="sound">' + (sound ? '♪ SOUND ON' : '♪ SOUND OFF') + '</button><button class="small" id="restart">↻ RESTART RUN</button></div>');

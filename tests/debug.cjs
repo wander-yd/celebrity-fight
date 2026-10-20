@@ -275,6 +275,7 @@ test('Player tab shows the character, base abilities and live read-only status w
   h.unlock('voiddebug');
   h.click('debug-tab-player');
   const html = h.el('debug-body').innerHTML;
+  for (const removed of ['Airborne immunity is separate', 'Hold left click to swing toward', 'WASD or touch-drag to move.', 'Jump over contact damage', 'Land close to enemies', 'Bosses can only be staggered']) assert.ok(!html.includes(removed), removed);
   for (const value of ['Donald Trump', 'Dollar Stack', 'CURRENT STATUS', '3 / 6', '220 px/s', '94 px', '120°', '0.42s', '0.2s', '0.58s', '1.5s', '65 px', '0.3s', '0.45s', '0.75s', 'No items equipped']) assert.ok(html.includes(value), 'Player info missing ' + value);
   assert.ok(!/<input|<select/.test(html));
   assert.equal(h.art.length, 1);
@@ -320,8 +321,8 @@ test('guide and shipped UI stay English and new script assets are present', () =
   assert.ok(html.includes('aria-labelledby="debug-title"'));
   assert.ok(!html.includes('id="interact"'));
   assert.ok(!/E: SUPPLY|<kbd>E<|E to interact/.test(html));
-  assert.ok(html.includes('debug.js?v=27'));
-  assert.ok(html.indexOf('debug.js?v=27') < html.indexOf('game.js?v=27'));
+  assert.ok(html.includes('debug.js?v=28'));
+  assert.ok(html.indexOf('debug.js?v=28') < html.indexOf('game.js?v=28'));
 });
 test('in-arena HUD, cooldown ring and touch readiness agree; pause holds details and Q does nothing', () => {
   const h = harness();
