@@ -1,7 +1,7 @@
 {
-  "version": 12,
-  "authority": "User requested Biden diaper costume; SPEC.md v12",
-  "productState": "v11 English game; Biden wears a cartoon diaper",
+  "version": 13,
+  "authority": "User approved Debug & Codex scope; SPEC.md v13",
+  "productState": "English game with password-gated Debug & illustrated Codex",
   "removed": [
     "multi-room layout",
     "doors",
@@ -21,15 +21,15 @@
     "six item synergies",
     "boss surviving minions",
     "jump lesson",
-    "amplifier and supply pickups"
+    "chapter2/3 supply pickups"
   ],
   "verification": {
-    "command": "node tests/game.cjs",
-    "result": "27 existing scenario groups pass; JS syntax and drawing/controller mock checks pass; combat core unchanged",
-    "syntax": "core.js and game.js pass",
+    "command": "node tests/game.cjs; node tests/debug.cjs",
+    "result": "27 existing + 10 debug/codex groups pass; 6 normal simulations match v12 exactly",
+    "syntax": "core.js, debug.js and game.js pass",
     "browser": "not verified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "After native publication confirmation, human playtest of one arena; no further feature work.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_8f874b1e2f6081919e0ff560fdd3ccb9"
+  "nextAction": "After publication: user opens Debug/Codex with voiddebug, tests a Boss shortcut and infinite hearts.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_715a7611c5688191a8d5b2d4920da7a1"
 }
