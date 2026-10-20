@@ -1,7 +1,7 @@
 {
-  "version": 20,
-  "authority": "User approved hostile projectiles drawn on top; SPEC.md v20",
-  "productState": "v19 gameplay; hostile bullets above actors and combat effects, below HUD",
+  "version": 21,
+  "authority": "User approved xijinping visual resize only; SPEC.md v21",
+  "productState": "v20 with chapter2 Boss in-arena drawing scale1.3; collision radius27 unchanged",
   "removed": [
     "multi-room layout",
     "doors",
@@ -27,11 +27,11 @@
   ],
   "verification": {
     "command": "node tests/game.cjs; node tests/debug.cjs",
-    "result": "35 game + 13 Debug/Codex groups pass; source draw order checked; combat core unchanged",
+    "result": "35 game +13 Debug/Codex groups pass; combat core unchanged",
     "syntax": "core.js, debug.js and game.js pass",
     "browser": "not verified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Play a Boss fight and check that bullets remain visible over its body after a jump.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_7ff1a057ff9881918996b37f13dc87c3"
+  "nextAction": "Inspect chapter2 Boss size in play via Debug/Codex Boss shortcut.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_0eed1fbe4ee48191916123f0e4032811"
 }

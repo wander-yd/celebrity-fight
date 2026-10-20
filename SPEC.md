@@ -116,3 +116,7 @@ Rollback: v18 source787de79f4db843f0a52a71c3933a3e2e38fbaa5f. Stop after publish
 # v20 — hostile projectiles on top (user requested)
 Move the existing hostile bullet draw pass after actors, player weapon/swings and transient combat effects, before labels in the HUD and overlays. Preserve each bullet appearance, position, size, collision, damage and timing. Player item shots and ground hazards keep their existing layers. No protection, balance or behavior changes.
 Evidence: syntax and existing game/Debug checks; verify source draw order and unchanged core. Real-browser visual QA unavailable. Rollback: v19 source dc5d5457449311691cd53240144623bc0b4a3760. Stop after publishing this visual layering change.
+
+
+# v21 — match chapter2 Boss visual size (user approved)
+Set only xijinping's in-arena portrait scale to1.3 instead of1.65. Other Boss drawings remain1.65. Collision radius remains27 for all Bosses; combat core and Codex portrait framing unchanged. Evidence: existing35 game +13 Debug/Codex groups and syntax pass; core unchanged. Real-browser visual size unverified. Rollback: v20 source718f877b7508cf964b8a877a92d0cc0a8b4257ef. Stop after publication.
