@@ -3,7 +3,7 @@
 const DEBUG_PASSWORD='voiddebug';
 const VoidGuide=(()=>{
  const enemies={
-  chaser:{name:'Chaser',behavior:'Follows you continuously and deals contact damage.',counter:'Keep moving. Sweep nearby groups with your microphone.'},
+  chaser:{name:'Chaser',behavior:'Follows you continuously and deals contact damage.',counter:'Keep moving. Sweep nearby groups with your dollar stack.'},
   charger:{name:'Charger',behavior:'Shows an arrow before rushing in a straight line.',counter:'Step sideways after the warning, or jump across its path.'},
   shooter:{name:'Shooter',behavior:'Approaches firing range, then sends aimed shots. Chapter 3 uses a drone variant.',counter:'Move across its line of fire and close in between shots.'},
   turret:{name:'Spread Turret',behavior:'Stays in place and fires a five-shot fan.',counter:'Move between volleys, then approach from the side.'},

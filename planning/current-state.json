@@ -1,7 +1,7 @@
 {
-  "version": 17,
-  "authority": "User approved first landing fix only; SPEC.md v17",
-  "productState": "0.3s landing protection and local overlap separation; projectile layers unchanged",
+  "version": 18,
+  "authority": "User approved dollar-stack cosmetic weapon swap; SPEC.md v18",
+  "productState": "v17 gameplay; dollar-stack weapon art for player/clones and matching English wording",
   "removed": [
     "multi-room layout",
     "doors",
@@ -27,11 +27,11 @@
   ],
   "verification": {
     "command": "node tests/game.cjs; node tests/debug.cjs",
-    "result": "35 game + 10 Debug/Codex groups pass; landing immunity, expiry, body separation and unchanged layering",
+    "result": "35 game + 10 Debug/Codex groups pass; core.js byte-for-byte unchanged",
     "syntax": "core.js, debug.js and game.js pass",
     "browser": "not verified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "After publication: user tests landing on a Boss through Debug; projectile visibility remains a separate proposed change.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_3febe20d337081919fc3a741aef362be"
+  "nextAction": "After publication: user checks dollar-stack swing appearance and clone art; projectile layering remains unchanged.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_ea7295a7ffe481918442b852ec702bc4"
 }
