@@ -1,7 +1,7 @@
 {
-  "version": 6,
-  "authority": "Latest user request; SPEC.md v6",
-  "productState": "Open single arena per chapter; suited Winnie the Pooh in chapter2",
+  "version": 7,
+  "authority": "User selected option B; SPEC.md v7",
+  "productState": "Open arenas; melee only; original three-chapter Boss mechanics with current skins",
   "removed": [
     "multi-room layout",
     "doors",
@@ -11,7 +11,10 @@
     "walls",
     "crates",
     "barrels",
-    "solid boss containers"
+    "solid boss containers",
+    "amplifier pickup",
+    "sound-wave gameplay unlock",
+    "later boss casts, dashes and HP gates"
   ],
   "preserved": [
     "three bosses",
@@ -22,11 +25,11 @@
   ],
   "verification": {
     "command": "node tests/game.cjs",
-    "result": "19 scenario groups passed",
+    "result": "19 scenario groups passed including original attack counts, intervals, HP, speed and amplifier removal",
     "syntax": "core.js and game.js pass",
     "browser": "not verified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "nextAction": "After native publication confirmation, human playtest of one arena; no further feature work.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_8712520fb70c8191b989fe0a30f3cdd5"
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_a6bb2c5da8e4819185162029ca528484"
 }
