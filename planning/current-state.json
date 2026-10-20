@@ -1,7 +1,7 @@
 {
-  "version": 18,
-  "authority": "User approved dollar-stack cosmetic weapon swap; SPEC.md v18",
-  "productState": "v17 gameplay; dollar-stack weapon art for player/clones and matching English wording",
+  "version": 19,
+  "authority": "User approved Player Codex and shared ability definitions; SPEC.md v19",
+  "productState": "v18 gameplay; read-only Player tab with shared base stats and current status/build",
   "removed": [
     "multi-room layout",
     "doors",
@@ -27,11 +27,11 @@
   ],
   "verification": {
     "command": "node tests/game.cjs; node tests/debug.cjs",
-    "result": "35 game + 10 Debug/Codex groups pass; core.js byte-for-byte unchanged",
+    "result": "35 game + 13 Debug/Codex groups pass; 12 deterministic combat simulations match v18 exactly",
     "syntax": "core.js, debug.js and game.js pass",
     "browser": "not verified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "After publication: user checks dollar-stack swing appearance and clone art; projectile layering remains unchanged.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_ea7295a7ffe481918442b852ec702bc4"
+  "nextAction": "After publication: open DEBUG / CODEX with voiddebug, select Player and inspect base abilities versus paused current status.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_89c2eb74effc8191819094ed68e84a1c"
 }
