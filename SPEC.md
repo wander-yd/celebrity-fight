@@ -71,3 +71,7 @@ Rollback: v9 source9085c3ec16bf80632b0e37a468fe59cc4785e9d3. Evidence: existing 
 Translate every player-facing string to English: page controls, menus, tutorial, combat HUD, feedback labels, supplies, Boss names, six item descriptions and pair synergies. Remove repeated English item subtitles after names become English. Preserve all mechanics and visual assets.
 Evidence: no Han characters in shipped HTML/JS. Combat-core source matches prior version exactly after string literals are masked. Existing regression suite checks current English help. Browser typography/layout and physical input remain unverified. Rollback: v10 source95df7b6345590423fb56e28c39fe6ff37a5117ae.
 Final check:27 scenario groups pass, including English HUD/controller checks and all15 item pairs. Both JS syntax checks pass.
+
+# v12 — Biden diaper costume (user requested)
+Add a clearly visible cartoon white diaper with pale-blue waistband/tabs and exposed lower legs to the existing Biden sprite. Retain recognizable white hair, glasses and upper suit. Rendering-only change; keep all attacks, stats, collision and other characters unchanged. English UI remains. Rollback: v11 source26e1bad530c286724bb9428928015082830e7f58.
+Evidence: JS syntax and all27 existing scenario groups pass, including Boss draw/controller mocks. core.js unchanged. Browser visual appearance remains unverified.

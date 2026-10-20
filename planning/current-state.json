@@ -1,7 +1,7 @@
 {
-  "version": 11,
-  "authority": "User requested all-English game; SPEC.md v11",
-  "productState": "v10 gameplay; all player-facing text in English",
+  "version": 12,
+  "authority": "User requested Biden diaper costume; SPEC.md v12",
+  "productState": "v11 English game; Biden wears a cartoon diaper",
   "removed": [
     "multi-room layout",
     "doors",
@@ -25,11 +25,11 @@
   ],
   "verification": {
     "command": "node tests/game.cjs",
-    "result": "27 scenario groups passed; English-only scan; combat source unchanged outside string literals",
+    "result": "27 existing scenario groups pass; JS syntax and drawing/controller mock checks pass; combat core unchanged",
     "syntax": "core.js and game.js pass",
     "browser": "not verified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "nextAction": "After native publication confirmation, human playtest of one arena; no further feature work.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_4ab7d62c23a88191ae5f9430cb035622"
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_8f874b1e2f6081919e0ff560fdd3ccb9"
 }
