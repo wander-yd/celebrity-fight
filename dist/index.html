@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="A cartoon dollar-stack roguelite with three arenas, chasing bosses and synergistic builds.">
     <title>The Donald — Void Arena</title>
-    <link rel="stylesheet" href="styles.css?v=23">
+    <link rel="stylesheet" href="styles.css?v=24">
   </head>
   <body>
     <header>
@@ -21,15 +21,32 @@
         <p class="subtitle">Get close. Break shields. Cash in on the chaos.<br>Three bosses. One fight at a time.</p>
       </div>
       <div class="layout">
-        <section class="gamewrap" aria-label="Arena game">
-          <canvas id="game" width="960" height="600" tabindex="0" aria-label="Use WASD to move, mouse to aim and swing a dollar stack, Space to dodge-jump, P to pause"></canvas>
-          <div id="overlay" class="overlay"></div>
-          <button class="touch" id="jump" aria-label="Jump ready">JUMP</button>
-          <nav class="arena-actions" aria-label="Game menu"><button id="pause" class="small">Ⅱ PAUSE</button><button id="debug-open" class="small">⚙ CODEX</button></nav>
-          <div class="arena-vitals">
-            <div id="health" aria-label="Health"></div>
-            <div id="equipped" aria-label="Equipped items"></div>
+        <section id="game-stage" class="gamewrap" aria-label="Arena game">
+          <div id="arena-toolbar" class="arena-toolbar">
+            <div class="arena-vitals">
+              <div id="health" aria-label="Health"></div>
+              <div id="equipped" aria-label="Equipped items"></div>
+            </div>
+            <nav class="arena-actions" aria-label="Game menu">
+              <button id="pause" class="small" aria-label="Pause or resume"><span aria-hidden="true">Ⅱ</span><span class="action-word"> PAUSE</span></button>
+              <button id="debug-open" class="small" aria-label="Open Debug and Codex"><span aria-hidden="true">☷</span><span class="action-word"> CODEX</span></button>
+              <button id="play-mode" class="small" aria-label="Enter Play mode" aria-pressed="false"><span aria-hidden="true">⛶</span><span class="action-word"> VIEW</span></button>
+            </nav>
+            <div class="arena-progress"><span id="chapter-label"></span><span id="wave-label"></span></div>
+            <div id="arena-instruction" class="arena-instruction" hidden></div>
           </div>
+          <div id="arena-viewport" class="arena-viewport">
+            <canvas id="game" width="960" height="600" tabindex="0" aria-label="Use WASD to move, mouse to aim and swing a dollar stack, Space to dodge-jump, P to pause"></canvas>
+            <div id="jump-caption" class="jump-caption" hidden></div>
+          </div>
+          <div id="boss-panel" class="boss-panel">
+            <div class="boss-info">
+              <div id="boss-label"></div>
+              <div id="boss-meter" class="boss-meter" role="progressbar" aria-label="Boss health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" hidden><i id="boss-fill"></i></div>
+            </div>
+            <button class="touch" id="jump" aria-label="Jump ready">JUMP</button>
+          </div>
+          <div id="overlay" class="overlay"></div>
           <div class="sr-only"><span id="jumptext"></span><span id="debug-status" role="status" hidden>Infinite hearts enabled</span></div>
         </section>
       </div>
@@ -46,13 +63,13 @@
       </header>
       <div id="debug-body" class="debug-body"></div>
     </dialog>
-    <script src="core.js?v=23"></script>
-    <script src="timing.js?v=23"></script>
-    <script src="state.js?v=23"></script>
-    <script src="render.js?v=23"></script>
-    <script src="ui.js?v=23"></script>
-    <script src="debug.js?v=23"></script>
-    <script src="input.js?v=23"></script>
-    <script src="game.js?v=23"></script>
+    <script src="core.js?v=24"></script>
+    <script src="timing.js?v=24"></script>
+    <script src="state.js?v=24"></script>
+    <script src="render.js?v=24"></script>
+    <script src="ui.js?v=24"></script>
+    <script src="debug.js?v=24"></script>
+    <script src="input.js?v=24"></script>
+    <script src="game.js?v=24"></script>
   </body>
 </html>

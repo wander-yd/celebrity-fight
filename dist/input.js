@@ -52,6 +52,10 @@ function bindInput() {
       }
       return;
     }
+    // Let focused menu controls keep their native Enter/Space activation.
+    const tag = e.target?.tagName?.toLowerCase();
+    if (['Space', 'Enter'].includes(e.code) && ['button', 'summary', 'input', 'select', 'textarea', 'a'].includes(tag)) return;
+    if (!['play', 'tutorial', 'reward'].includes(game.mode) && e.key.toLowerCase() !== 'p' && e.key !== 'Escape') return;
     if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault();
     keys[e.key.toLowerCase()] = true;
     if (e.repeat) return;
@@ -78,6 +82,9 @@ function bindInput() {
     e.preventDefault();
     fn();
   };
+  document.getElementById('play-mode').onclick = () => setPlayMode(!document.body.classList.contains('play-mode'));
+  window.addEventListener('resize', fitPlayMode);
+  window.visualViewport?.addEventListener('resize', fitPlayMode);
   document.getElementById('pause').onclick = () => {
     release();
     game.pause();

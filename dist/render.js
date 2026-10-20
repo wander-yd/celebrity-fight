@@ -533,22 +533,6 @@ function draw() {
       ellipse(b.x - 1, b.y - 1, 2, 2, '#ffe8dc');
     }
   }
-  drawCombatHud();
-  const boss = g.boss;
-  if (boss) {
-    ctx.fillStyle = '#12151f';
-    ctx.fillRect(182, H - 23, 596, 11);
-    ctx.fillStyle = theme.accent;
-    ctx.fillRect(182, H - 23, 596 * Math.max(0, boss.hp / boss.maxhp), 11);
-    ctx.strokeStyle = '#292d34';
-    for (const n of [.5]) {
-      ctx.beginPath();
-      ctx.moveTo(182 + 596 * n, H - 23);
-      ctx.lineTo(182 + 596 * n, H - 12);
-      ctx.stroke();
-    }
-    text(g.mode === 'reward' ? 'WALK INTO THE HEALTH KIT' : boss.dead ? 'BOSS DOWN · ENEMIES LEFT: ' + g.remaining() : boss.name + (boss.hp < boss.maxhp * .5 ? ' / ENRAGED' : ''), 480, H - 30, 11, boss.dead ? '#d9fb76' : theme.accent, 'center', true);
-  }
   if (g.messageTime > 0 && g.mode === 'play') {
     ctx.fillStyle = '#14202ade';
     ctx.fillRect(180, 103, 600, 40);
@@ -559,13 +543,6 @@ function draw() {
     ctx.fillStyle = '#142019ed';
     ctx.fillRect(215, 520, 530, 31);
     text(prompt, 480, 541, 14, '#e9ffc0', 'center', true);
-  }
-  if (['tutorial', 'tutorialSuccess'].includes(g.mode)) {
-    ctx.fillStyle = '#14202aee';
-    ctx.fillRect(130, 104, 700, 65);
-    const msg = g.mode === 'tutorialSuccess' ? 'HIT! Jump → break shield → swing.' : g.lessonStage === 'attack' ? 'Shield broken! Aim at the dummy and hold left click.' : 'Press SPACE / JUMP and land close to the dummy.';
-    text(msg, 480, 131, 18, '#d9fb76', 'center', true);
-    text('Safe dummy · Swing hits a forward arc · Dashed circle shows landing range', 480, 155, 13, '#d5dfcd', 'center');
   }
   if (g.mode === 'play' && !touchMove) {
     ctx.strokeStyle = '#f8e8baa0';
@@ -598,26 +575,5 @@ function drawJumpCharge() {
   ctx.beginPath();
   ctx.arc(x, y, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
   ctx.stroke();
-  if (p.jumpCd > 0) {
-    const labelX = clamp(x, 85, W - 85),
-      labelY = clamp(y + 39, 110, H - 48);
-    ctx.fillStyle = '#142019e8';
-    ctx.fillRect(labelX - 40, labelY - 13, 80, 20);
-    text('JUMP ' + p.jumpCd.toFixed(1) + 's', labelX, labelY, 12, '#fff1b8', 'center', true);
-  }
   ctx.restore();
-}
-function drawCombatHud() {
-  const g = game,
-    p = g.player,
-    theme = g.theme;
-  ctx.fillStyle = '#151d26';
-  ctx.fillRect(0, 0, W, 72);
-  text('0' + g.chapter + ' / ' + theme.name, 320, 28, 15, theme.accent, 'left', true);
-  text(g.mode === 'reward' ? 'CLEAR · COLLECT HEALTH KIT' : g.boss ? 'BOSS · MINIONS ' + g.remaining() : 'WAVE ' + g.spawned + ' / ' + g.waveTotal, 320, 51, 12, '#d1d8c5');
-  if (g.debugInvincible) {
-    ctx.fillStyle = '#263d25ee';
-    ctx.fillRect(28, 78, 174, 23);
-    text('DEBUG · INVINCIBLE', 38, 94, 11, '#d9fb76', 'left', true);
-  }
 }

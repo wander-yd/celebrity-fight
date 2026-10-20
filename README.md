@@ -27,8 +27,14 @@ Run from the repository root:
 node tests/run.cjs
 ```
 
-The suites cover simulation rules, HTML-backed DOM fixtures, frame-rate timing, historical combat/render parity, and CSS cleanup. Historical comparisons use the v22 commit already in Git history and require no network.
+The suites cover simulation rules, HTML-backed DOM fixtures, frame-rate timing, historical combat/world-render parity, CSS structure and UI/UX geometry/flows. Historical comparisons use the v22 commit already in Git history and require no network.
 
 The DOM/canvas fixture is deliberately limited: it catches missing or unmounted element IDs and loads the actual shipped scripts, but cannot verify browser layout, native input behavior or game feel. Those require a browser/device playtest.
 
-When editing rendering, preserve the threat layers: ground → actors/effects → jump indicator → hostile projectiles → HUD. Keep gameplay numbers in `PLAYER_ABILITIES` and read those definitions in descriptions instead of copying numeric text.
+When editing rendering, preserve the threat layers: ground → actors/effects → jump indicator → hostile projectiles; readable HUD text and the touch Jump control live in DOM bars outside the world. Keep gameplay numbers in `PLAYER_ABILITIES` and read those definitions in descriptions instead of copying numeric text.
+
+## Play mode
+
+Start automatically enters Play mode, which collapses page branding and fits the arena to the visual viewport. Menus offer Page view / Play mode; the toolbar also has a view toggle. The world keeps its original960×600 coordinates. The displayed viewport clips only the old top72px HUD region (960×528 remains visible); mouse/touch aiming uses the full canvas rectangle. Never resize the simulation or crop the bottom edge to fit a screen.
+
+Resume leads the Pause menu; Controls and Build are native collapsed details. Phone upgrade choices stack and show an action summary before full effects. Browser/device checks remain required for visual quality and touch comfort.

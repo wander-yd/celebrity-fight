@@ -303,8 +303,8 @@ test('guide and shipped UI stay English and new script assets are present', () =
   assert.ok(html.includes('aria-labelledby="debug-title"'));
   assert.ok(!html.includes('id="interact"'));
   assert.ok(!/E: SUPPLY|<kbd>E<|E to interact/.test(html));
-  assert.ok(html.includes('debug.js?v=23'));
-  assert.ok(html.indexOf('debug.js?v=23') < html.indexOf('game.js?v=23'));
+  assert.ok(html.includes('debug.js?v=24'));
+  assert.ok(html.indexOf('debug.js?v=24') < html.indexOf('game.js?v=24'));
 });
 test('in-arena HUD, cooldown ring and touch readiness agree; pause holds details and Q does nothing', () => {
   const h = harness();
@@ -315,7 +315,8 @@ test('in-arena HUD, cooldown ring and touch readiness agree; pause holds details
   assert.equal(h.el('equipped').textContent, '◎  ✴');
   assert.equal(h.el('jump').textContent, 'JUMP 0.8s');
   assert.ok(h.el('jump')['aria-label'].includes('0.8'));
-  assert.ok(h.drawCalls.some(x => x[0] === 'fillText' && x[1] === 'JUMP 0.8s'));
+  assert.equal(h.el('jump-caption').textContent, 'JUMP 0.8s');
+  assert.equal(h.el('jump-caption').hidden, false);
   const before = h.run('JSON.stringify(game.room.fields)');
   h.listeners.keydown({
     key: 'q',
@@ -350,12 +351,12 @@ test('in-arena HUD, cooldown ring and touch readiness agree; pause holds details
 });
 test('HTML contains in-stage vitals and menus with no external combat sidebar or Q; guides match landing items', () => {
   const html = fs.readFileSync('dist/index.html', 'utf8'),
-    start = html.indexOf('<section class="gamewrap"'),
+    start = html.indexOf('<section id="game-stage"'),
     end = html.indexOf('</section>', start);
   for (const id of ['health', 'jump', 'pause', 'debug-open', 'equipped']) assert.ok(html.slice(start, end).includes('id="' + id + '"'), id);
   assert.ok(!html.includes('<aside'));
   assert.ok(!html.includes('id="tariff"'));
-  assert.match(fs.readFileSync('dist/styles.css', 'utf8'), /aspect-ratio:\s*16\/10!important/);
+  assert.match(fs.readFileSync('dist/styles.css', 'utf8'), /aspect-ratio:\s*20\s*\/\s*11/);
   for (const file of ['dist/game.js', 'dist/debug.js', 'dist/core.js', 'dist/render.js', 'dist/ui.js', 'dist/input.js', 'dist/state.js', 'dist/timing.js']) assert.ok(!/tariff|TARIFF/.test(fs.readFileSync(file, 'utf8')), file);
   const h = harness();
   h.click('debug-open');

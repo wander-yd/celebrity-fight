@@ -994,4 +994,4 @@ test('overlapping settlements expire once each; new fields remain at impact befo
   g.updateFields(2.1);
   assert.equal(b.hp, hp - 4);
 });
-console.log(`V23: ${passed} scenario groups passed. Drawing/controller checks use mocks, not a real browser.`);
+console.log(`V24: ${passed} scenario groups passed. Drawing/controller checks use mocks, not a real browser.`);

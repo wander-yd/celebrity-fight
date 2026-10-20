@@ -1,7 +1,7 @@
 {
-  "version": 23,
-  "authority": "User approved bounded refactor and timing fix; SPEC.md v23",
-  "productState": "v22 rules and art with fixed60Hz scheduling, readable browser modules, strict HTML-backed test fixture, obsolete obstacle/CSS cleanup and generated numeric item descriptions",
+  "version": 24,
+  "authority": "User approved first UI/UX pass; SPEC.md v24",
+  "productState": "v23 combat unchanged; viewport-fit reversible Play mode, fixed-size DOM HUD and touch footer, Resume-first Pause, mobile stacked upgrade cards",
   "removed": [
     "multi-room layout",
     "doors",
@@ -31,11 +31,11 @@
   ],
   "verification": {
     "command": "node tests/run.cjs",
-    "result": "40 game +15 Debug/Codex +10 refactor groups pass;48 seeded900-step core comparisons and3 Boss canvas command/style comparisons match v22; CSS order preserved with101 unused/overridden declarations removed",
-    "syntax": "All8 browser scripts and diff whitespace checks pass; shipped HTML/assets load through strict DOM fixture",
-    "browser": "No supported browser QA; native layout/device input/performance/feel remain unverified"
+    "result": "40 game +15 Debug/Codex +10 refactor +11 UX groups pass; core byte-identical to v23;48 seeded historical combat comparisons and3 world/art/effect/projectile traces match (intentional DOM HUD relocations excluded)",
+    "syntax": "Changed JS syntax, HTML nesting/unique IDs, stylesheet contracts and diff whitespace pass",
+    "browser": "No supported browser QA; viewport math/DOM are fixtures, native layout/touch/visual polish remain unverified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Play one full run on the usual device: check timing at low FPS, menu/input recovery and unchanged visuals/feel.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_a4d947b363b4819182a0bf2261a32efb"
+  "nextAction": "On desktop and phone, start a run, pause/resume, and inspect an upgrade choice; check readable HUD and comfortable touch input.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_77c58c46c3048191bd1e6d98bb6fa1f9"
 }

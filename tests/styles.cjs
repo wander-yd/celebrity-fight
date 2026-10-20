@@ -1,17 +1,9 @@
 'use strict';
 
-// Verify CSS cleanup structurally; this is not browser layout/computed-style QA.
+// Structural checks complement, but do not replace, browser/device layout verification.
 const fs = require('fs'),
-  cp = require('node:child_process'),
   assert = require('node:assert/strict');
-const prior = cp.execFileSync('git', ['show', 'a27a9bf599f4b9401eeb0e5b0467a135e8d2258b:dist/index.html'], {
-  encoding: 'utf8',
-  maxBuffer: 2 ** 20
-});
-const old = prior.match(/<style>([\s\S]*?)<\/style>/)[1],
-  current = fs.readFileSync('dist/styles.css', 'utf8');
-const markup = fs.readFileSync('dist/index.html', 'utf8') + fs.readdirSync('dist').filter(f => f.endsWith('.js')).map(f => fs.readFileSync('dist/' + f, 'utf8')).join('\n');
-const classes = new Set(['hidden', ...[...markup.matchAll(/class=["']([^"']*)["']/g)].flatMap(m => m[1].split(/\s+/))]);
+const current = fs.readFileSync('dist/styles.css', 'utf8');
 function flatten(source, context = []) {
   source = source.replace(/\/\*[\s\S]*?\*\//g, '');
   const declarations = [];
@@ -55,26 +47,28 @@ function flatten(source, context = []) {
   }
   return declarations;
 }
-const before = flatten(old),
-  after = flatten(current),
-  kept = new Set();
-let cursor = before.length - 1;
-for (let i = after.length - 1; i >= 0; i--) {
-  while (cursor >= 0 && JSON.stringify(before[cursor]) !== JSON.stringify(after[i])) cursor--;
-  assert.ok(cursor >= 0, 'CSS introduced or moved a declaration: ' + JSON.stringify(after[i]));
-  kept.add(cursor--);
+const declarations = flatten(current);
+assert.ok(declarations.length > 0);
+function last(selector, property) {
+  return declarations.filter(d => d.selector === selector && d.property === property).at(-1)?.value;
 }
-let removed = 0;
-for (let i = 0; i < before.length; i++) if (!kept.has(i)) {
-  removed++;
-  const d = before[i];
-  const unused = [...d.selector.matchAll(/\.([a-zA-Z_][\w-]*)/g)].some(m => !classes.has(m[1]));
-  if (unused) continue;
-  assert.ok(before.slice(i + 1).some(later => later.context === d.context && later.selector === d.selector && later.property === d.property && (!d.value.includes('!important') || later.value.includes('!important'))), 'removed live, unshadowed declaration ' + JSON.stringify(d));
-}
-assert.ok(removed > 0);
-console.log(`PASS CSS retains declaration order; ${removed} removed declarations are unused or provably overridden`);
+assert.equal(last('.arena-vitals #health', 'font-size'), '20px');
+assert.equal(last('.arena-progress', 'font-size'), '12px');
+assert.equal(last('#boss-label', 'font-size'), '12px');
+assert.match(last('.jump-caption', 'font'), /12px/);
+assert.equal(last('.jump-caption', 'background'), 'transparent');
+assert.equal(last('.arena-actions .small', 'min-height'), '44px');
+assert.equal(last('.touch', 'width'), '56px');
+assert.equal(last('.touch', 'height'), '56px');
+assert.equal(last('.choices', 'grid-template-columns'), '1fr');
+assert.ok(declarations.some(d => d.selector === '.choices' && d.property === 'grid-template-columns' && d.value === '1fr' && d.context.includes('650px')));
+assert.equal(last('.pause-primary', 'position'), 'sticky');
+assert.equal(last('[hidden]', 'display'), 'none !important');
+assert.equal(last('.arena-viewport', 'aspect-ratio'), '20 / 11');
+assert.equal(last('body.play-mode > header', 'display'), 'none');
+assert.equal(last('body.play-mode .overlay', 'position'), 'fixed');
+console.log('PASS readable HUD sizes, touch targets, stacked cards, sticky Resume and Play-mode CSS contracts');
 const html = fs.readFileSync('dist/index.html', 'utf8');
 assert.ok(!html.includes('<style>'));
-assert.ok(html.includes('styles.css?v=23'));
-console.log('PASS external stylesheet is linked from the shipped page');
+assert.ok(html.includes('styles.css?v=24'));
+console.log('PASS stylesheet structure and shipped link');

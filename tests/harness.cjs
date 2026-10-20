@@ -51,6 +51,7 @@ function harness(coreOverride, options = {}) {
     }
   }
   function create(tagName) {
+    const classes = new Set();
     let html = '',
       content = '';
     const node = {
@@ -65,12 +66,27 @@ function harness(coreOverride, options = {}) {
       value: '',
       open: false,
       classList: {
-        add() {},
-        remove() {}
+        add(...names) {
+          for (const name of names) classes.add(name);
+        },
+        remove(...names) {
+          for (const name of names) classes.delete(name);
+        },
+        contains(name) {
+          return classes.has(name);
+        },
+        toggle(name, force) {
+          const on = force ?? !classes.has(name);
+          if (on) classes.add(name);else classes.delete(name);
+          return on;
+        }
       },
       setAttribute(key, value) {
         this.attributes[key] = String(value);
-        if (key === 'id') this.id = value;else if (key === 'hidden') this.hidden = true;else if (key.startsWith('data-')) this.dataset[key.slice(5).replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = value;else this[key] = value;
+        if (key === 'id') this.id = value;else if (key === 'class') {
+          classes.clear();
+          for (const name of value.split(/\s+/)) classes.add(name);
+        } else if (key === 'hidden') this.hidden = true;else if (key.startsWith('data-')) this.dataset[key.slice(5).replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = value;else this[key] = value;
       },
       getAttribute(key) {
         return this.attributes[key] ?? null;
@@ -81,6 +97,13 @@ function harness(coreOverride, options = {}) {
       },
       setPointerCapture() {},
       getBoundingClientRect() {
+        if (options.rects?.[this.id]) return options.rects[this.id];
+        if (this.id === 'arena-viewport') return {
+          left: 0,
+          top: 0,
+          width: 960,
+          height: 528
+        };
         return {
           left: 0,
           top: 0,
@@ -124,6 +147,13 @@ function harness(coreOverride, options = {}) {
       }
     };
     Object.defineProperties(node, {
+      offsetHeight: {
+        get() {
+          if (node.id === 'arena-toolbar') return (options.toolbarHeight ?? 82) + (elements.get('arena-instruction')?.hidden === false ? 40 : 0);
+          if (node.id === 'boss-panel') return options.footerHeight ?? 48;
+          return 0;
+        }
+      },
       innerHTML: {
         get: () => html,
         set(value) {
@@ -155,6 +185,7 @@ function harness(coreOverride, options = {}) {
     assert,
     document: {
       getElementById: el,
+      body: root.children.find(n => n.tagName === 'html')?.children.find(n => n.tagName === 'body'),
       hidden: false,
       activeElement: null,
       addEventListener(key, fn) {
@@ -162,6 +193,8 @@ function harness(coreOverride, options = {}) {
       }
     },
     window: {
+      innerWidth: options.width ?? 1280,
+      innerHeight: options.height ?? 800,
       addEventListener(key, fn) {
         listeners[key] = fn;
       }
