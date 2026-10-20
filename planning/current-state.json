@@ -1,7 +1,7 @@
 {
-  "version": 13,
-  "authority": "User approved Debug & Codex scope; SPEC.md v13",
-  "productState": "English game with password-gated Debug & illustrated Codex",
+  "version": 14,
+  "authority": "User requested own-bomb immunity; SPEC.md v14",
+  "productState": "v13 game; Khamenei immune to his own bombardments",
   "removed": [
     "multi-room layout",
     "doors",
@@ -25,11 +25,11 @@
   ],
   "verification": {
     "command": "node tests/game.cjs; node tests/debug.cjs",
-    "result": "27 existing + 10 debug/codex groups pass; 6 normal simulations match v12 exactly",
+    "result": "29 game + 10 debug/codex groups pass; all three own-bomb sources verified",
     "syntax": "core.js, debug.js and game.js pass",
     "browser": "not verified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "After publication: user opens Debug/Codex with voiddebug, tests a Boss shortcut and infinite hearts.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_715a7611c5688191a8d5b2d4920da7a1"
+  "nextAction": "After publication: use Debug/Codex to test chapter3 Boss; own bombs no longer reduce his HP.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_a576b14bd3248191afcb4a52a960ace9"
 }

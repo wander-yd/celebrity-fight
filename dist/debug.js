@@ -14,7 +14,7 @@ const VoidGuide=(()=>{
  const bosses=[
   {kind:'biden',attacks:'Five urine droplets in a fan, plus one slow homing poop projectile. Hits leave no slowing pool.',counter:'Keep circling to draw the homing shot away, then step in for a swing. The diaper is cosmetic.'},
   {kind:'pooh',attacks:'A rotating 12-shot ring followed by three fast aimed shots.',counter:'Let the aimed burst pass, move through a gap, and watch the conveyor direction.'},
-  {kind:'mojtaba',attacks:'Rotating bullet rings and a warned explosion at your position. Additional bombardments escalate at health thresholds.',counter:'Leave red circles before they detonate. Save your jump for a blocked escape route.'}
+  {kind:'mojtaba',attacks:'Rotating bullet rings and a warned explosion at your position. Additional bombardments escalate at health thresholds. His bombs hurt you and minions, but not him.',counter:'Leave red circles before they detonate. Save your jump for a blocked escape route.'}
  ];
  function bossStats(chapter){const g=new VoidArena.Arena(()=>.5);g.chapter=chapter;g.setupChapter();g.createBoss();const b=g.boss;g.fireOriginalBoss(b,0);const normal={shots:g.room.bullets.length,interval:b.cd};g.room.bullets=[];b.hp=b.maxhp*.49;g.fireOriginalBoss(b,0);return{hp:b.maxhp,speed:b.speed,normal,enraged:{shots:g.room.bullets.length,interval:b.cd}};}
  return{enemies,bosses,bossStats};
