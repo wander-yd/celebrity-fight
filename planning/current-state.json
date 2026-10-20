@@ -1,7 +1,7 @@
 {
-  "version": 19,
-  "authority": "User approved Player Codex and shared ability definitions; SPEC.md v19",
-  "productState": "v18 gameplay; read-only Player tab with shared base stats and current status/build",
+  "version": 20,
+  "authority": "User approved hostile projectiles drawn on top; SPEC.md v20",
+  "productState": "v19 gameplay; hostile bullets above actors and combat effects, below HUD",
   "removed": [
     "multi-room layout",
     "doors",
@@ -27,11 +27,11 @@
   ],
   "verification": {
     "command": "node tests/game.cjs; node tests/debug.cjs",
-    "result": "35 game + 13 Debug/Codex groups pass; 12 deterministic combat simulations match v18 exactly",
+    "result": "35 game + 13 Debug/Codex groups pass; source draw order checked; combat core unchanged",
     "syntax": "core.js, debug.js and game.js pass",
     "browser": "not verified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "After publication: open DEBUG / CODEX with voiddebug, select Player and inspect base abilities versus paused current status.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_89c2eb74effc8191819094ed68e84a1c"
+  "nextAction": "Play a Boss fight and check that bullets remain visible over its body after a jump.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_7ff1a057ff9881918996b37f13dc87c3"
 }
