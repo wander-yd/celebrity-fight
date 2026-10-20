@@ -1,7 +1,7 @@
 {
-  "version": 26,
-  "authority": "User approved Debug & Codex text cleanup; SPEC.md v26",
-  "productState": "v25 gameplay and UI preserved; Enemies/Bosses counter advice and unlocked-tab opening/closing paragraphs removed",
+  "version": 27,
+  "authority": "User approved concise Debug text and level terminology; SPEC.md v27",
+  "productState": "v26 behavior preserved; concise Debug controls without chapter descriptions, ON/OFF labels, visible level terminology",
   "removed": [
     "multi-room layout",
     "doors",
@@ -31,11 +31,11 @@
   ],
   "verification": {
     "command": "node tests/run.cjs",
-    "result": "Existing game, Debug/Codex, refactor, parity, styles and UX suites; guide checks include absent counter advice/intros/closing notes with stats, descriptions, actions and synergies preserved",
+    "result": "Existing suites cover removed Debug descriptions, ON/OFF control, preserved actions and reset behavior; core unchanged except Debug banner terminology",
     "syntax": "Changed JS syntax, HTML nesting/unique IDs, stylesheet contracts and diff whitespace pass",
     "browser": "No supported browser QA; viewport math/DOM are fixtures, native layout/touch/visual polish remain unverified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Refresh the game and browse the cleaner Debug & Codex tabs.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_f04ed41bfa388191b226ab32026defb6"
+  "nextAction": "Refresh and check the concise Debug tab and level labels.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_e41c0d17786881918a4526d6670b5c8c"
 }

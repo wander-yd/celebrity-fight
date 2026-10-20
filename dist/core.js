@@ -1121,7 +1121,7 @@
         this.spawned = this.waveTotal;
         this.createBoss();
       }
-      this.say(`DEBUG / CHAPTER ${chapter} / ${bossFight ? 'BOSS FIGHT' : 'FULL WAVE'}`, 3);
+      this.say(`DEBUG / LEVEL ${chapter} / ${bossFight ? 'BOSS FIGHT' : 'FULL WAVE'}`, 3);
       return true;
     }
     pause() {

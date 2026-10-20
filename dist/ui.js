@@ -57,10 +57,10 @@ function syncOverlay() {
     button('practice', () => game.practice());
     button('skip', () => game.skipLesson());
   } else if (game.mode === 'tutorialDone') {
-    show('<div class="tag">SHIELD BROKEN · CASH SLAP LANDED ✓</div><h2>Use the<br><em>opening.</em></h2><p>Jump close → land to break shields → swing your dollar stack.<br>Bosses stagger briefly and resist repeated stuns.<br>After each Boss, walk into the health kit to heal and continue.<br>In chapter 3, red circles warn you before explosions.</p><button class="primary" id="lessonDone">ENTER THE ARENA ↗</button>');
+    show('<div class="tag">SHIELD BROKEN · CASH SLAP LANDED ✓</div><h2>Use the<br><em>opening.</em></h2><p>Jump close → land to break shields → swing your dollar stack.<br>Bosses stagger briefly and resist repeated stuns.<br>After each Boss, walk into the health kit to heal and continue.<br>In level 3, red circles warn you before explosions.</p><button class="primary" id="lessonDone">ENTER THE ARENA ↗</button>');
     button('lessonDone', () => game.newRun());
   } else if (game.mode === 'paused') {
-    show('<div class="pause-primary"><div class="tag">ARENA PAUSED</div><button class="primary" id="resume">RESUME ↗</button></div><p class="pause-summary">Chapter ' + game.chapter + ' / 3 · Score ' + game.score + ' · ' + Math.floor(game.time) + ' seconds</p><details class="pause-section" id="pause-controls"><summary>Controls &amp; help</summary><p>WASD / arrows: move<br>Mouse: aim + hold click to swing<br>SPACE: jump · P / ESC: pause<br>Touch: drag to move + auto attack, tap JUMP<br>After a Boss, walk into the health kit to heal and choose an item.</p><p class="landscape-tip">On a phone, landscape gives you a larger arena.</p></details><details class="pause-section" id="pause-build"><summary>Your build · ' + game.items.length + ' items</summary><div class="pause-build"><b>YOUR BUILD · DOLLAR STACK</b>' + buildDetails() + '</div></details><div class="pause-settings"><button class="small" id="sound">' + (sound ? '♪ SOUND ON' : '♪ SOUND OFF') + '</button><button class="small" id="restart">↻ RESTART RUN</button></div>');
+    show('<div class="pause-primary"><div class="tag">ARENA PAUSED</div><button class="primary" id="resume">RESUME ↗</button></div><p class="pause-summary">Level ' + game.chapter + ' / 3 · Score ' + game.score + ' · ' + Math.floor(game.time) + ' seconds</p><details class="pause-section" id="pause-controls"><summary>Controls &amp; help</summary><p>WASD / arrows: move<br>Mouse: aim + hold click to swing<br>SPACE: jump · P / ESC: pause<br>Touch: drag to move + auto attack, tap JUMP<br>After a Boss, walk into the health kit to heal and choose an item.</p><p class="landscape-tip">On a phone, landscape gives you a larger arena.</p></details><details class="pause-section" id="pause-build"><summary>Your build · ' + game.items.length + ' items</summary><div class="pause-build"><b>YOUR BUILD · DOLLAR STACK</b>' + buildDetails() + '</div></details><div class="pause-settings"><button class="small" id="sound">' + (sound ? '♪ SOUND ON' : '♪ SOUND OFF') + '</button><button class="small" id="restart">↻ RESTART RUN</button></div>');
     button('resume', () => game.pause());
     button('restart', () => game.newRun());
     document.getElementById('resume').focus();
@@ -70,12 +70,12 @@ function syncOverlay() {
       tone(500);
     };
   } else if (game.mode === 'upgrade') {
-    show('<div class="tag">CHAPTER ' + game.chapter + ' CLEARED · ALL MINIONS CLEARED</div><h2>Build a<br><em>better bad idea.</em></h2><p>Health kit collected. Choose your next item.<br>Next: ' + THEMES[game.chapter].name + '</p><div class="choices">' + game.offer.map((u, i) => {
+    show('<div class="tag">LEVEL ' + game.chapter + ' CLEARED · ALL MINIONS CLEARED</div><h2>Build a<br><em>better bad idea.</em></h2><p>Health kit collected. Choose your next item.<br>Next: ' + THEMES[game.chapter].name + '</p><div class="choices">' + game.offer.map((u, i) => {
       const partner = game.items.find(id => synergy(id, u.id));
       return '<button class="choice" id="pick' + i + '"><span>' + u.icon + '</span><b>' + u.name + '</b><small class="choice-action">' + itemAction(u.id) + '</small><small class="choice-detail">' + u.desc + '</small>' + (partner ? '<small class="synergy">SYNERGY WITH ' + ITEMS.find(x => x.id === partner).name + ': ' + synergy(partner, u.id) + '</small>' : '') + '</button>';
     }).join('') + '</div>');
     if (game.offer.length === 0) {
-      show('<div class="tag">ALL ITEMS COLLECTED</div><h2>Build complete.</h2><p>Health kit collected. Continue to ' + THEMES[game.chapter].name + '.</p><button class="primary" id="buildContinue">NEXT CHAPTER ↗</button>');
+      show('<div class="tag">ALL ITEMS COLLECTED</div><h2>Build complete.</h2><p>Health kit collected. Continue to ' + THEMES[game.chapter].name + '.</p><button class="primary" id="buildContinue">NEXT LEVEL ↗</button>');
       button('buildContinue', () => game.takeOffer(0));
     } else game.offer.forEach((_, i) => button('pick' + i, () => game.takeOffer(i)));
   } else if (['dead', 'win'].includes(game.mode)) {

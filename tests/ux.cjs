@@ -177,8 +177,8 @@ test('Codex remains reachable and password locked from menus and paused Play mod
   assert.equal(h.run('game.mode'), 'paused');
   assert.ok(h.env.document.body.classList.contains('play-mode'));
 });
-test('UI pass leaves the simulation and ability defaults byte-identical to v23', () => {
-  assert.equal(fs.readFileSync('dist/core.js', 'utf8'), cp.execFileSync('git', ['show', '3f1b5c37e77bd4b56fe2e28626db08a6e5027721:dist/core.js'], {
+test('simulation and ability defaults match v23 apart from the Debug level label', () => {
+  assert.equal(fs.readFileSync('dist/core.js', 'utf8').replace('DEBUG / LEVEL ${chapter}', 'DEBUG / CHAPTER ${chapter}'), cp.execFileSync('git', ['show', '3f1b5c37e77bd4b56fe2e28626db08a6e5027721:dist/core.js'], {
     encoding: 'utf8',
     maxBuffer: 2 ** 20
   }));

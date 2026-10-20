@@ -181,7 +181,11 @@ test('UI can start every wave and Boss, retain loadout and toggle the visible in
   const h = harness();
   h.click('debug-open');
   h.unlock('voiddebug');
+  for (const removed of ['Ignore damage.', 'Open arena.', 'Conveyors push', 'Missile warnings', 'CHAPTER', ' chapters</span>']) assert.ok(!h.el('debug-body').innerHTML.includes(removed), removed);
+  assert.ok(h.el('debug-body').innerHTML.includes('LEVEL 01'));
+  assert.match(h.el('debug-body').innerHTML, /id="debug-infinite"[^>]*>OFF<\/button>/);
   h.click('debug-infinite');
+  assert.match(h.el('debug-body').innerHTML, /id="debug-infinite"[^>]*>ON<\/button>/);
   assert.equal(h.run('game.debugInvincible'), true);
   assert.equal(h.el('health').textContent, '∞ HEARTS');
   assert.equal(h.el('debug-status').hidden, false);
@@ -289,7 +293,7 @@ test('Player current build, synergies and debug status refresh on reopen while b
   h.run("game.items=['pull','settle'];game.player.hp=2;game.setDebugInvincible(true)");
   h.click('debug-tab-player');
   let html = h.el('debug-body').innerHTML;
-  for (const value of ['Equipped items · 2', 'Seizure Order + Final Settlement', '2 / 6', 'ON · INVINCIBLE']) assert.ok(html.includes(value));
+  for (const value of ['Equipped items · 2', 'Seizure Order + Final Settlement', '2 / 6', 'ON']) assert.ok(html.includes(value));
   h.click('debug-close');
   h.run("game.player.hp=5;game.player.jumpCd=0;game.items=[];game.setDebugInvincible(false)");
   h.click('debug-open');
@@ -316,8 +320,8 @@ test('guide and shipped UI stay English and new script assets are present', () =
   assert.ok(html.includes('aria-labelledby="debug-title"'));
   assert.ok(!html.includes('id="interact"'));
   assert.ok(!/E: SUPPLY|<kbd>E<|E to interact/.test(html));
-  assert.ok(html.includes('debug.js?v=26'));
-  assert.ok(html.indexOf('debug.js?v=26') < html.indexOf('game.js?v=26'));
+  assert.ok(html.includes('debug.js?v=27'));
+  assert.ok(html.indexOf('debug.js?v=27') < html.indexOf('game.js?v=27'));
 });
 test('in-arena HUD, cooldown ring and touch readiness agree; pause holds details and Q does nothing', () => {
   const h = harness();
