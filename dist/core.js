@@ -9,7 +9,7 @@ const rectHit=(x,y,r,b)=>Math.hypot(x-clamp(x,b.x,b.x+b.w),y-clamp(y,b.y,b.y+b.h
 const rectOverlap=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 const THEMES=[
  {name:'BIDEN',boss:'BIDEN',subtitle:'THE DIRTY CAMPAIGN',floor:'#26303d',grid:'#354152',accent:'#96c9ff',hp:105},
- {name:'WINNIE THE POOH',boss:'WINNIE THE POOH',subtitle:'THE TRADE WAR',floor:'#303227',grid:'#444735',accent:'#f2cf76',hp:155},
+ {name:'xijinping',boss:'xijinping',subtitle:'THE TRADE WAR',floor:'#303227',grid:'#444735',accent:'#f2cf76',hp:155},
  {name:'MOJTABA KHAMENEI',boss:'MOJTABA KHAMENEI',subtitle:'THE ESCALATION MACHINE',floor:'#352b34',grid:'#493946',accent:'#f4a487',hp:190}
 ];
 const WAVES=[{count:15,interval:1.15-.12,roster:['chaser','shooter','charger','shield']},{count:21,interval:1.15-.24,roster:['charger','turret','shield','shooter','splitter','chaser']},{count:24,interval:1.15-.36,roster:['shooter','turret','charger','splitter','shield','chaser']}];

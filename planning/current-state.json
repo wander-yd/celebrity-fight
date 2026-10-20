@@ -1,7 +1,7 @@
 {
-  "version": 15,
-  "authority": "User requested automatic post-Boss kits and E removal; SPEC.md v15",
-  "productState": "Boss clear \u2192 walk into health kit \u2192 item choice \u2192 next chapter; no E controls",
+  "version": 16,
+  "authority": "User requested red-shirt Pooh named xijinping; SPEC.md v16",
+  "productState": "v15 gameplay; chapter2 Boss has classic red-shirt bear art and name xijinping",
   "removed": [
     "multi-room layout",
     "doors",
@@ -27,11 +27,11 @@
   ],
   "verification": {
     "command": "node tests/game.cjs; node tests/debug.cjs",
-    "result": "31 game + 10 debug/codex groups pass; post-Boss pickup flow and no double heal",
+    "result": "31 game + 10 Debug/Codex groups pass; combat core unchanged outside Boss-name strings",
     "syntax": "core.js, debug.js and game.js pass",
     "browser": "not verified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "After publication: defeat Boss1 via Debug, walk into its kit, choose an item and enter chapter2.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_55ad41632184819197aef4911f789b5d"
+  "nextAction": "After publication: inspect chapter2 Boss and Codex portrait using Debug/Codex.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_346d695a4bec81918827e0f876b8853a"
 }
