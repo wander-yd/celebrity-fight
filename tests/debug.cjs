@@ -207,9 +207,22 @@ test('guide shows all enemies, live stats, all six items, every supported synerg
   h.click('debug-open');
   h.unlock('voiddebug');
   const initial = h.run('JSON.stringify({time:game.time,player:game.player,chapter:game.chapter,room:game.room,score:game.score,items:game.items,mode:game.mode})');
+  for (const tab of ['debug', 'player', 'enemies', 'items', 'bosses']) {
+    h.click('debug-tab-' + tab);
+    const page = h.el('debug-body').innerHTML;
+    assert.ok(!page.includes('codex-intro'), tab);
+    assert.ok(!page.includes('codex-note'), tab);
+    if (tab === 'enemies' || tab === 'bosses') {
+      assert.ok(!page.includes('<b>COUNTER</b>'), tab);
+      assert.ok(!page.includes('codex-counter'), tab);
+    }
+  }
+  h.run("for(const entry of [...Object.values(VoidGuide.enemies),...VoidGuide.bosses]) assert.equal(entry.counter,undefined)");
+  h.art.length = 0;
   h.click('debug-tab-enemies');
   assert.equal(h.art.length, 7);
   assert.ok(h.el('debug-body').innerHTML.includes('Split Offspring'));
+  assert.ok(h.el('debug-body').innerHTML.includes('Follows you continuously and deals contact damage.'));
   h.run("for(const id of Object.keys(VoidArena.TYPES))assert.ok(VoidGuide.enemies[id]);");
   h.click('debug-tab-items');
   const html = h.el('debug-body').innerHTML;
@@ -303,8 +316,8 @@ test('guide and shipped UI stay English and new script assets are present', () =
   assert.ok(html.includes('aria-labelledby="debug-title"'));
   assert.ok(!html.includes('id="interact"'));
   assert.ok(!/E: SUPPLY|<kbd>E<|E to interact/.test(html));
-  assert.ok(html.includes('debug.js?v=25'));
-  assert.ok(html.indexOf('debug.js?v=25') < html.indexOf('game.js?v=25'));
+  assert.ok(html.includes('debug.js?v=26'));
+  assert.ok(html.indexOf('debug.js?v=26') < html.indexOf('game.js?v=26'));
 });
 test('in-arena HUD, cooldown ring and touch readiness agree; pause holds details and Q does nothing', () => {
   const h = harness();

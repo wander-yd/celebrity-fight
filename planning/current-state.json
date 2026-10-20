@@ -1,7 +1,7 @@
 {
-  "version": 25,
-  "authority": "User approved removal of following jump text and bomb countdown number; SPEC.md v25",
-  "productState": "v24 UI and combat preserved; following jump caption removed; bomb warning retains animated circle and exclamation without number",
+  "version": 26,
+  "authority": "User approved Debug & Codex text cleanup; SPEC.md v26",
+  "productState": "v25 gameplay and UI preserved; Enemies/Bosses counter advice and unlocked-tab opening/closing paragraphs removed",
   "removed": [
     "multi-room layout",
     "doors",
@@ -31,11 +31,11 @@
   ],
   "verification": {
     "command": "node tests/run.cjs",
-    "result": "40 game +15 Debug/Codex +10 refactor +12 UX groups pass; core unchanged;48 seeded combat comparisons and3 world rendering comparisons pass; animated warning radius and jump ring/ready flash checked",
+    "result": "Existing game, Debug/Codex, refactor, parity, styles and UX suites; guide checks include absent counter advice/intros/closing notes with stats, descriptions, actions and synergies preserved",
     "syntax": "Changed JS syntax, HTML nesting/unique IDs, stylesheet contracts and diff whitespace pass",
     "browser": "No supported browser QA; viewport math/DOM are fixtures, native layout/touch/visual polish remain unverified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Playtest the cleaner jump and bomb indicators on the normal device.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_ded5f7ccb7788191a5a12167185ae20e"
+  "nextAction": "Refresh the game and browse the cleaner Debug & Codex tabs.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_f04ed41bfa388191b226ab32026defb6"
 }

@@ -6,52 +6,42 @@ const VoidGuide = (() => {
   const enemies = {
     chaser: {
       name: 'Chaser',
-      behavior: 'Follows you continuously and deals contact damage.',
-      counter: 'Keep moving. Sweep nearby groups with your dollar stack.'
+      behavior: 'Follows you continuously and deals contact damage.'
     },
     charger: {
       name: 'Charger',
-      behavior: 'Shows an arrow before rushing in a straight line.',
-      counter: 'Step sideways after the warning, or jump across its path.'
+      behavior: 'Shows an arrow before rushing in a straight line.'
     },
     shooter: {
       name: 'Shooter',
-      behavior: 'Approaches firing range, then sends aimed shots. Chapter 3 uses a drone variant.',
-      counter: 'Move across its line of fire and close in between shots.'
+      behavior: 'Approaches firing range, then sends aimed shots. Chapter 3 uses a drone variant.'
     },
     turret: {
       name: 'Spread Turret',
-      behavior: 'Stays in place and fires a five-shot fan.',
-      counter: 'Move between volleys, then approach from the side.'
+      behavior: 'Stays in place and fires a five-shot fan.'
     },
     shield: {
       name: 'Shield Guard',
-      behavior: 'Faces you quickly and blocks attacks from the front.',
-      counter: 'Jump close: landing stuns it and breaks its shield for ' + VoidArena.PLAYER_ABILITIES.landing.shieldBreak + ' seconds.'
+      behavior: 'Faces you quickly and blocks attacks from the front.'
     },
     splitter: {
       name: 'Splitter',
-      behavior: 'Chases you and splits into two fast, fragile offspring on death.',
-      counter: 'Leave room for the offspring. Landing and wide swings help clear them.'
+      behavior: 'Chases you and splits into two fast, fragile offspring on death.'
     },
     mini: {
       name: 'Split Offspring',
-      behavior: 'A fast one-HP enemy created by a defeated Splitter.',
-      counter: 'One melee hit clears it. Avoid letting several surround you.'
+      behavior: 'A fast one-HP enemy created by a defeated Splitter.'
     }
   };
   const bosses = [{
     kind: 'biden',
-    attacks: 'Five urine droplets in a fan, plus one slow homing poop projectile. Hits leave no slowing pool.',
-    counter: 'Keep circling to draw the homing shot away, then step in for a swing. The diaper is cosmetic.'
+    attacks: 'Five urine droplets in a fan, plus one slow homing poop projectile. Hits leave no slowing pool.'
   }, {
     kind: 'pooh',
-    attacks: 'A rotating 12-shot ring followed by three fast aimed shots.',
-    counter: 'Let the aimed burst pass, move through a gap, and watch the conveyor direction.'
+    attacks: 'A rotating 12-shot ring followed by three fast aimed shots.'
   }, {
     kind: 'mojtaba',
-    attacks: 'Rotating bullet rings and a warned explosion at your position. Additional bombardments escalate at health thresholds. His bombs hurt you and minions, but not him.',
-    counter: 'Leave red circles before they detonate. Save your jump for a blocked escape route.'
+    attacks: 'Rotating bullet rings and a warned explosion at your position. Additional bombardments escalate at health thresholds. His bombs hurt you and minions, but not him.'
   }];
   function bossStats(chapter) {
     const g = new VoidArena.Arena(() => .5);
@@ -146,7 +136,7 @@ function createDebugCodex({
     }
   }
   function debugPage() {
-    return '<p class="codex-intro">Test a wave or a Boss directly. Jumps restore hearts and cooldowns, clear temporary combat effects, and keep your items.</p><div class="debug-summary"><span><b>3</b> chapters</span><span><b>7</b> enemy types</span><span><b>6</b> build items</span></div><section class="debug-toggle"><div><h3>Infinite hearts</h3><p>Ignore damage. Turn it off to test survival again. Restart turns it off.</p></div><button type="button" id="debug-infinite" aria-pressed="' + game.debugInvincible + '" class="debug-switch">' + (game.debugInvincible ? 'ON · INVINCIBLE' : 'OFF') + '</button></section><div class="debug-chapters">' + THEMES.map((theme, i) => '<article class="codex-card"><div class="codex-eyebrow">CHAPTER 0' + (i + 1) + '</div><h3>' + theme.name + '</h3>' + facts([['Wave', WAVES[i].count + ' enemies'], ['Boss', theme.hp + ' HP']]) + '<p>' + (i === 0 ? 'Open arena. Urine fans and homing poop.' : i === 1 ? 'Conveyors push grounded fighters.' : 'Missile warnings and escalating bombardments.') + '</p><div class="debug-actions"><button type="button" id="debug-wave-' + i + '">Start wave ↗</button><button type="button" id="debug-boss-' + i + '">Start Boss ↗</button></div></article>').join('') + '</div><p class="codex-note">Actions start the selected fight immediately. Invincibility stays on across debug jumps, and resets on Restart.</p>';
+    return '<div class="debug-summary"><span><b>3</b> chapters</span><span><b>7</b> enemy types</span><span><b>6</b> build items</span></div><section class="debug-toggle"><div><h3>Infinite hearts</h3><p>Ignore damage. Turn it off to test survival again. Restart turns it off.</p></div><button type="button" id="debug-infinite" aria-pressed="' + game.debugInvincible + '" class="debug-switch">' + (game.debugInvincible ? 'ON · INVINCIBLE' : 'OFF') + '</button></section><div class="debug-chapters">' + THEMES.map((theme, i) => '<article class="codex-card"><div class="codex-eyebrow">CHAPTER 0' + (i + 1) + '</div><h3>' + theme.name + '</h3>' + facts([['Wave', WAVES[i].count + ' enemies'], ['Boss', theme.hp + ' HP']]) + '<p>' + (i === 0 ? 'Open arena. Urine fans and homing poop.' : i === 1 ? 'Conveyors push grounded fighters.' : 'Missile warnings and escalating bombardments.') + '</p><div class="debug-actions"><button type="button" id="debug-wave-' + i + '">Start wave ↗</button><button type="button" id="debug-boss-' + i + '">Start Boss ↗</button></div></article>').join('') + '</div>';
   }
   const number = value => String(Number(value.toFixed(2)));
   const seconds = value => number(value) + 's';
@@ -162,27 +152,27 @@ function createDebugCodex({
       if (link) pairs.push('<li><strong>' + equipped[i].name + ' + ' + equipped[j].name + '</strong> — ' + link + '</li>');
     }
     const card = (title, values, note) => '<article class="codex-card"><div class="codex-eyebrow">BASE ABILITY</div><h3>' + title + '</h3>' + facts(values) + '<p>' + note + '</p></article>';
-    return '<p class="codex-intro">Your character, current condition and complete move set. Base abilities read the same definitions used by combat. Current status is frozen while this window is open.</p><div class="codex-player-top"><section class="codex-card"><div class="codex-cardhead">' + image('player', 'trump', 'Donald Trump') + '<div><div class="codex-eyebrow">PLAYER CHARACTER</div><h3>Donald Trump</h3><p>💵 Dollar Stack · overhead melee</p></div></div>' + facts([['Chapter', game.chapter + ' / ' + THEMES.length], ['Opponent', THEMES[game.chapter - 1].name], ['Base max hearts', a.health.max], ['Base ground speed', a.movement.speed + ' px/s']]) + '</section><section class="codex-card codex-current"><div class="codex-eyebrow">CURRENT STATUS · PAUSED SNAPSHOT</div><h3>Right now</h3>' + facts([['Hearts', p.hp + ' / ' + p.maxhp], ['State when opened', returnMode.replace(/([A-Z])/g, ' $1').toUpperCase()], ['Jump cooldown', ready(p.jumpCd)], ['Swing cooldown', ready(p.attackCd)], ['Airborne remaining', seconds(p.jump)], ['Timed protection', seconds(p.inv)], ['Infinite hearts', game.debugInvincible ? 'ON · INVINCIBLE' : 'OFF']]) + '<p>Airborne immunity is separate from timed protection. Infinite hearts ignores damage until disabled or the run restarts.</p></section></div><div class="codex-grid">' + card('Dollar Stack', [['Damage', a.melee.damage], ['Base reach', a.melee.range + ' px'], ['Forward arc', Math.round(a.melee.arc * 180 / Math.PI) + '°'], ['Swing cycle', seconds(a.melee.cycle)], ['Hit after start', seconds(a.melee.impact)]], 'Hold left click to swing toward your mouse. A body that overlaps the reach can be hit. Damage occurs once per swing, at impact.') + card('Movement & health', [['Ground speed', a.movement.speed + ' px/s'], ['Maximum hearts', a.health.max], ['Damage per hit', a.health.damagePerHit + ' heart'], ['Protection after hit', seconds(a.health.hurtProtection)], ['Health kit', a.health.supplyHeal + ' hearts']], 'WASD or touch-drag to move. Health kits appear after the first two Boss arenas are cleared; walk into one to heal and choose an item. Healing is capped at your maximum hearts.') + card('Jump · SPACE', [['Airborne duration', seconds(a.jump.duration)], ['Cooldown', seconds(a.jump.cooldown)], ['Air movement', number(a.jump.speedMultiplier) + '× base speed'], ['Airborne damage', 'IMMUNE']], 'Jump over contact damage, bullets and explosions. The cooldown starts at takeoff.') + card('Landing impact', [['Damage', a.landing.damage], ['Base radius', a.landing.radius + ' px'], ['Normal stun', seconds(a.landing.stun)], ['Shield break', seconds(a.landing.shieldBreak)], ['Landing protection', seconds(a.landing.protection)]], 'Land close to enemies to damage and stun them. Nearby shields break. Overlapping live bodies are separated after impact; longer existing protection is preserved.') + card('Landing on a Boss', [['Damage', a.landing.damage], ['Stagger duration', seconds(a.landing.bossStagger)], ['Stagger resistance', seconds(a.landing.bossResistance)]], 'Bosses can only be staggered again after the resistance timer ends. Landing damage and protection still apply when the Boss resists a stagger.') + '</div><section class="codex-card codex-player-build"><div class="codex-eyebrow">CURRENT BUILD</div><h3>Equipped items · ' + equipped.length + '</h3>' + (equipped.length ? '<ul class="codex-equipped">' + equipped.map(item => '<li><strong>' + item.icon + ' ' + item.name + '</strong><span>' + item.desc + '</span></li>').join('') + '</ul>' : '<p>No items equipped. Collect a post-Boss health kit to open your next item choice.</p>') + '<div class="codex-counter"><b>YOUR SUPPORTED SYNERGIES</b>' + (pairs.length ? '<ul>' + pairs.join('') + '</ul>' : '<p>No supported pair equipped yet.</p>') + '</div></section><p class="codex-note">This tab is read-only. Numerical ability changes flow through the shared definitions after a new version is published and the page is refreshed. Behavioral explanations still need to be kept in sync.</p>';
+    return '<div class="codex-player-top"><section class="codex-card"><div class="codex-cardhead">' + image('player', 'trump', 'Donald Trump') + '<div><div class="codex-eyebrow">PLAYER CHARACTER</div><h3>Donald Trump</h3><p>💵 Dollar Stack · overhead melee</p></div></div>' + facts([['Chapter', game.chapter + ' / ' + THEMES.length], ['Opponent', THEMES[game.chapter - 1].name], ['Base max hearts', a.health.max], ['Base ground speed', a.movement.speed + ' px/s']]) + '</section><section class="codex-card codex-current"><div class="codex-eyebrow">CURRENT STATUS · PAUSED SNAPSHOT</div><h3>Right now</h3>' + facts([['Hearts', p.hp + ' / ' + p.maxhp], ['State when opened', returnMode.replace(/([A-Z])/g, ' $1').toUpperCase()], ['Jump cooldown', ready(p.jumpCd)], ['Swing cooldown', ready(p.attackCd)], ['Airborne remaining', seconds(p.jump)], ['Timed protection', seconds(p.inv)], ['Infinite hearts', game.debugInvincible ? 'ON · INVINCIBLE' : 'OFF']]) + '<p>Airborne immunity is separate from timed protection. Infinite hearts ignores damage until disabled or the run restarts.</p></section></div><div class="codex-grid">' + card('Dollar Stack', [['Damage', a.melee.damage], ['Base reach', a.melee.range + ' px'], ['Forward arc', Math.round(a.melee.arc * 180 / Math.PI) + '°'], ['Swing cycle', seconds(a.melee.cycle)], ['Hit after start', seconds(a.melee.impact)]], 'Hold left click to swing toward your mouse. A body that overlaps the reach can be hit. Damage occurs once per swing, at impact.') + card('Movement & health', [['Ground speed', a.movement.speed + ' px/s'], ['Maximum hearts', a.health.max], ['Damage per hit', a.health.damagePerHit + ' heart'], ['Protection after hit', seconds(a.health.hurtProtection)], ['Health kit', a.health.supplyHeal + ' hearts']], 'WASD or touch-drag to move. Health kits appear after the first two Boss arenas are cleared; walk into one to heal and choose an item. Healing is capped at your maximum hearts.') + card('Jump · SPACE', [['Airborne duration', seconds(a.jump.duration)], ['Cooldown', seconds(a.jump.cooldown)], ['Air movement', number(a.jump.speedMultiplier) + '× base speed'], ['Airborne damage', 'IMMUNE']], 'Jump over contact damage, bullets and explosions. The cooldown starts at takeoff.') + card('Landing impact', [['Damage', a.landing.damage], ['Base radius', a.landing.radius + ' px'], ['Normal stun', seconds(a.landing.stun)], ['Shield break', seconds(a.landing.shieldBreak)], ['Landing protection', seconds(a.landing.protection)]], 'Land close to enemies to damage and stun them. Nearby shields break. Overlapping live bodies are separated after impact; longer existing protection is preserved.') + card('Landing on a Boss', [['Damage', a.landing.damage], ['Stagger duration', seconds(a.landing.bossStagger)], ['Stagger resistance', seconds(a.landing.bossResistance)]], 'Bosses can only be staggered again after the resistance timer ends. Landing damage and protection still apply when the Boss resists a stagger.') + '</div><section class="codex-card codex-player-build"><div class="codex-eyebrow">CURRENT BUILD</div><h3>Equipped items · ' + equipped.length + '</h3>' + (equipped.length ? '<ul class="codex-equipped">' + equipped.map(item => '<li><strong>' + item.icon + ' ' + item.name + '</strong><span>' + item.desc + '</span></li>').join('') + '</ul>' : '<p>No items equipped. Collect a post-Boss health kit to open your next item choice.</p>') + '<div class="codex-counter"><b>YOUR SUPPORTED SYNERGIES</b>' + (pairs.length ? '<ul>' + pairs.join('') + '</ul>' : '<p>No supported pair equipped yet.</p>') + '</div></section>';
   }
   function enemiesPage() {
-    return '<p class="codex-intro">Recognize the silhouette, understand the attack, choose your response. HP and movement speeds below come from the live enemy definitions.</p><div class="codex-grid">' + Object.entries(TYPES).map(([id, type]) => {
+    return '<div class="codex-grid">' + Object.entries(TYPES).map(([id, type]) => {
       const entry = VoidGuide.enemies[id];
       const chapters = WAVES.flatMap((wave, i) => wave.roster.includes(id) ? [i + 1] : []);
-      return '<article class="codex-card"><div class="codex-cardhead">' + image('enemy', id, entry.name) + '<div><div class="codex-eyebrow">' + (id === 'mini' ? 'SPAWNED BY SPLITTERS' : 'CHAPTERS ' + chapters.join(' / ')) + '</div><h3>' + entry.name + '</h3></div></div>' + facts([['HP', type.hp], ['Move', type.speed + ' px/s']]) + '<p>' + entry.behavior + '</p><div class="codex-counter"><b>COUNTER</b> ' + entry.counter + '</div></article>';
-    }).join('') + '</div><p class="codex-note">Movement is baseline ground speed; charges, landing zones and conveyors can change it. All enemy contact and projectiles cost one heart per hit, subject to invulnerability.</p>';
+      return '<article class="codex-card"><div class="codex-cardhead">' + image('enemy', id, entry.name) + '<div><div class="codex-eyebrow">' + (id === 'mini' ? 'SPAWNED BY SPLITTERS' : 'CHAPTERS ' + chapters.join(' / ')) + '</div><h3>' + entry.name + '</h3></div></div>' + facts([['HP', type.hp], ['Move', type.speed + ' px/s']]) + '<p>' + entry.behavior + '</p></article>';
+    }).join('') + '</div>';
   }
   function itemsPage() {
-    return '<p class="codex-intro">After each of the first two Bosses, clear the minions and walk into the health kit to restore ' + PLAYER_ABILITIES.health.supplyHeal + ' hearts and open the item choices. Two picks per normal campaign. Choose one of three unowned items. Your second offer includes a supported synergy.</p><div class="codex-basics"><b>SPACE · JUMP</b><span>Avoid damage in the air. Landing stuns normal enemies, breaks shields, grants ' + PLAYER_ABILITIES.landing.protection + 's protection and separates overlapping bodies.</span><b>LANDING ITEMS</b><span>Each item works alone. Seizure Order pulls for ' + PLAYER_ABILITIES.items.pullDuration + 's. Final Settlement detonates after ' + PLAYER_ABILITIES.items.settleDuration + 's for ' + PLAYER_ABILITIES.items.settleBase + ' to ' + (PLAYER_ABILITIES.items.settleBase + PLAYER_ABILITIES.items.settleBonusCap) + ' damage. Default Cascade marks landing targets for ' + PLAYER_ABILITIES.items.markDuration + 's.</span><b>LANDING CLAUSE</b><span>' + PLAYER_ABILITIES.landingZone.duration + 's slowing zone: ' + reduction(PLAYER_ABILITIES.landingZone.normalMoveMultiplier) + ' slower normal movement, ' + Math.round((PLAYER_ABILITIES.landingZone.normalAttackIntervalMultiplier - 1) * 100) + '% longer normal attack intervals, ' + reduction(PLAYER_ABILITIES.landingZone.bossMoveMultiplier) + ' slower Boss movement. Slow lingers ' + PLAYER_ABILITIES.landingZone.linger + 's; Boss firing is unchanged. Overlapping slows and pulls do not stack.</span></div><div class="codex-grid">' + ITEMS.map(item => {
+    return '<div class="codex-basics"><b>SPACE · JUMP</b><span>Avoid damage in the air. Landing stuns normal enemies, breaks shields, grants ' + PLAYER_ABILITIES.landing.protection + 's protection and separates overlapping bodies.</span><b>LANDING ITEMS</b><span>Each item works alone. Seizure Order pulls for ' + PLAYER_ABILITIES.items.pullDuration + 's. Final Settlement detonates after ' + PLAYER_ABILITIES.items.settleDuration + 's for ' + PLAYER_ABILITIES.items.settleBase + ' to ' + (PLAYER_ABILITIES.items.settleBase + PLAYER_ABILITIES.items.settleBonusCap) + ' damage. Default Cascade marks landing targets for ' + PLAYER_ABILITIES.items.markDuration + 's.</span><b>LANDING CLAUSE</b><span>' + PLAYER_ABILITIES.landingZone.duration + 's slowing zone: ' + reduction(PLAYER_ABILITIES.landingZone.normalMoveMultiplier) + ' slower normal movement, ' + Math.round((PLAYER_ABILITIES.landingZone.normalAttackIntervalMultiplier - 1) * 100) + '% longer normal attack intervals, ' + reduction(PLAYER_ABILITIES.landingZone.bossMoveMultiplier) + ' slower Boss movement. Slow lingers ' + PLAYER_ABILITIES.landingZone.linger + 's; Boss firing is unchanged. Overlapping slows and pulls do not stack.</span></div><div class="codex-grid">' + ITEMS.map(item => {
       const partners = ITEMS.filter(other => synergy(item.id, other.id));
       return '<article class="codex-card"><div class="codex-cardhead"><span class="codex-itemart" aria-hidden="true">' + item.icon + '</span><div><div class="codex-eyebrow">' + (game.has(item.id) ? 'IN YOUR BUILD' : 'BUILD ITEM') + '</div><h3>' + item.name + '</h3></div></div><p>' + item.desc + '</p><div class="codex-counter"><b>SUPPORTED SYNERGIES</b><ul>' + partners.map(other => '<li><strong>' + other.name + '</strong> — ' + synergy(item.id, other.id) + '</li>').join('') + '</ul></div></article>';
     }).join('') + '</div>';
   }
   function bossesPage() {
-    return '<p class="codex-intro">Bosses use the current original three-chapter patterns. All fire faster below half health. Defeating a Boss does not remove any surviving enemies.</p><div class="codex-grid">' + THEMES.map((theme, i) => {
+    return '<div class="codex-grid">' + THEMES.map((theme, i) => {
       const entry = VoidGuide.bosses[i],
         stats = VoidGuide.bossStats(i + 1);
-      return '<article class="codex-card"><div class="codex-cardhead">' + image('boss', i, theme.name) + '<div><div class="codex-eyebrow">CHAPTER 0' + (i + 1) + '</div><h3>' + theme.name + '</h3></div></div>' + facts([['HP', stats.hp], ['Move', stats.speed + ' px/s'], ['Volley', stats.normal.shots + ' → ' + stats.enraged.shots + ' shots'], ['Interval', stats.normal.interval + 's → ' + stats.enraged.interval + 's']]) + '<p>' + entry.attacks + '</p><div class="codex-counter"><b>COUNTER</b> ' + entry.counter + '</div></article>';
-    }).join('') + '</div><p class="codex-note">Arrow values show normal → below-half-health behavior. All Bosses briefly stagger when you land nearby, with resistance to repeated stuns.</p>';
+      return '<article class="codex-card"><div class="codex-cardhead">' + image('boss', i, theme.name) + '<div><div class="codex-eyebrow">CHAPTER 0' + (i + 1) + '</div><h3>' + theme.name + '</h3></div></div>' + facts([['HP', stats.hp], ['Move', stats.speed + ' px/s'], ['Volley', stats.normal.shots + ' → ' + stats.enraged.shots + ' shots'], ['Interval', stats.normal.interval + 's → ' + stats.enraged.interval + 's']]) + '<p>' + entry.attacks + '</p></article>';
+    }).join('') + '</div>';
   }
   function render(focusId) {
     if (!unlocked) {
