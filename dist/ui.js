@@ -114,7 +114,7 @@ function hud() {
   document.getElementById('boss-fill').style.background = game.theme.accent;
   setHudText('jumptext', p.jumpCd > 0 ? 'Jump ready in ' + p.jumpCd.toFixed(1) + ' seconds' : 'Jump ready');
   const jump = document.getElementById('jump');
-  if (jump.textContent !== (p.jumpCd > 0 ? 'JUMP ' + p.jumpCd.toFixed(1) + 's' : 'JUMP')) jump.textContent = p.jumpCd > 0 ? 'JUMP ' + p.jumpCd.toFixed(1) + 's' : 'JUMP';
+  if (jump.textContent !== 'JUMP') jump.textContent = 'JUMP';
   jump.style.opacity = p.jumpCd > 0 ? '.65' : '1';
   jump.setAttribute('aria-label', p.jumpCd > 0 ? 'Jump ready in ' + p.jumpCd.toFixed(1) + ' seconds' : 'Jump ready');
   updateTutorialInstruction();

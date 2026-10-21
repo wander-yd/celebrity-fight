@@ -69,5 +69,5 @@ assert.equal(last('body.play-mode .overlay', 'position'), 'fixed');
 console.log('PASS readable HUD sizes, touch targets, stacked cards, sticky Resume and Play-mode CSS contracts');
 const html = fs.readFileSync('dist/index.html', 'utf8');
 assert.ok(!html.includes('<style>'));
-assert.ok(html.includes('styles.css?v=30'));
+assert.ok(html.includes('styles.css?v=31'));
 console.log('PASS stylesheet structure and shipped link');

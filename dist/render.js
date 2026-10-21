@@ -320,7 +320,6 @@ function drawMob(e, paint = ctx, chapter = game.chapter) {
     ctx.arc(0, 0, e.r + 5, e.face - 1.25, e.face + 1.25);
     ctx.stroke();
   }
-  if (e.type === 'shield' && e.broken > 0) text('SHIELD BROKEN ' + e.broken.toFixed(1) + 's', 0, -e.r - 37, 10, '#d9fb76', 'center', true);
   if (e.stun > 0) text('✧', 0, -e.r - 14, 21, '#fff0a3', 'center');
   if (e.slow > 0) text('↓ SLOWED', 0, -e.r - 24, 10, '#ffdf8d', 'center', true);
   if (e.mark > 0) text('✴ MARKED', 0, -e.r - 48, 10, '#ffb9ca', 'center', true);

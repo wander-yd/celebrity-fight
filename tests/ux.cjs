@@ -256,4 +256,28 @@ test('reward phase always draws the player and full hearts can reach the kit and
     assert.equal(h.run('game.chapter'), level + 1);
   }
 });
+test('shield-break labels are absent in combat and tutorial; shield recovery and Jump feedback remain', () => {
+  for (const tutorial of [false, true]) {
+    const h = harness();
+    h.click('start');
+    h.click(tutorial ? 'practice' : 'skip');
+    h.run(`var guard=${tutorial ? 'game.room.mobs[0]' : "game.spawnMob('shield',game.room,{x:300,y:300})"};guard.broken=2.3;guard.stun=1;`);
+    h.drawCalls.length = 0;
+    h.run('drawMob(guard)');
+    assert.ok(!h.drawCalls.some(c => c[0] === 'fillText' && String(c[1]).includes('SHIELD BROKEN')));
+    assert.ok(h.drawCalls.some(c => c[0] === 'fillText' && c[1] === '✧'));
+    if (!tutorial) {
+      h.run('guard.broken=.05;guard.stun=0;game.updateMobs(.05)');
+      assert.equal(h.run('guard.broken'), 0);
+      h.drawCalls.length = 0;
+      h.run('drawMob(guard)');
+      assert.ok(h.drawCalls.some(c => c[0] === 'set' && c[1] === 'lineWidth' && c[2] === 7), 'shield visual returns');
+    }
+    for (const cd of [.75, 0]) {
+      h.run(`game.player.jumpCd=${cd};hud()`);
+      assert.equal(h.el('jump').textContent, 'JUMP');
+      assert.equal(h.el('jump').style.opacity, cd > 0 ? '.65' : '1');
+    }
+  }
+});
 console.log(`${passed} UI/UX scenario groups passed. Geometry/DOM checks are fixtures, not browser layout/device verification.`);
