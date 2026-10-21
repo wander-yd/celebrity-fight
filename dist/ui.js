@@ -176,10 +176,14 @@ function fitArena() {
   stage.style.height = size.height + 'px';
   const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
   const changed = camera.width !== size.width || camera.height !== size.height || viewDpr !== dpr;
-  if (!changed) return;
+  if (!changed) {
+    applyTouchLayout();
+    return;
+  }
   viewDpr = dpr;
   camera.resize(size.width, size.height);
   camera.keepVisible(game.player);
+  applyTouchLayout();
   canvas.width = Math.round(size.width * dpr);
   canvas.height = Math.round(size.height * dpr);
   release();

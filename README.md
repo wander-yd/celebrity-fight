@@ -62,3 +62,9 @@ Setup status: prepared; repository creation and authenticated Git push are still
 Touch uses a visible left floating stick and an inset 84px Jump button. Hold/drag on the left to move with the existing auto aim/attack; use the other thumb to jump. A small neutral zone filters finger jitter; maximum movement speed is unchanged. Controls follow touch versus mouse/keyboard input, not screen width. Mouse/keyboard keeps WASD/arrows, mouse aiming/hold attack and Space to jump. Rotate or open Pause/Debug to safely release held touch.
 
 `tests/touch.cjs` covers input switching, radial movement, independent fingers, capture cancellation and transitions. Browser frame layouts were inspected; physical-device touch comfort still needs playtest. See `planning/touch-controls.md`.
+
+## Local touch tuning (0.2.2 / Build38)
+
+The movement stick now fades at its release point instead of returning to a home corner. Debug → Controls lets you drag/resize Jump or use the labelled sliders, independently for Portrait and Landscape. Changes autosave on the current browser; Reset restores the selected profile; Copy config copies or exposes selectable JSON to share for default tuning. This does not change other players' defaults. Relative positions are constrained to the current safe area; opposite-orientation preview is approximate until rotation. Storage failure falls back to session-only settings with a visible message.
+
+`touch-layout.js` owns versioned layout validation/storage and safe positioning; `debug.js` owns the paused editor. See `planning/touch-layout-tuning.md` for limits and verification.

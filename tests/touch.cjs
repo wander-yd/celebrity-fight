@@ -102,7 +102,8 @@ test('visible floating stick starts neutral, filters small jitters and gives ful
     h.canvasListeners.pointerup(finger(1));
     assert.equal(h.run('touchMove'), null);
     assert.equal(h.el('move-stick').classList.contains('active'), false);
-    assert.equal(h.el('move-stick').style.left, '');
+    assert.equal(h.el('move-stick').style.left, '100px');
+    assert.equal(h.el('move-stick').style.top, '200px');
   }
 });
 test('only left-side touch starts movement; extra fingers cannot steal its origin', () => {
@@ -117,6 +118,19 @@ test('only left-side touch starts movement; extra fingers cannot steal its origi
   assert.equal(h.run('touchPointerId'), 1);
   assert.equal(h.run('JSON.stringify(touchOrigin)'), origin);
   assert.equal(h.run('touchMove.x'), 1);
+});
+test('released stick stays in place; a new higher touch survives stale release events', () => {
+  const h = start();
+  down(h, 1, 90, 650);
+  move(h, 1, 130, 650);
+  h.canvasListeners.pointerup(finger(1));
+  assert.equal(h.el('move-stick').style.top, '650px');
+  down(h, 2, 100, 400);
+  move(h, 2, 140, 400);
+  h.canvasListeners.lostpointercapture(finger(1));
+  assert.equal(h.run('touchPointerId'), 2);
+  assert.equal(h.run('touchMove.x'), 1);
+  assert.equal(h.el('move-stick').style.top, '400px');
 });
 test('right Jump and its release leave left movement and auto attack running', () => {
   const h = start();

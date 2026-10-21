@@ -95,7 +95,9 @@ function createDebugCodex({
     opened = false,
     returnMode = 'menu',
     tab = 'debug';
-  const tabs = [['debug', 'Debug'], ['player', 'Player'], ['enemies', 'Enemies · 7'], ['items', 'Items · 6'], ['bosses', 'Bosses · 3'], ['updates', 'Updates']];
+  const tabs = [['debug', 'Debug'], ['controls', 'Controls'], ['player', 'Player'], ['enemies', 'Enemies · 7'], ['items', 'Items · 6'], ['bosses', 'Bosses · 3'], ['updates', 'Updates']];
+  let controlOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+  let cancelControlDrag = () => {};
   const escape = value => String(value).replace(/[&<>"']/g, c => ({
     '&': '&amp;',
     '<': '&lt;',
@@ -177,7 +179,122 @@ function createDebugCodex({
   function updatesPage() {
     return '<section class="codex-card update-current"><div class="codex-eyebrow">LOADED VERSION</div><h3>' + escape(VoidReleases.displayVersion) + '</h3><span>Build ' + VoidReleases.currentVersion + '</span></section><div class="update-history">' + VoidReleases.entries.map(entry => '<article class="codex-card"><div class="codex-eyebrow">' + (entry.displayVersion ? escape(entry.displayVersion) + ' · Build ' + entry.version : 'v' + entry.version) + ' · ' + escape(entry.date) + ' · ' + escape(entry.type) + (entry.version === VoidReleases.currentVersion ? ' · CURRENT' : '') + '</div><h3>' + escape(entry.title) + '</h3><ul>' + entry.changes.map(change => '<li>' + escape(change) + '</li>').join('') + '</ul><p class="update-verification">' + escape(entry.verification) + '</p></article>').join('') + '</div>';
   }
+  function controlsPage() {
+    return '<section class="control-editor"><p>Drag JUMP. Each orientation saves on this browser.</p><div class="control-profiles"><button type="button" id="controls-portrait">Portrait</button><button type="button" id="controls-landscape">Landscape</button></div><div class="control-workspace"><div id="controls-preview" class="controls-preview" aria-label="Touch layout preview"><span>Move: touch anywhere on the left</span><button type="button" id="controls-preview-jump" class="control-jump" aria-label="Drag Jump position">JUMP</button></div><div class="control-settings"><div class="control-fields"><label for="controls-x">Horizontal <output id="controls-x-value"></output></label><input type="range" id="controls-x" min="55" max="95" step="1"><label for="controls-height">Height from bottom <output id="controls-height-value"></output></label><input type="range" id="controls-height" min="12" max="65" step="1"><label for="controls-size">Size <output id="controls-size-value"></output></label><input type="range" id="controls-size" min="64" max="112" step="2"></div><div class="debug-actions"><button type="button" id="controls-reset">Reset</button><button type="button" id="controls-copy">Copy config</button></div><p id="controls-status" role="status" aria-live="polite"></p><textarea id="controls-export" aria-label="Touch controls config" readonly hidden rows="8"></textarea></div></div></section>';
+  }
+  function updateControls(status) {
+    if (!opened || !unlocked || tab !== 'controls') return;
+    const profile = touchLayout.get()[controlOrientation];
+    const w = window.visualViewport?.width || window.innerWidth,
+      h = window.visualViewport?.height || window.innerHeight;
+    const same = (w > h ? 'landscape' : 'portrait') === controlOrientation;
+    const width = same ? w : h,
+      height = same ? h : w;
+    const preview = document.getElementById('controls-preview');
+    preview.style.aspectRatio = width + ' / ' + height;
+    preview.style.maxWidth = controlOrientation === 'portrait' ? '220px' : '640px';
+    const safe = same ? controlSafeBounds() : undefined;
+    const p = VoidTouchLayout.position(profile, width, height, safe);
+    const button = document.getElementById('controls-preview-jump');
+    button.style.left = p.x / width * 100 + '%';
+    button.style.top = p.y / height * 100 + '%';
+    button.style.width = p.size / width * 100 + '%';
+    button.style.height = p.size / height * 100 + '%';
+    for (const key of ['portrait', 'landscape']) document.getElementById('controls-' + key).setAttribute('aria-pressed', String(controlOrientation === key));
+    for (const [id, value, unit] of [['x', Math.round(profile.x * 100), '%'], ['height', Math.round((1 - profile.y) * 100), '%'], ['size', profile.size, 'px']]) {
+      document.getElementById('controls-' + id).value = value;
+      document.getElementById('controls-' + id + '-value').textContent = value + unit;
+    }
+    document.getElementById('controls-export').value = touchLayout.export();
+    if (status) document.getElementById('controls-status').textContent = status;
+  }
+  function bindControls() {
+    const edited = patch => {
+      const saved = touchLayout.update(controlOrientation, patch);
+      applyTouchLayout();
+      updateControls(saved ? 'Saved on this browser.' : 'Temporary only: browser storage unavailable.');
+    };
+    for (const key of ['portrait', 'landscape']) bind('controls-' + key, () => {
+      cancelControlDrag();
+      controlOrientation = key;
+      updateControls();
+    });
+    for (const id of ['x', 'height', 'size']) document.getElementById('controls-' + id).oninput = e => {
+      const value = Number(e.target.value);
+      edited(id === 'x' ? {
+        x: value / 100
+      } : id === 'height' ? {
+        y: 1 - value / 100
+      } : {
+        size: value
+      });
+    };
+    const preview = document.getElementById('controls-preview'),
+      button = document.getElementById('controls-preview-jump');
+    let drag = null;
+    cancelControlDrag = () => {
+      drag = null;
+    };
+    button.onpointerdown = e => {
+      if (drag || e.button !== undefined && e.button !== 0) return;
+      e.preventDefault();
+      const rect = preview.getBoundingClientRect();
+      drag = {
+        id: e.pointerId,
+        x: (e.clientX - rect.left) / rect.width - parseFloat(button.style.left) / 100,
+        y: (e.clientY - rect.top) / rect.height - parseFloat(button.style.top) / 100
+      };
+      button.setPointerCapture(e.pointerId);
+    };
+    button.onpointermove = e => {
+      if (!drag || e.pointerId !== drag.id) return;
+      e.preventDefault();
+      const rect = preview.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - drag.x,
+        y = (e.clientY - rect.top) / rect.height - drag.y;
+      const w = window.visualViewport?.width || window.innerWidth,
+        h = window.visualViewport?.height || window.innerHeight;
+      const safe = (w > h ? 'landscape' : 'portrait') === controlOrientation ? controlSafeBounds() : undefined;
+      edited(safe ? {
+        x: (x * w - safe.left) / safe.width,
+        y: (y * h - safe.top) / safe.height
+      } : {
+        x,
+        y
+      });
+    };
+    const end = e => {
+      if (drag?.id === e.pointerId) drag = null;
+    };
+    button.onpointerup = end;
+    button.onpointercancel = end;
+    button.onlostpointercapture = end;
+    bind('controls-reset', () => {
+      cancelControlDrag();
+      const saved = touchLayout.reset(controlOrientation);
+      applyTouchLayout();
+      updateControls(saved ? 'Reset and saved on this browser.' : 'Reset for this session; browser storage unavailable.');
+    });
+    bind('controls-copy', async () => {
+      const text = touchLayout.export(),
+        field = document.getElementById('controls-export');
+      field.value = text;
+      field.hidden = false;
+      try {
+        await window.navigator.clipboard.writeText(text);
+        if (opened && tab === 'controls') document.getElementById('controls-status').textContent = 'Config copied.';
+      } catch (_) {
+        if (opened && tab === 'controls' && document.getElementById('controls-export') === field) {
+          field.focus();
+          field.select?.();
+          document.getElementById('controls-status').textContent = 'Select and copy the config below.';
+        }
+      }
+    });
+    updateControls('Changes apply locally; close this window to playtest.');
+  }
   function render(focusId) {
+    dialog.dataset.tab = unlocked ? tab : 'locked';
     if (!unlocked) {
       body.innerHTML = '<div class="debug-lock"><div class="codex-eyebrow">LOCAL DEBUG ACCESS</div><h3>Unlock the test bench.</h3><p>Enter the debug password. The window pauses combat while you browse.</p><form id="debug-unlock-form"><label for="debug-password">Password</label><div class="debug-passwordrow"><input id="debug-password" type="password" autocomplete="off" maxlength="64" required><button type="submit">Unlock ↗</button></div><p id="debug-error" role="alert" aria-live="polite"></p></form><p class="codex-note">Browser-local convenience lock. Unlock lasts until this page reloads.</p></div>';
       document.getElementById('debug-unlock-form').onsubmit = e => {
@@ -198,6 +315,7 @@ function createDebugCodex({
     }
     body.innerHTML = '<nav class="codex-nav" aria-label="Debug and guide sections">' + tabs.map(([id, title]) => '<button type="button" id="debug-tab-' + id + '" aria-pressed="' + (tab === id) + '">' + title + '</button>').join('') + '</nav><div class="codex-content">' + {
       debug: debugPage,
+      controls: controlsPage,
       player: playerPage,
       enemies: enemiesPage,
       items: itemsPage,
@@ -219,6 +337,7 @@ function createDebugCodex({
         bind('debug-boss-' + i, () => jump(i + 1, true));
       }
     }
+    if (tab === 'controls') bindControls();
     paintArt();
     document.getElementById(focusId || 'debug-tab-' + tab).focus();
   }
@@ -235,6 +354,7 @@ function createDebugCodex({
   function close() {
     if (!opened) return;
     opened = false;
+    cancelControlDrag();
     releaseInput();
     game.mode = returnMode;
     dialog.close();
@@ -257,6 +377,10 @@ function createDebugCodex({
   });
   dialog.addEventListener('close', () => {
     if (opened) close();
+  });
+  window.addEventListener('resize', () => {
+    cancelControlDrag();
+    updateControls();
   });
   return {
     open,

@@ -98,6 +98,12 @@ function harness(coreOverride, options = {}) {
       setPointerCapture() {},
       getBoundingClientRect() {
         if (options.rects?.[this.id]) return options.rects[this.id];
+        if (['game-stage', 'control-safe-area'].includes(this.id)) return {
+          left: 0,
+          top: 0,
+          width: env.window.innerWidth,
+          height: env.window.innerHeight
+        };
         if (this.id === 'arena-viewport') return {
           left: 0,
           top: 0,
@@ -195,13 +201,21 @@ function harness(coreOverride, options = {}) {
     window: {
       innerWidth: options.width ?? 1280,
       innerHeight: options.height ?? 800,
+      localStorage: options.storage,
+      navigator: {
+        clipboard: options.clipboard
+      },
       matchMedia() {
         return {
           matches: !!options.coarse
         };
       },
       addEventListener(key, fn) {
-        listeners[key] = fn;
+        const previous = listeners[key];
+        listeners[key] = previous ? e => {
+          previous(e);
+          fn(e);
+        } : fn;
       }
     },
     requestAnimationFrame(fn) {

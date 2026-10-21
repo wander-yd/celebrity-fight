@@ -12,9 +12,6 @@ function releaseMove() {
   touchMove = null;
   const stick = document.getElementById('move-stick');
   stick.classList.remove('active');
-  stick.style.left = '';
-  stick.style.top = '';
-  document.getElementById('move-thumb').style.transform = '';
 }
 function setInputMode(mode) {
   if (inputMode === mode) return;
@@ -98,6 +95,7 @@ function bindInput() {
       stick.classList.add('active');
       stick.style.left = p.x + 'px';
       stick.style.top = p.y + 'px';
+      document.getElementById('move-thumb').style.transform = '';
       moveStick(e);
     } else {
       canvas.setPointerCapture(e.pointerId);

@@ -1,7 +1,7 @@
 {
-  "version": 37,
-  "authority": "User approved visible floating joystick, inset Jump, independent touch and keyboard/mouse visibility switching; SPEC.md Build37",
-  "productState": "Square camera arena with thumb-friendly touch stick/Jump and input-based control visibility; combat simulation unchanged",
+  "version": 38,
+  "authority": "User approved local Debug Controls tuning and release-in-place joystick fade; SPEC.md Build38",
+  "productState": "Higher Jump defaults with local per-orientation Debug layout tuning; release-in-place stick fade; unchanged simulation/camera",
   "removed": [
     "multi-room layout",
     "doors",
@@ -31,14 +31,14 @@
   ],
   "verification": {
     "command": "node tests/run.cjs",
-    "result": "40 game +16 Debug/Codex +10 refactor +17 UX +10 touch groups;63 camera cases;48 controlled900-step interior encounters and original art; core.js byte-identical to Build36 source.",
+    "result": "40 game +16 Debug/Codex +10 refactor +17 UX +11 touch +8 control-layout groups;63 camera cases;48 controlled900-step parity encounters and art/styles checks. core.js unchanged.",
     "syntax": "Changed JS syntax, HTML nesting/unique IDs, stylesheet contracts and diff whitespace pass",
-    "browser": "Native keyboard-only desktop preview and touch-forced390×844/844×390 iframe layouts inspected. Physical-phone comfort and real multitouch remain pending."
+    "browser": "Native drag, reload persistence, Copy config fallback, Reset and390×844/844×390 Controls layout checks passed; physical-phone comfort remains pending."
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Phone playtest: move and jump with both thumbs in portrait and landscape; assess reach, stopping and direction changes.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_b391d10fc080819190eb2a356b272b82",
-  "displayVersion": "0.2.1",
+  "nextAction": "Phone: Debug → Controls, tune Portrait/Landscape Jump reach and size, close to playtest; Copy config to share preferred defaults.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_7c90a8740c14819193b87928606737bf",
+  "displayVersion": "0.2.2",
   "githubBackup": {
     "status": "prepared-not-uploaded",
     "proposedRepository": "wander-yd/donald-void-arena",
@@ -46,11 +46,10 @@
     "nextAction": "With user approval, use the browser to create the private repository and establish an authenticated Git transfer; verify branch and tags before marking synced."
   },
   "priorPublication": {
-    "build": 36,
-    "commitSha": "3dafa13495ac4c18e40063b34efff9cbffa902b5",
-    "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_b391d10fc080819190eb2a356b272b82",
-    "deploymentId": "appgdep_6ad8cab0b2748191bd30f29a2644a802",
-    "status": "succeeded",
-    "url": "https://donald-trump.grassy-fawn-9947.chatgpt.site"
+    "build": 37,
+    "commitSha": "fc392f796c695df6445ff36286d272f9f9b35256",
+    "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_7c90a8740c14819193b87928606737bf",
+    "deploymentId": "appgdep_6ad9293e26b88191ad6ba556b856b8f9",
+    "status": "succeeded"
   }
 }

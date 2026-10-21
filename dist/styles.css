@@ -1333,8 +1333,11 @@ body .overlay { z-index:5; }
 .move-stick {
   display:none;
   position:absolute;
-  left:max(28px, calc(env(safe-area-inset-left) + 20px));
-  bottom:max(28px, calc(env(safe-area-inset-bottom) + 20px));
+  left:0;
+  top:0;
+  transform:translate(-50%,-50%);
+  opacity:0;
+  transition:opacity .15s ease-out;
   width:120px;
   height:120px;
   border:2px solid #e9ffc04d;
@@ -1345,8 +1348,7 @@ body .overlay { z-index:5; }
   z-index:3;
 }
 .move-stick.active {
-  bottom:auto;
-  transform:translate(-50%,-50%);
+  opacity:1;
   border-color:#e9ffc080;
 }
 .move-thumb {
@@ -1363,8 +1365,9 @@ body .overlay { z-index:5; }
 .touch {
   display:none;
   position:absolute;
-  right:max(32px, calc(env(safe-area-inset-right) + 24px));
-  bottom:max(44px, calc(env(safe-area-inset-bottom) + 24px));
+  right:auto;
+  bottom:auto;
+  transform:translate(-50%,-50%);
   width:84px;
   height:84px;
   margin:0;
@@ -1380,13 +1383,59 @@ body .overlay { z-index:5; }
 .touch:active { filter:brightness(1.25); }
 #game-stage[data-input="touch"] .move-stick,
 #game-stage[data-input="touch"] .touch { display:block; }
-@media(orientation:landscape) {
-  .move-stick {
-    left:max(44px, calc(env(safe-area-inset-left) + 24px));
-    bottom:max(28px, calc(env(safe-area-inset-bottom) + 20px));
-  }
-  .touch {
-    right:max(44px, calc(env(safe-area-inset-right) + 24px));
-    bottom:max(32px, calc(env(safe-area-inset-bottom) + 24px));
-  }
+#control-safe-area {
+  position:absolute;
+  inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  pointer-events:none;
+}
+.control-editor { max-width:720px; margin:auto; }
+.control-editor h3 { margin:0 0 8px; }
+.control-editor p { font-size:13px; line-height:1.5; color:#b4c2aa; }
+.control-editor > p { margin:0; }
+.control-workspace { display:grid; grid-template-columns:minmax(180px,1fr) minmax(230px,1fr); gap:20px; align-items:start; }
+.control-settings { min-width:0; }
+.control-profiles { display:flex; gap:8px; margin:16px 0; }
+.control-profiles [aria-pressed="true"] { border-color:#d9fb76; color:#d9fb76; }
+.controls-preview {
+  position:relative;
+  width:100%;
+  border:1px solid #7b9163;
+  margin:0 auto 18px;
+  background:repeating-linear-gradient(0deg,transparent 0 29px,#b9d09e12 29px 30px),repeating-linear-gradient(90deg,#17211b 0 29px,#b9d09e12 29px 30px);
+}
+.controls-preview > span { position:absolute; left:8px; top:8px; right:8px; font-size:11px; color:#b4c2aa; pointer-events:none; }
+.controls-preview .control-jump {
+  position:absolute;
+  min-height:0;
+  min-width:0;
+  padding:0;
+  border:2px solid #d9fb76;
+  border-radius:50%;
+  background:#213529;
+  color:#eaffc5;
+  font-size:10px;
+  transform:translate(-50%,-50%);
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.control-jump::before { content:""; position:absolute; inset:-8px; border-radius:50%; }
+.control-fields { display:grid; grid-template-columns:minmax(135px,1fr) 2fr; align-items:center; gap:14px; margin:18px 0; }
+.control-fields label { font-size:13px; }
+.control-fields output { display:inline-block; color:#d9fb76; margin-left:6px; }
+.control-fields input { width:100%; min-height:32px; accent-color:#d9fb76; }
+#controls-export { width:100%; background:#101a12; color:#eaffc5; border:1px solid #7b9163; padding:10px; font:12px monospace; }
+@media(max-width:650px) {
+  #debug-window[data-tab="controls"] .codex-nav { flex-wrap:nowrap; overflow-x:auto; }
+  #debug-window[data-tab="controls"] .codex-nav button { flex:0 0 auto; }
+  .control-workspace { grid-template-columns:1fr; gap:0; }
+}
+@media(max-height:500px) {
+  #debug-window[data-tab="controls"] .debug-header { padding:10px 16px; }
+  #debug-window[data-tab="controls"] .debug-header p,
+  #debug-window[data-tab="controls"] .debug-header .codex-eyebrow { display:none; }
+  #debug-window[data-tab="controls"] .codex-nav { padding:8px 16px; }
+  #debug-window[data-tab="controls"] .codex-content { padding:12px 16px; }
+  .control-profiles { margin:10px 0; }
+  .control-fields { margin:0 0 12px; gap:8px; }
 }

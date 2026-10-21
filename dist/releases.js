@@ -3,9 +3,21 @@
 // Human-maintained release history. Dates use Asia/Kuala_Lumpur.
 // Current publication resolves by projectId + version; exact historical IDs are filled next release.
 const VoidReleases = Object.freeze({
-  "currentVersion": 37,
+  "currentVersion": 38,
   "projectId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "entries": [
+    {
+      "version": 38,
+      "displayVersion": "0.2.2",
+      "date": "2026-10-22",
+      "type": "Controls",
+      "title": "Local touch layout tuning",
+      "changes": [
+        "Movement stick fades out where released; higher Jump defaults for portrait and landscape.",
+        "Debug Controls previews and saves Jump position/size per orientation on this browser, with Reset and Copy config."
+      ],
+      "verification": "Automated regression and control-layout checks passed; physical-phone comfort pending."
+    },
     {
       "version": 37,
       "displayVersion": "0.2.1",
@@ -16,7 +28,9 @@ const VoidReleases = Object.freeze({
         "Visible floating movement stick with a small deadzone; larger inset Jump button in both orientations.",
         "Move and jump independently with two fingers; touch controls hide when using mouse or keyboard."
       ],
-      "verification": "Automated input and regression checks passed; browser layout preview inspected. Physical-phone feel pending."
+      "verification": "Automated input and regression checks passed; browser layout preview inspected. Physical-phone feel pending.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_7c90a8740c14819193b87928606737bf",
+      "commitSha": "fc392f796c695df6445ff36286d272f9f9b35256"
     },
     {
       "version": 36,
@@ -204,5 +218,5 @@ const VoidReleases = Object.freeze({
       "commitSha": "a27a9bf599f4b9401eeb0e5b0467a135e8d2258b"
     }
   ],
-  "displayVersion": "0.2.1"
+  "displayVersion": "0.2.2"
 });
