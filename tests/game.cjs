@@ -152,7 +152,7 @@ test('all chapters stay obstacle-free after original Boss attacks', () => {
       r: 14
     };
     C.moveBody(g.room, p, 800, 0);
-    assert.equal(p.x, 880);
+    assert.equal(p.x, C.ARENA.right - p.r);
   }
   assert.equal(C.THEMES[1].name, 'xijinping');
 });
@@ -571,12 +571,12 @@ test('Boss follows the chapter2 conveyor just like other grounded bodies', () =>
   b.grace = 0;
   b.cd = 10;
   b.x = 480;
-  b.y = 176;
+  b.y = C.CONVEYORS[0].y + 24;
   g.player.x = 480;
   g.player.y = 380;
   g.updateBoss(.1);
   assert.equal(b.x, 487);
-  assert.equal(b.y, 179);
+  assert.equal(b.y, C.CONVEYORS[0].y + 27);
 });
 test('current item descriptions and product help never advertise removed upgrades', () => {
   for (const item of C.ITEMS) assert.ok(!/sound waves|amplifier/i.test(item.desc));
@@ -632,7 +632,7 @@ test('natural spawns return to arena edges with a safe player gap', () => {
   const g = fresh();
   for (let i = 0; i < 80; i++) {
     const e = g.spawnMob('chaser');
-    assert.ok(e.x <= 60 || e.x >= 900 || e.y <= 110 || e.y >= 540);
+    assert.ok(e.x <= C.ARENA.left + 32 || e.x >= C.ARENA.right - 32 || e.y <= C.ARENA.top + 32 || e.y >= C.ARENA.bottom - 32);
     assert.ok(C.dist(e, g.player) > 170);
     assert.ok(e.t >= 1 && e.t <= 1.8);
     assert.ok(C.free(g.room, e.x, e.y, e.r));
@@ -789,8 +789,8 @@ test('landing separation handles exact overlap, arena edges and nearby groups wi
     x: 55,
     y: 105
   }, {
-    x: 905,
-    y: 545
+    x: C.ARENA.right - 27,
+    y: C.ARENA.bottom - 27
   }]) {
     const g = fresh();
     clear(g);

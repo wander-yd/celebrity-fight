@@ -321,8 +321,8 @@ test('guide and shipped UI stay English and new script assets are present', () =
   assert.ok(html.includes('aria-labelledby="debug-title"'));
   assert.ok(!html.includes('id="interact"'));
   assert.ok(!/E: SUPPLY|<kbd>E<|E to interact/.test(html));
-  assert.ok(html.includes('debug.js?v=35'));
-  assert.ok(html.indexOf('debug.js?v=35') < html.indexOf('game.js?v=35'));
+  assert.ok(html.includes('debug.js?v=36'));
+  assert.ok(html.indexOf('debug.js?v=36') < html.indexOf('game.js?v=36'));
 });
 test('in-arena HUD, cooldown ring and touch readiness agree; pause holds details and Q does nothing', () => {
   const h = harness();
@@ -373,7 +373,7 @@ test('HTML contains in-stage vitals and menus with no external combat sidebar or
   for (const id of ['health', 'jump', 'pause', 'debug-open', 'equipped']) assert.ok(html.slice(start, end).includes('id="' + id + '"'), id);
   assert.ok(!html.includes('<aside'));
   assert.ok(!html.includes('id="tariff"'));
-  assert.match(fs.readFileSync('dist/styles.css', 'utf8'), /aspect-ratio:\s*20\s*\/\s*11/);
+  assert.match(fs.readFileSync('dist/styles.css', 'utf8'), /aspect-ratio:\s*auto/);
   for (const file of ['dist/game.js', 'dist/debug.js', 'dist/core.js', 'dist/render.js', 'dist/ui.js', 'dist/input.js', 'dist/state.js', 'dist/timing.js']) assert.ok(!/tariff|TARIFF/.test(fs.readFileSync(file, 'utf8')), file);
   const h = harness();
   h.click('debug-open');
@@ -394,7 +394,7 @@ test('Updates shows the loaded release and ordered rollback milestones without c
   const snapshot = h.run('JSON.stringify({mode:game.mode,time:game.time,player:game.player,room:game.room,items:game.items})');
   h.click('debug-tab-updates');
   const html = h.el('debug-body').innerHTML;
-  for (const value of ['LOADED VERSION', '<h3>0.1.3</h3>', 'Build 35', 'CURRENT', 'Player stays visible after boss defeat', 'Landing-driven item builds', 'device playtest pending']) assert.ok(html.includes(value), value);
+  for (const value of ['LOADED VERSION', '<h3>0.2.0</h3>', 'Build 36', 'CURRENT', 'Player stays visible after boss defeat', 'Landing-driven item builds', 'device playtest pending']) assert.ok(html.includes(value), value);
   assert.ok(html.indexOf('v31 ·') < html.indexOf('v30 ·'));
   assert.ok(!html.includes('appgver_'));
   assert.ok(!html.includes('debug-wave-'));
@@ -405,7 +405,7 @@ test('Updates shows the loaded release and ordered rollback milestones without c
   assert.ok(h.el('debug-wave-0'));
   h.click('debug-close');
   assert.equal(h.run('game.mode'), 'play');
-  const changed = fs.readFileSync('dist/releases.js', 'utf8').replace('"currentVersion": 35', '"currentVersion": 99');
+  const changed = fs.readFileSync('dist/releases.js', 'utf8').replace('"currentVersion": 36', '"currentVersion": 99');
   const oldTab = harness(undefined, {sources: {'releases.js': changed}});
   oldTab.click('debug-open');
   oldTab.unlock('voiddebug');

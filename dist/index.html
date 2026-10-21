@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="A cartoon dollar-stack roguelite with three arenas, chasing bosses and synergistic builds.">
     <title>The Donald — Void Arena</title>
-    <link rel="stylesheet" href="styles.css?v=35">
+    <link rel="stylesheet" href="styles.css?v=36">
   </head>
   <body>
     <main>
@@ -24,7 +24,7 @@
             <div id="arena-instruction" class="arena-instruction" hidden></div>
           </div>
           <div id="arena-viewport" class="arena-viewport">
-            <canvas id="game" width="960" height="600" tabindex="0" aria-label="Use WASD to move, mouse to aim and swing a dollar stack, Space to dodge-jump, P to pause"></canvas>
+            <canvas id="game" width="728" height="728" tabindex="0" aria-label="Use WASD to move, mouse to aim and swing a dollar stack, Space to dodge-jump, P to pause"></canvas>
           </div>
           <div id="boss-panel" class="boss-panel">
             <div class="boss-info">
@@ -33,6 +33,8 @@
             </div>
             <button class="touch" id="jump" aria-label="Jump ready">JUMP</button>
           </div>
+          <div id="arena-message" class="arena-message" hidden></div>
+          <div id="arena-prompt" class="arena-prompt" hidden></div>
           <div id="overlay" class="overlay"></div>
           <div class="sr-only"><span id="jumptext"></span><span id="debug-status" role="status" hidden>Infinite hearts enabled</span></div>
         </section>
@@ -49,14 +51,15 @@
       </header>
       <div id="debug-body" class="debug-body"></div>
     </dialog>
-    <script src="core.js?v=35"></script>
-    <script src="timing.js?v=35"></script>
-    <script src="state.js?v=35"></script>
-    <script src="render.js?v=35"></script>
-    <script src="ui.js?v=35"></script>
-    <script src="releases.js?v=35"></script>
-    <script src="debug.js?v=35"></script>
-    <script src="input.js?v=35"></script>
-    <script src="game.js?v=35"></script>
+    <script src="core.js?v=36"></script>
+    <script src="timing.js?v=36"></script>
+    <script src="camera.js?v=36"></script>
+    <script src="state.js?v=36"></script>
+    <script src="render.js?v=36"></script>
+    <script src="ui.js?v=36"></script>
+    <script src="releases.js?v=36"></script>
+    <script src="debug.js?v=36"></script>
+    <script src="input.js?v=36"></script>
+    <script src="game.js?v=36"></script>
   </body>
 </html>

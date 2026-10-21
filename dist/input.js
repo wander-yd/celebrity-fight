@@ -6,23 +6,37 @@ function release() {
   touchOrigin = null;
   touchMove = null;
 }
-function coords(e) {
+function screenCoords(e) {
   const b = canvas.getBoundingClientRect();
   return {
-    x: (e.clientX - b.left) * W / b.width,
-    y: (e.clientY - b.top) * H / b.height
+    x: (e.clientX - b.left) * camera.width / Math.max(1, b.width),
+    y: (e.clientY - b.top) * camera.height / Math.max(1, b.height)
   };
+}
+function coords(e) {
+  return camera.screenToWorld(screenCoords(e));
+}
+function refreshAim() {
+  if (!screenPointer.active) return;
+  Object.assign(pointer, camera.screenToWorld(screenPointer));
+}
+function trackPointer(e) {
+  Object.assign(screenPointer, screenCoords(e), {
+    active: true
+  });
+  refreshAim();
 }
 // Register only after bootstrap creates the clock and Debug dialog.
 function bindInput() {
   canvas.addEventListener('pointerdown', e => {
     if (!['play', 'tutorial', 'reward'].includes(game.mode)) return;
     canvas.setPointerCapture(e.pointerId);
-    const p = coords(e);
-    pointer.x = p.x;
-    pointer.y = p.y;
+    trackPointer(e);
     if (e.pointerType === 'touch') {
-      touchOrigin = p;
+      touchOrigin = {
+        x: e.clientX,
+        y: e.clientY
+      };
       touchMove = {
         x: 0,
         y: 0
@@ -30,12 +44,10 @@ function bindInput() {
     } else pointer.down = true;
   });
   canvas.addEventListener('pointermove', e => {
-    const p = coords(e);
-    pointer.x = p.x;
-    pointer.y = p.y;
+    trackPointer(e);
     if (e.pointerType === 'touch' && touchOrigin) touchMove = {
-      x: clamp((p.x - touchOrigin.x) / 60, -1, 1),
-      y: clamp((p.y - touchOrigin.y) / 60, -1, 1)
+      x: clamp((e.clientX - touchOrigin.x) / 60, -1, 1),
+      y: clamp((e.clientY - touchOrigin.y) / 60, -1, 1)
     };
   });
   canvas.addEventListener('pointerup', release);

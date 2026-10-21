@@ -2,9 +2,28 @@
 
 // Pure simulation: no DOM, network, timers or browser-specific dependencies.
 (() => {
-  const W = 960,
-    H = 600,
+  const W = 728,
+    H = 728,
     TAU = Math.PI * 2;
+  // Square playable area: within 0.1% of the previous 904×494 interior.
+  const ARENA = Object.freeze({
+    left: 30,
+    top: 30,
+    right: 698,
+    bottom: 698,
+    size: 668,
+    centerX: 364,
+    centerY: 364
+  });
+  const CONVEYORS = Object.freeze([Object.freeze({
+    y: 130,
+    height: 48,
+    direction: 1
+  }), Object.freeze({
+    y: 550,
+    height: 48,
+    direction: -1
+  })]);
   // Shared numeric player rules: the simulation, renderer and Player Codex all read these.
   const PLAYER_ABILITIES = Object.freeze({
     health: Object.freeze({
@@ -219,37 +238,21 @@
   };
   const synergy = (a, b) => PAIRS[a]?.[b] || PAIRS[b]?.[a] || '';
   function free(room, x, y, r = 14) {
-    return x >= 28 + r && x <= W - 28 - r && y >= 78 + r && y <= H - 28 - r;
+    return x >= ARENA.left + r && x <= ARENA.right - r && y >= ARENA.top + r && y <= ARENA.bottom - r;
   }
   function moveBody(room, p, dx, dy) {
     const n = Math.max(1, Math.ceil(Math.max(Math.abs(dx), Math.abs(dy)) / 5));
     for (let i = 0; i < n; i++) {
-      const x = clamp(p.x + dx / n, 28 + p.r, W - 28 - p.r),
-        y = clamp(p.y + dy / n, 78 + p.r, H - 28 - p.r);
+      const x = clamp(p.x + dx / n, ARENA.left + p.r, ARENA.right - p.r),
+        y = clamp(p.y + dy / n, ARENA.top + p.r, ARENA.bottom - p.r);
       if (free(room, x, p.y, p.r)) p.x = x;
       if (free(room, p.x, y, p.r)) p.y = y;
     }
   }
   function nearestFree(room, x, y, r = 14) {
-    if (free(room, x, y, r)) return {
-      x,
-      y
-    };
-    let best = null,
-      d = Infinity;
-    for (let cy = 3; cy < 18; cy++) for (let cx = 1; cx < 29; cx++) {
-      const p = {
-        x: cx * 32 + 16,
-        y: cy * 32 + 16
-      };
-      if (free(room, p.x, p.y, r) && Math.hypot(x - p.x, y - p.y) < d) {
-        best = p;
-        d = Math.hypot(x - p.x, y - p.y);
-      }
-    }
-    return best || {
-      x: 80,
-      y: 336
+    return {
+      x: clamp(x, ARENA.left + r, ARENA.right - r),
+      y: clamp(y, ARENA.top + r, ARENA.bottom - r)
     };
   }
   function steer(room, p, target, speed, dt) {
@@ -356,7 +359,7 @@
       this.waveTotal = WAVES[this.chapter - 1].count;
       this.spawned = 0;
       this.spawnTimer = 1;
-      const p = nearestFree(this.room, 480, 380, this.player.r);
+      const p = nearestFree(this.room, ARENA.centerX, ARENA.centerY + 55, this.player.r);
       Object.assign(this.player, p);
       this.player.jump = 0;
       this.player.jumpOrigin = null;
@@ -371,13 +374,13 @@
       for (let tries = 0; !point && tries < 80; tries++) {
         const edge = Math.floor(this.rand(0, 4)),
           raw = {
-            x: edge === 0 ? 48 : edge === 1 ? W - 48 : this.rand(60, W - 60),
-            y: edge === 2 ? 85 : edge === 3 ? H - 45 : this.rand(90, H - 50)
+            x: edge === 0 ? ARENA.left + 20 : edge === 1 ? ARENA.right - 20 : this.rand(ARENA.left + 32, ARENA.right - 32),
+            y: edge === 2 ? ARENA.top + 20 : edge === 3 ? ARENA.bottom - 20 : this.rand(ARENA.top + 32, ARENA.bottom - 32)
           },
-          p = nearestFree(room, clamp(raw.x, 29 + cfg.r, W - 29 - cfg.r), clamp(raw.y, 79 + cfg.r, H - 29 - cfg.r), cfg.r + 1);
+          p = nearestFree(room, clamp(raw.x, ARENA.left + 1 + cfg.r, ARENA.right - 1 - cfg.r), clamp(raw.y, ARENA.top + 1 + cfg.r, ARENA.bottom - 1 - cfg.r), cfg.r + 1);
         if (free(room, p.x, p.y, cfg.r) && dist(p, this.player) > 170) point = p;
       }
-      point = nearestFree(room, point?.x || 800, point?.y || 480, cfg.r + 1);
+      point = nearestFree(room, point?.x ?? ARENA.right - 60, point?.y ?? ARENA.centerY, cfg.r + 1);
       const e = {
         ...cfg,
         ...point,
@@ -404,8 +407,8 @@
         id: this.uid++,
         type: 'boss',
         name: this.theme.boss,
-        x: 480,
-        y: 160,
+        x: ARENA.centerX,
+        y: ARENA.top + 110,
         r: 27,
         hp: this.theme.hp,
         maxhp: this.theme.hp,
@@ -434,7 +437,7 @@
       return this.room.mobs.filter(e => e.hp > 0).length;
     }
     beginReward() {
-      const pos = nearestFree(this.room, clamp(this.boss.x, 140, W - 140), clamp(this.boss.y, 180, H - 140), 22);
+      const pos = nearestFree(this.room, clamp(this.boss.x, ARENA.left + 70, ARENA.right - 70), clamp(this.boss.y, ARENA.top + 70, ARENA.bottom - 70), 22);
       this.room.pickup = {
         ...pos,
         r: 22,
@@ -805,7 +808,8 @@
     }
     applyConveyor(e, dt) {
       if (this.chapter !== 2 || e === this.player && e.jump > 0) return;
-      if (e.y > 152 && e.y < 200 || e.y > 456 && e.y < 504) moveBody(this.room, e, (e.y < 300 ? 1 : -1) * 70 * dt, 0);
+      const belt = CONVEYORS.find(b => e.y > b.y && e.y < b.y + b.height);
+      if (belt) moveBody(this.room, e, belt.direction * 70 * dt, 0);
     }
     tickBoss(dt) {
       const b = this.boss;
@@ -886,7 +890,7 @@
           }
         }
       }
-      this.room.shots = this.room.shots.filter(s => s.life > 0 && s.x > 25 && s.x < W - 25 && s.y > 78 && s.y < H - 25);
+      this.room.shots = this.room.shots.filter(s => s.life > 0 && s.x > ARENA.left && s.x < ARENA.right && s.y > ARENA.top && s.y < ARENA.bottom);
       for (const b of this.room.bullets) {
         if (b.kind === 'homingPoop') {
           const speed = Math.hypot(b.vx, b.vy),
@@ -919,7 +923,7 @@
           life: 3
         });
       }
-      this.room.bullets = this.room.bullets.filter(b => b.life > 0 && b.x > 25 && b.x < W - 25 && b.y > 78 && b.y < H - 25);
+      this.room.bullets = this.room.bullets.filter(b => b.life > 0 && b.x > ARENA.left && b.x < ARENA.right && b.y > ARENA.top && b.y < ARENA.bottom);
     }
     updateHazards(dt) {
       for (const h of this.room.hazards) {
@@ -1146,8 +1150,8 @@
     practice() {
       this.arena = this.makeArena();
       this.room.mobs = [];
-      this.player.x = 480;
-      this.player.y = 420;
+      this.player.x = ARENA.centerX;
+      this.player.y = ARENA.centerY + 80;
       this.player.jump = 0;
       this.player.jumpOrigin = null;
       this.player.jumpCd = 0;
@@ -1155,8 +1159,8 @@
       this.player.inv = 999;
       this.boss = null;
       const dummy = this.spawnMob('shield', this.room, {
-        x: 480,
-        y: 370
+        x: ARENA.centerX,
+        y: ARENA.centerY + 30
       });
       dummy.training = true;
       dummy.face = Math.PI / 2;
@@ -1175,7 +1179,7 @@
       p.jump = Math.max(0, p.jump - dt);
       const n = Math.max(1, Math.hypot(input.mx || 0, input.my || 0));
       moveBody(this.room, p, (input.mx || 0) / n * PLAYER_ABILITIES.movement.speed * dt, (input.my || 0) / n * PLAYER_ABILITIES.movement.speed * dt);
-      p.face = Math.atan2((input.aim?.y || 370) - p.y, (input.aim?.x || 480) - p.x);
+      p.face = Math.atan2((input.aim?.y ?? ARENA.centerY + 30) - p.y, (input.aim?.x ?? ARENA.centerX) - p.x);
       for (const e of this.room.mobs) if (e.hp > 0) e.face = Math.atan2(p.y - e.y, p.x - e.x);
       if (was && p.jump === 0 && this.land()) this.lessonStage = 'attack';
       if (input.attack && p.attackCd <= 0) {
@@ -1187,6 +1191,8 @@
   }
   globalThis.VoidArena = {
     Arena,
+    ARENA,
+    CONVEYORS,
     W,
     H,
     TYPES,

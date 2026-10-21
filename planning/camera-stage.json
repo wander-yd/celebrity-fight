@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "sourcePlan": "/workspace/sites/trump-void-arena/planning/camera-draft.md",
+  "currentStage": "Build",
+  "gateResult": "Pass",
+  "nextStage": "Build",
+  "exactNextAction": "Complete M3 regression and publication checks for the implemented camera delta, then publish to the existing Site and stop for user playtest.",
+  "destination": "Current agent in /workspace/sites/trump-void-arena",
+  "handoffPacket": "planning/camera-plan.md and planning/camera-stage.json",
+  "handoffMode": "Automatic",
+  "openAIRecommendation": "High",
+  "rubricCode": "H1",
+  "deepSeekEffort": "not-applicable",
+  "lockedDecisions": "Square668 interior; fixed-area270400 camera; soft edge96 and easing10; screen HUD/input; unchanged combat rules.",
+  "allowedChanges": "dist camera/core geometry/state/render/ui/input/game/index/styles/releases, geometry-aware tests, README/SPEC and planning controls. No other project/service targets.",
+  "doNotChange": "Numeric combat abilities/TYPES/THEMES/WAVES/items, original Boss behavior/scale/radii, reward visibility/owner-bomb immunity/landing safety, health-kit→item→level, Start/Resume text and existing icons, debug password/actions, source project identity/audience, GitHub backup status.",
+  "buildInstructions": "Complete M3 checks and same-Site publication only; no new features; stop for the user device playtest.",
+  "remainingBlockers": "None.",
+  "authoritativeArtifact": "planning/camera-plan.md",
+  "evidencePaths": "dist/core.js,dist/render.js,dist/input.js,tests/,planning/current-state.json",
+  "approvedPaths": "None supplied.",
+  "locationAssumptions": "Use existing repository planning/ alongside canonical SPEC/current-state."
+}

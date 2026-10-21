@@ -1,15 +1,15 @@
 'use strict';
 
-// Historical Git source is the rollback reference; no network or duplicate source fixture.
-const fs = require('fs'),
-  vm = require('vm'),
+// Geometry intentionally changed in Build36. Compare protected config and controlled
+// interior encounters; full-arena trajectories and camera draw commands cannot match.
+const fs = require('node:fs'),
+  vm = require('node:vm'),
   cp = require('node:child_process'),
-  assert = require('node:assert/strict'),
-  crypto = require('node:crypto');
+  assert = require('node:assert/strict');
 const {
   harness
 } = require('./harness.cjs');
-const baseline = 'a27a9bf599f4b9401eeb0e5b0467a135e8d2258b';
+const baseline = '03345c66fd408a426f715f2216c6b58c3ad21016';
 const prior = file => cp.execFileSync('git', ['show', baseline + ':dist/' + file], {
   encoding: 'utf8',
   maxBuffer: 2 ** 20
@@ -29,18 +29,31 @@ function make(source, chapter, boss, items) {
   g.chapter = chapter;
   g.setupChapter();
   g.items = items;
+  g.player.x = 480;
+  g.player.y = 360;
   g.player.inv = 999;
-  if (boss) g.createBoss();
-  return g;
+  g.spawnTimer = 999;
+  g.applyConveyor = () => {};
+  for (const [i, type] of ['shield', 'turret', 'charger', 'shooter'].entries()) {
+    const e = g.spawnMob(type, g.room, {
+      x: 400 + i * 40,
+      y: 340
+    });
+    e.hp = e.maxhp = 9999;
+  }
+  if (boss) {
+    g.createBoss();
+    g.boss.x = 550;
+    g.boss.y = 360;
+    g.boss.hp = g.boss.maxhp = 9999;
+  }
+  return {
+    g,
+    api: env.VoidArena
+  };
 }
-const removed = new Set(['walls', 'props', 'rev', 'nav', 'cast', 'dash', 'attackId', 'lessonAttack']);
-function normalize(value) {
-  if (!value || typeof value !== 'object') return value;
-  if (Array.isArray(value)) return value.map(normalize);
-  const entries = Object.entries(value).filter(([key]) => !removed.has(key)).map(([key, value]) => [key === 'slow' ? 'tax' : key, normalize(value)]).sort(([a], [b]) => a.localeCompare(b));
-  return Object.fromEntries(entries);
-}
-const snapshot = g => JSON.stringify(normalize({
+const builds = [[], ['pull'], ['settle'], ['bounce'], ['clone'], ['landing'], ['chain'], ['pull', 'settle', 'bounce', 'clone', 'landing', 'chain']];
+const serialize = g => JSON.stringify({
   mode: g.mode,
   chapter: g.chapter,
   time: g.time,
@@ -54,55 +67,56 @@ const snapshot = g => JSON.stringify(normalize({
   events: g.events,
   message: g.message,
   messageTime: g.messageTime
-}));
-const builds = [[], ['pull'], ['settle'], ['bounce'], ['clone'], ['landing'], ['chain'], ['pull', 'settle', 'bounce', 'clone', 'landing', 'chain']];
+});
+const a0 = make(old, 1, false, []),
+  b0 = make(current, 1, false, []);
+for (const key of ['PLAYER_ABILITIES', 'TYPES', 'THEMES', 'WAVES', 'ITEMS']) assert.equal(JSON.stringify(a0.api[key]), JSON.stringify(b0.api[key]), key + ' config changed');
 let count = 0;
-for (let chapter = 1; chapter <= 3; chapter++) for (const boss of [false, true]) for (const items of builds) {
-  const a = make(old, chapter, boss, items),
-    b = make(current, chapter, boss, items);
+for (const chapter of [1, 2, 3]) for (const boss of [false, true]) for (const items of builds) {
+  const a = make(old, chapter, boss, items).g,
+    b = make(current, chapter, boss, items).g;
   for (let frame = 0; frame < 900; frame++) {
     if (frame % 95 === 0) {
-      a.jump();
-      b.jump();
+      for (const g of [a, b]) {
+        g.player.x = 480;
+        g.player.y = 360;
+        for (const [i, e] of g.room.mobs.entries()) {
+          e.x = 400 + i * 40;
+          e.y = 340;
+        }
+        if (g.boss) {
+          g.boss.x = 550;
+          g.boss.y = 360;
+        }
+        g.jump();
+      }
+    }
+    // Isolate interior combat from intentionally different boundary lifetimes/spawns.
+    for (const g of [a, b]) {
+      g.room.bullets = [];
+      g.room.shots = [];
     }
     const input = {
-      mx: Math.sin(frame / 70) * .45,
-      my: Math.cos(frame / 70) * .45,
+      mx: 0,
+      my: 0,
       attack: true,
       autoAim: true
     };
     a.step(1 / 60, input);
     b.step(1 / 60, input);
-    assert.ok(snapshot(a) === snapshot(b), `core parity: chapter${chapter} boss${boss} items${items} frame${frame}`);
+    assert.equal(serialize(a), serialize(b), `interior parity chapter${chapter} boss${boss} items${items} frame${frame}`);
   }
   count++;
 }
-console.log(`PASS ${count} seeded 900-step simulations preserve v22 active behavior`);
-const html = prior('index.html'),
-  sources = Object.fromEntries(['core.js', 'debug.js', 'game.js'].map(file => [file, prior(file)]));
-// Only exclude explicit v24 HUD relocations. All world/art/effect/threat commands remain compared.
-let priorBrowser = sources['game.js'];
-const bossStart = priorBrowser.indexOf('drawCombatHud();'),
-  bossEnd = priorBrowser.indexOf('if(g.messageTime', bossStart);
-assert.ok(bossStart >= 0 && bossEnd > bossStart);
-priorBrowser = priorBrowser.slice(0, bossStart) + priorBrowser.slice(bossEnd);
-const captionStart = priorBrowser.indexOf('if(p.jumpCd>0){', priorBrowser.indexOf('function drawJumpCharge'));
-const captionEnd = priorBrowser.indexOf('ctx.restore();', captionStart);
-assert.ok(captionStart >= 0 && captionEnd > captionStart);
-priorBrowser = priorBrowser.slice(0, captionStart) + priorBrowser.slice(captionEnd);
-sources['game.js'] = priorBrowser;
-function scene(h, chapter) {
-  h.run(`game.newRun();game.chapter=${chapter};game.setupChapter();game.items=VoidArena.ITEMS.map(x=>x.id);game.createBoss();game.boss.mark=1;game.boss.tax=1;game.boss.slow=1;game.boss.grace=0;game.player.inv=0;game.player.jumpCd=.75;for(const [i,type] of Object.keys(VoidArena.TYPES).entries()){const e=game.spawnMob(type,game.room,{x:120+i*90,y:300});e.age=.4;e.face=.5;e.tax=e.slow=1;e.mark=1;}game.room.fields=[{kind:'pull',x:200,y:300,r:90,life:.4,max:.6},{kind:'settle',x:400,y:300,r:90,life:1,max:2},{kind:'slow',x:600,y:300,r:90,life:1,max:2}];game.room.bullets=[{x:480,y:180,r:8,kind:'urine',vx:100,vy:20},{x:500,y:180,r:11,kind:'homingPoop',vx:100,vy:20},{x:520,y:180,r:6,kind:'bullet',vx:100,vy:20}];game.room.effects=[{x:300,y:300,r:65,life:.2,max:.5,color:'#d9fb76'}];syncOverlay();`);
+console.log(`PASS unchanged combat config and ${count} seeded 900-step interior encounters vs Build35 (boundaries/conveyors/long projectile travel excluded)`);
+function art(h) {
   h.drawCalls.length = 0;
-  h.run('draw();hud()');
-  return crypto.createHash('sha256').update(JSON.stringify(h.drawCalls)).digest('hex');
+  h.run(`for(const kind of ['trump','biden','pooh','mojtaba'])person(200,200,kind,1.3);for(const type of Object.keys(VoidArena.TYPES)){const e={...VoidArena.TYPES[type],type,x:300,y:300,hp:2,maxhp:7,face:.3,age:.5,broken:1,stun:1,slow:1,mark:1,flash:0};drawMob(e,ctx,3);}for(const face of [0,1,2,3]){game.player.face=face;downwardCash(game.player,0);}`);
+  return JSON.stringify(h.drawCalls);
 }
-for (let chapter = 1; chapter <= 3; chapter++) {
-  const a = harness(undefined, {
-      html,
-      sources
-    }),
-    b = harness();
-  assert.equal(scene(a, chapter), scene(b, chapter), 'canvas draw/style commands changed in chapter ' + chapter);
-}
-console.log('PASS all three Boss scenes preserve v22 world/art/effect/projectile commands and styles (relocated HUD excluded)');
+assert.equal(art(harness(undefined, {
+  sources: {
+    'render.js': prior('render.js')
+  }
+})), art(harness()));
+console.log('PASS existing character/enemy/weapon art commands remain unchanged; world/HUD projection intentionally differs');

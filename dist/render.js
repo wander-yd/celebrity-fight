@@ -350,36 +350,45 @@ function draw() {
     r = g.room,
     p = g.player,
     theme = g.theme;
-  ctx.clearRect(0, 0, W, H);
+  syncCameraRoom();
+  ctx.setTransform(viewDpr, 0, 0, viewDpr, 0, 0);
+  ctx.clearRect(0, 0, camera.width, camera.height);
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, camera.width, camera.height);
+  ctx.save();
+  ctx.translate(camera.width / 2, camera.height / 2);
+  ctx.scale(camera.scale, camera.scale);
+  ctx.translate(-camera.x, -camera.y);
   ctx.fillStyle = theme.floor;
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillRect(ARENA.left, ARENA.top, ARENA.size, ARENA.size);
   ctx.strokeStyle = theme.grid;
   ctx.lineWidth = 1;
-  for (let x = 32; x < W; x += 32) {
+  for (let x = ARENA.left + 32; x < ARENA.right; x += 32) {
     ctx.beginPath();
-    ctx.moveTo(x, 78);
-    ctx.lineTo(x, H - 28);
+    ctx.moveTo(x, ARENA.top);
+    ctx.lineTo(x, ARENA.bottom);
     ctx.stroke();
   }
-  for (let y = 80; y < H; y += 32) {
+  for (let y = ARENA.top + 32; y < ARENA.bottom; y += 32) {
     ctx.beginPath();
-    ctx.moveTo(28, y);
-    ctx.lineTo(W - 28, y);
+    ctx.moveTo(ARENA.left, y);
+    ctx.lineTo(ARENA.right, y);
     ctx.stroke();
   }
   ctx.strokeStyle = '#a8ac8366';
   ctx.lineWidth = 3;
-  ctx.strokeRect(28, 78, W - 56, H - 106);
-  if (g.chapter === 2) for (const y of [152, 456]) {
+  ctx.strokeRect(ARENA.left, ARENA.top, ARENA.size, ARENA.size);
+  if (g.chapter === 2) for (const belt of CONVEYORS) {
+    const y = belt.y;
     ctx.fillStyle = '#17231e';
-    ctx.fillRect(45, y, 870, 48);
+    ctx.fillRect(ARENA.left + 17, y, ARENA.size - 34, belt.height);
     ctx.strokeStyle = '#7d9578';
     ctx.lineWidth = 2;
-    for (let x = 60; x < 900; x += 45) {
-      const xx = x + g.time * 30 % 45 * (y < 300 ? 1 : -1);
+    for (let x = ARENA.left + 32; x < ARENA.right - 32; x += 45) {
+      const xx = x + g.time * 30 % 45 * belt.direction;
       ctx.beginPath();
       ctx.moveTo(xx, y + 12);
-      ctx.lineTo(xx + (y < 300 ? 12 : -12), y + 24);
+      ctx.lineTo(xx + 12 * belt.direction, y + 24);
       ctx.lineTo(xx, y + 36);
       ctx.stroke();
     }
@@ -532,17 +541,6 @@ function draw() {
       ellipse(b.x - 1, b.y - 1, 2, 2, '#ffe8dc');
     }
   }
-  if (g.messageTime > 0 && g.mode === 'play') {
-    ctx.fillStyle = '#14202ade';
-    ctx.fillRect(180, 103, 600, 40);
-    text(g.message, 480, 129, 15, theme.accent, 'center', true);
-  }
-  const prompt = g.prompt();
-  if (prompt && ['play', 'reward'].includes(g.mode)) {
-    ctx.fillStyle = '#142019ed';
-    ctx.fillRect(215, 520, 530, 31);
-    text(prompt, 480, 541, 14, '#e9ffc0', 'center', true);
-  }
   if (g.mode === 'play' && !touchMove) {
     ctx.strokeStyle = '#f8e8baa0';
     ctx.lineWidth = 1.5;
@@ -554,6 +552,7 @@ function draw() {
     ctx.lineTo(pointer.x, pointer.y + 12);
     ctx.stroke();
   }
+  ctx.restore();
 }
 function drawJumpCharge() {
   if (!['play', 'tutorial', 'tutorialSuccess'].includes(game.mode)) return;

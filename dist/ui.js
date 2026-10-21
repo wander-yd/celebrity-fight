@@ -135,6 +135,12 @@ function hud() {
   jump.style.opacity = p.jumpCd > 0 ? '.65' : '1';
   jump.setAttribute('aria-label', p.jumpCd > 0 ? 'Jump ready in ' + p.jumpCd.toFixed(1) + ' seconds' : 'Jump ready');
   updateTutorialInstruction();
+  const message = document.getElementById('arena-message');
+  message.hidden = !(game.messageTime > 0 && game.mode === 'play');
+  if (!message.hidden) setHudText('arena-message', game.message);
+  const prompt = document.getElementById('arena-prompt');
+  prompt.hidden = game.mode !== 'reward';
+  if (!prompt.hidden) setHudText('arena-prompt', game.prompt());
 }
 function itemAction(id) {
   return {
@@ -146,22 +152,37 @@ function itemAction(id) {
     chain: 'Land → mark enemies → death shards'
   }[id];
 }
-function arenaStageSize(viewWidth, viewHeight, toolbarHeight, footerHeight) {
-  const contentWidth = Math.max(0, Math.min(viewWidth - 18, (viewHeight - toolbarHeight - footerHeight - 18) * W / 528));
+function arenaStageSize(viewWidth, viewHeight) {
   return {
-    width: contentWidth + 2,
-    height: toolbarHeight + footerHeight + contentWidth * 528 / W + 2
+    width: Math.max(1, viewWidth),
+    height: Math.max(1, viewHeight)
   };
 }
+function syncCameraRoom() {
+  if (cameraRoom === game.room) return;
+  cameraRoom = game.room;
+  camera.snap(game.player);
+  cameraStamp = null;
+  release();
+  refreshAim();
+}
 function fitArena() {
+  const size = arenaStageSize(window.visualViewport?.width || window.innerWidth || W, window.visualViewport?.height || window.innerHeight || H);
   const stage = document.getElementById('game-stage');
-  const width = window.visualViewport?.width || window.innerWidth || W;
-  const height = window.visualViewport?.height || window.innerHeight || H;
-  // Measure again after width changes in case the responsive toolbar wrapped.
-  for (let pass = 0; pass < 2; pass++) {
-    const size = arenaStageSize(width, height, document.getElementById('arena-toolbar').offsetHeight, document.getElementById('boss-panel').offsetHeight);
-    stage.style.width = size.width + 'px';
-  }
+  stage.style.width = size.width + 'px';
+  stage.style.height = size.height + 'px';
+  const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  const changed = camera.width !== size.width || camera.height !== size.height || viewDpr !== dpr;
+  if (!changed) return;
+  viewDpr = dpr;
+  camera.resize(size.width, size.height);
+  camera.keepVisible(game.player);
+  canvas.width = Math.round(size.width * dpr);
+  canvas.height = Math.round(size.height * dpr);
+  release();
+  frameClock.reset();
+  cameraStamp = null;
+  refreshAim();
 }
 function updateTutorialInstruction() {
   const el = document.getElementById('arena-instruction'),

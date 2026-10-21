@@ -8,6 +8,7 @@ A buildless browser game. The intended rules and change boundaries live in `SPEC
 | --- | --- |
 | `dist/core.js` | Pure combat simulation, shared ability/item definitions and generated item descriptions |
 | `dist/timing.js` | Fixed 60 Hz simulation clock, bounded stall recovery |
+| `dist/camera.js` | Pure fixed-area camera, soft edge target and world/screen projection |
 | `dist/state.js` | Shared browser state and canvas/overlay references |
 | `dist/render.js` | Character art and ordered canvas drawing passes |
 | `dist/ui.js` | Menus, HUD text and sound |
@@ -35,9 +36,13 @@ When editing rendering, preserve the threat layers: ground → actors/effects �
 
 ## Game layout
 
-The arena is the only page layout and fits the visual viewport from initial load. No Page view or layout-switch controls remain. The world keeps its original960×600 coordinates; the displayed viewport clips only the old top72px HUD region (960×528 remains visible). Mouse/touch aiming uses the full canvas rectangle. Never resize the simulation or crop the bottom edge to fit a screen.
+The full visual viewport is the game screen. Hearts/menu controls and the Boss/Jump HUD float above the world with no reserved header/footer bars. HUD text stays at readable CSS sizes; only controls accept pointer events. The square arena interior is668×668 in728×728 world units (area within0.1% of the old904×494 arena). Spawns, movement, projectiles, health kits and two opposite conveyors share the same exported arena geometry.
 
-Resume leads Pause; Controls and Build are native collapsed details. Phone upgrade choices stack. Browser/device checks remain required for visual quality and touch comfort.
+`camera.js` is presentation-only: visible area270400 world units², exponential ground-follow10/s, soft edge overscan96. Portrait and landscape change the view shape, not its area or simulation. Near an edge, following gradually weakens; outside the arena is black. Rotation preserves the view center when possible and minimally corrects it if Donald would leave the new view. It never repositions entities or advances combat. New rooms snap the camera. Jump height affects art only.
+
+Mouse aim is recomputed through the inverse of the same camera used for drawing, including a stationary cursor while the camera moves. Touch dragging uses CSS-screen deltas, independent of world scale. Resize releases stale touch/held-pointer input and discards clock catch-up. The backing canvas uses capped DPR2; CSS viewport and physical buffer size remain separate.
+
+Tests include camera corner/inverse/equal-area/rotation cases and controlled interior combat parity vs Build35. Full-arena trajectories/render traces intentionally differ; the parity test excludes relocated conveyors, boundary contacts and long projectile travel while dedicated scenarios test their new geometry. Combat constants and character/enemy/weapon art remain compared. Preview used a desktop browser and390×844/844×390 game frames; this does not establish physical phone touch comfort or offscreen-attack fairness.
 
 ## Release history
 

@@ -3,9 +3,21 @@
 // Human-maintained release history. Dates use Asia/Kuala_Lumpur.
 // Current publication resolves by projectId + version; exact historical IDs are filled next release.
 const VoidReleases = Object.freeze({
-  "currentVersion": 35,
+  "currentVersion": 36,
   "projectId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "entries": [
+    {
+      "version": 36,
+      "displayVersion": "0.2.0",
+      "date": "2026-10-21",
+      "type": "Camera & UI",
+      "title": "Square arena and following camera",
+      "changes": [
+        "Square arena with near-original area, closer smooth camera and floating HUD.",
+        "Portrait/landscape keep the same visible world area; rotation preserves combat and player visibility."
+      ],
+      "verification": "Automated checks and desktop/portrait/landscape browser previews passed; physical phone feel pending."
+    },
     {
       "version": 35,
       "displayVersion": "0.1.3",
@@ -15,7 +27,9 @@ const VoidReleases = Object.freeze({
       "changes": [
         "Restored plain START and RESUME buttons; other menu icons remain unchanged."
       ],
-      "verification": "UI and guide checks passed; device playtest pending."
+      "verification": "UI and guide checks passed; device playtest pending.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_1650e3e47c74819199c61ccc4e86b4c6",
+      "commitSha": "03345c66fd408a426f715f2216c6b58c3ad21016"
     },
     {
       "version": 34,
@@ -176,5 +190,5 @@ const VoidReleases = Object.freeze({
       "commitSha": "a27a9bf599f4b9401eeb0e5b0467a135e8d2258b"
     }
   ],
-  "displayVersion": "0.1.3"
+  "displayVersion": "0.2.0"
 });

@@ -1,7 +1,7 @@
 {
-  "version": 35,
-  "authority": "User approved plain START and RESUME only; SPEC.md Build35",
-  "productState": "Plain text START and RESUME; all other icons and gameplay preserved",
+  "version": 36,
+  "authority": "User approved square arena/camera/floating HUD scope; SPEC.md Build36 and planning/camera-plan.md",
+  "productState": "Square equal-area arena, smooth ground-follow camera, floating HUD and portrait/landscape equal visible area; combat defaults preserved",
   "removed": [
     "multi-room layout",
     "doors",
@@ -31,14 +31,14 @@
   ],
   "verification": {
     "command": "node tests/run.cjs",
-    "result": "UI, guide and stylesheet suites; plain Start/Resume, preserved sound and remaining icon controls, menu/tutorial and reward flows",
+    "result": "40 game +16 Debug/Codex +10 refactor +17 UX groups;63 pure camera corner/orientation/inverse cases;48 controlled900-step interior encounters vs Build35 plus unchanged combat config/art. Geometry-dependent assertions updated explicitly.",
     "syntax": "Changed JS syntax, HTML nesting/unique IDs, stylesheet contracts and diff whitespace pass",
-    "browser": "No supported browser QA; viewport math/DOM are fixtures, native layout/touch/visual polish remain unverified"
+    "browser": "Native desktop preview and390\u00d7844/844\u00d7390 frames inspected; tutorial persists across frame rotation; physical phone touch feel and threat fairness pending."
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Refresh to inspect the restored START and RESUME text buttons.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_50a0a5e373fc8191b7688ea9b2cd79dc",
-  "displayVersion": "0.1.3",
+  "nextAction": "Refresh and play one level on the normal phone; rotate near corners and judge zoom, HUD overlap and offscreen attacks.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_1650e3e47c74819199c61ccc4e86b4c6",
+  "displayVersion": "0.2.0",
   "githubBackup": {
     "status": "prepared-not-uploaded",
     "proposedRepository": "wander-yd/donald-void-arena",

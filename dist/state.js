@@ -3,6 +3,8 @@
 // Shared browser state. Simulation stays in core.js.
 const {
   Arena,
+  ARENA,
+  CONVEYORS,
   W,
   H,
   THEMES,
@@ -15,6 +17,15 @@ const {
 const canvas = document.getElementById('game'),
   ctx = canvas.getContext('2d'),
   overlay = document.getElementById('overlay');
+const camera = VoidCamera.create(ARENA);
+const screenPointer = {
+  x: 0,
+  y: 0,
+  active: false
+};
+let cameraRoom = null,
+  cameraStamp = null,
+  viewDpr = 1;
 const game = new Arena(),
   keys = {},
   pointer = {

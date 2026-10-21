@@ -1250,3 +1250,86 @@ button:focus-visible {
   outline: 3px solid #fff1b8;
   outline-offset: 3px;
 }
+
+/* One viewport: world camera fills the screen; HUD never changes the view area. */
+body main { padding:0; }
+.gamewrap {
+  position:relative;
+  max-width:none;
+  margin:0;
+  border:0;
+  border-radius:0;
+  background:#000;
+  overflow:hidden;
+}
+.arena-viewport {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  aspect-ratio:auto;
+}
+.arena-viewport #game {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+.arena-toolbar {
+  position:absolute;
+  top:max(10px, env(safe-area-inset-top));
+  left:max(10px, env(safe-area-inset-left));
+  right:max(10px, env(safe-area-inset-right));
+  padding:0;
+  background:none;
+  border:0;
+  pointer-events:none;
+  z-index:3;
+  text-shadow:0 1px 3px #000,1px 0 3px #000;
+}
+.arena-actions { pointer-events:auto; }
+.arena-actions .small { background:#142018b3; }
+.arena-progress { justify-content:flex-start; gap:8px; }
+.arena-instruction {
+  max-width:480px;
+  line-height:1.35;
+  padding:4px 0;
+}
+.boss-panel {
+  position:absolute;
+  left:max(12px, env(safe-area-inset-left));
+  right:max(12px, env(safe-area-inset-right));
+  bottom:max(12px, env(safe-area-inset-bottom));
+  height:auto;
+  min-height:0;
+  padding:0;
+  border:0;
+  background:none;
+  pointer-events:none;
+  z-index:3;
+  text-shadow:0 1px 3px #000,1px 0 3px #000;
+}
+.boss-info { max-width:600px; }
+.boss-meter { background:#090f16b3; }
+.touch { pointer-events:auto; margin-left:auto; }
+.arena-message,.arena-prompt {
+  position:absolute;
+  left:16px;
+  right:16px;
+  text-align:center;
+  pointer-events:none;
+  z-index:2;
+  font: bold 12px/1.4 Arial,sans-serif;
+  color:#e9ffc0;
+  text-shadow:0 1px 3px #000,1px 0 3px #000;
+}
+.arena-message { top:112px; }
+.arena-prompt { bottom:80px; }
+body .overlay { z-index:5; }
+@media(max-width:650px) {
+  .arena-toolbar { padding:0; }
+  .arena-vitals #health { font-size:20px; }
+  .arena-vitals #equipped { font-size:12px; }
+  .boss-panel { height:auto; padding:0; }
+  .arena-message { top:120px; }
+}

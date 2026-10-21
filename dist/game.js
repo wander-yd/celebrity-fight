@@ -3,6 +3,10 @@
 // Bootstrap and fixed-step scheduling only.
 const frameClock = VoidTiming.createClock();
 function loop(t) {
+  syncCameraRoom();
+  refreshAim();
+  const cameraDt = cameraStamp === null ? 0 : Math.max(0, Math.min(.25, (t - cameraStamp) / 1000));
+  cameraStamp = t;
   const input = {
     mx: touchMove ? touchMove.x : (keys.d || keys.arrowright ? 1 : 0) - (keys.a || keys.arrowleft ? 1 : 0),
     my: touchMove ? touchMove.y : (keys.s || keys.arrowdown ? 1 : 0) - (keys.w || keys.arrowup ? 1 : 0),
@@ -22,6 +26,9 @@ function loop(t) {
     jumpFlash = Math.max(0, jumpFlash - dt);
     return game.mode === mode && game.room === room;
   });
+  syncCameraRoom();
+  if (!document.hidden && ['play', 'tutorial', 'tutorialSuccess', 'reward'].includes(game.mode)) camera.follow(game.player, cameraDt);
+  refreshAim();
   syncOverlay();
   hud();
   draw();

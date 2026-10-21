@@ -1,0 +1,1 @@
+Independent planner review: S1–S10 PASS,19/20. Reviewer: review_camera_plan. Cautions: handle zero camera travel without division; renderer and mouse inverse share one camera snapshot. Both incorporated in pure camera contract.
