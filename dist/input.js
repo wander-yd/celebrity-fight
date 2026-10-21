@@ -82,9 +82,8 @@ function bindInput() {
     e.preventDefault();
     fn();
   };
-  document.getElementById('play-mode').onclick = () => setPlayMode(!document.body.classList.contains('play-mode'));
-  window.addEventListener('resize', fitPlayMode);
-  window.visualViewport?.addEventListener('resize', fitPlayMode);
+  window.addEventListener('resize', fitArena);
+  window.visualViewport?.addEventListener('resize', fitArena);
   document.getElementById('pause').onclick = () => {
     release();
     game.pause();

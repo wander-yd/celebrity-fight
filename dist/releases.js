@@ -3,9 +3,20 @@
 // Human-maintained release history. Dates use Asia/Kuala_Lumpur.
 // Current publication resolves by projectId + version; exact historical IDs are filled next release.
 const VoidReleases = Object.freeze({
-  "currentVersion": 32,
+  "currentVersion": 33,
   "projectId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "entries": [
+    {
+      "version": 33,
+      "displayVersion": "0.1.1",
+      "date": "2026-10-21",
+      "type": "UI",
+      "title": "One focused game layout",
+      "changes": [
+        "Game layout now fits the screen from opening; removed Page view and view-switching buttons."
+      ],
+      "verification": "Automated checks passed; device playtest pending."
+    },
     {
       "version": 32,
       "date": "2026-10-21",
@@ -14,7 +25,9 @@ const VoidReleases = Object.freeze({
       "changes": [
         "Added a read-only Updates tab and loaded-version indicator."
       ],
-      "verification": "Automated checks passed; device playtest pending."
+      "verification": "Automated checks passed; device playtest pending.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_f780eed2acb081918314e27873409ace",
+      "commitSha": "4c22af44e972356f6a2d7f569c764c1f6361e42c"
     },
     {
       "version": 31,
@@ -136,5 +149,6 @@ const VoidReleases = Object.freeze({
       "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_a4d947b363b4819182a0bf2261a32efb",
       "commitSha": "a27a9bf599f4b9401eeb0e5b0467a135e8d2258b"
     }
-  ]
+  ],
+  "displayVersion": "0.1.1"
 });

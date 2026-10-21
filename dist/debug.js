@@ -175,7 +175,7 @@ function createDebugCodex({
     }).join('') + '</div>';
   }
   function updatesPage() {
-    return '<section class="codex-card update-current"><div class="codex-eyebrow">LOADED VERSION</div><h3>v' + VoidReleases.currentVersion + '</h3></section><div class="update-history">' + VoidReleases.entries.map(entry => '<article class="codex-card"><div class="codex-eyebrow">v' + entry.version + ' · ' + escape(entry.date) + ' · ' + escape(entry.type) + (entry.version === VoidReleases.currentVersion ? ' · CURRENT' : '') + '</div><h3>' + escape(entry.title) + '</h3><ul>' + entry.changes.map(change => '<li>' + escape(change) + '</li>').join('') + '</ul><p class="update-verification">' + escape(entry.verification) + '</p></article>').join('') + '</div>';
+    return '<section class="codex-card update-current"><div class="codex-eyebrow">LOADED VERSION</div><h3>' + escape(VoidReleases.displayVersion) + '</h3><span>Build ' + VoidReleases.currentVersion + '</span></section><div class="update-history">' + VoidReleases.entries.map(entry => '<article class="codex-card"><div class="codex-eyebrow">' + (entry.displayVersion ? escape(entry.displayVersion) + ' · Build ' + entry.version : 'v' + entry.version) + ' · ' + escape(entry.date) + ' · ' + escape(entry.type) + (entry.version === VoidReleases.currentVersion ? ' · CURRENT' : '') + '</div><h3>' + escape(entry.title) + '</h3><ul>' + entry.changes.map(change => '<li>' + escape(change) + '</li>').join('') + '</ul><p class="update-verification">' + escape(entry.verification) + '</p></article>').join('') + '</div>';
   }
   function render(focusId) {
     if (!unlocked) {

@@ -33,14 +33,16 @@ The DOM/canvas fixture is deliberately limited: it catches missing or unmounted 
 
 When editing rendering, preserve the threat layers: ground → actors/effects → jump indicator → hostile projectiles; readable HUD text and the touch Jump control live in DOM bars outside the world. Keep gameplay numbers in `PLAYER_ABILITIES` and read those definitions in descriptions instead of copying numeric text.
 
-## Play mode
+## Game layout
 
-Start automatically enters Play mode, which collapses page branding and fits the arena to the visual viewport. Menus offer Page view / Play mode; the toolbar also has a view toggle. The world keeps its original960×600 coordinates. The displayed viewport clips only the old top72px HUD region (960×528 remains visible); mouse/touch aiming uses the full canvas rectangle. Never resize the simulation or crop the bottom edge to fit a screen.
+The arena is the only page layout and fits the visual viewport from initial load. No Page view or layout-switch controls remain. The world keeps its original960×600 coordinates; the displayed viewport clips only the old top72px HUD region (960×528 remains visible). Mouse/touch aiming uses the full canvas rectangle. Never resize the simulation or crop the bottom edge to fit a screen.
 
-Resume leads the Pause menu; Controls and Build are native collapsed details. Phone upgrade choices stack and show an action summary before full effects. Browser/device checks remain required for visual quality and touch comfort.
+Resume leads Pause; Controls and Build are native collapsed details. Phone upgrade choices stack. Browser/device checks remain required for visual quality and touch comfort.
 
 ## Release history
 
-`dist/releases.js` is the single human-maintained source for the Updates tab. Add one newest-first entry per published release, bump currentVersion and HTML asset queries together, and keep notes to one or two player-visible changes. Dates use Asia/Kuala_Lumpur. Record actual verification limits. No background fetch, local history or automatic code-change tracking is used.
+`dist/releases.js` is the single human-maintained source for the Updates tab. Add one newest-first entry per published release, bump currentVersion (Sites Build), displayVersion and HTML asset queries together, and keep notes to one or two player-visible changes. Dates use Asia/Kuala_Lumpur. Record actual verification limits. No background fetch, local history or automatic code-change tracking is used.
 
 For each historical entry, copy savedVersionId and commitSha from Sites list_site_versions/get_site_version. The current release cannot embed its own resulting Git SHA or saved ID: it resolves through projectId + currentVersion using Sites version discovery; fill its exact references when preparing the next release. Never guess references. Rollback is a separate, explicitly requested Sites action; this tab is read-only. Older versions may lack later bug fixes (notably v30 reward visibility).
+
+From Build33 onward, displayVersion uses 0.feature.patch: small fixes/UI cleanup increment patch, meaningful new features increment feature and reset patch. Reserve1.0.0 for an explicitly approved release milestone; no Alpha/Beta labels. Historical v22–v32 entries keep their original numbers.

@@ -21,8 +21,7 @@ function tone(f = 250, d = .07, type = 'triangle', v = .025) {
 }
 function show(html) {
   overlay.dataset.mode = game.mode;
-  overlay.innerHTML = html + '<div class="overlay-tools"><button type="button" class="small" id="overlay-view">' + (document.body.classList.contains('play-mode') ? 'PAGE VIEW' : 'PLAY MODE') + '</button><button type="button" class="small" id="menu-codex">DEBUG / CODEX</button></div>';
-  document.getElementById('overlay-view').onclick = () => setPlayMode(!document.body.classList.contains('play-mode'));
+  overlay.innerHTML = html + '<div class="overlay-tools"><button type="button" class="small" id="menu-codex">DEBUG / CODEX</button></div>';
   document.getElementById('menu-codex').onclick = () => debugPanel.open();
   overlay.classList.remove('hidden');
 }
@@ -39,7 +38,7 @@ function syncOverlay() {
   lastMode = game.mode;
   frameClock.reset();
   updateTutorialInstruction();
-  fitPlayMode();
+  fitArena();
   for (const id of ['jump']) document.getElementById(id).style.visibility = ['play', 'tutorial'].includes(game.mode) ? 'visible' : 'hidden';
   if (['play', 'tutorial', 'tutorialSuccess', 'reward', 'debug'].includes(game.mode)) {
     overlay.classList.add('hidden');
@@ -49,7 +48,6 @@ function syncOverlay() {
   if (game.mode === 'menu') {
     show('<h2>THE DONALD</h2><button class="primary" id="start">START</button><div class="hint">WASD: Move · Hold click: Attack · Space: Jump<br>Touch: Drag to move · Tap Jump</div>');
     button('start', () => {
-      setPlayMode(true);
       game.start();
     });
   } else if (game.mode === 'tutorialIntro') {
@@ -129,37 +127,22 @@ function itemAction(id) {
     chain: 'Land → mark enemies → death shards'
   }[id];
 }
-function playStageSize(viewWidth, viewHeight, toolbarHeight, footerHeight) {
+function arenaStageSize(viewWidth, viewHeight, toolbarHeight, footerHeight) {
   const contentWidth = Math.max(0, Math.min(viewWidth - 18, (viewHeight - toolbarHeight - footerHeight - 18) * W / 528));
   return {
     width: contentWidth + 2,
     height: toolbarHeight + footerHeight + contentWidth * 528 / W + 2
   };
 }
-function fitPlayMode() {
+function fitArena() {
   const stage = document.getElementById('game-stage');
-  if (!document.body.classList.contains('play-mode')) {
-    stage.style.width = '';
-    return;
-  }
   const width = window.visualViewport?.width || window.innerWidth || W;
   const height = window.visualViewport?.height || window.innerHeight || H;
   // Measure again after width changes in case the responsive toolbar wrapped.
   for (let pass = 0; pass < 2; pass++) {
-    const size = playStageSize(width, height, document.getElementById('arena-toolbar').offsetHeight, document.getElementById('boss-panel').offsetHeight);
+    const size = arenaStageSize(width, height, document.getElementById('arena-toolbar').offsetHeight, document.getElementById('boss-panel').offsetHeight);
     stage.style.width = size.width + 'px';
   }
-}
-function setPlayMode(enabled) {
-  release();
-  document.body.classList.toggle('play-mode', !!enabled);
-  document.getElementById('play-mode').setAttribute('aria-pressed', String(!!enabled));
-  document.getElementById('play-mode').setAttribute('aria-label', enabled ? 'Return to Page view' : 'Enter Play mode');
-  const view = document.getElementById('overlay-view');
-  if (view) view.textContent = enabled ? 'PAGE VIEW' : 'PLAY MODE';
-  frameClock.reset();
-  fitPlayMode();
-  if (['play', 'tutorial', 'reward'].includes(game.mode)) canvas.focus();
 }
 function updateTutorialInstruction() {
   const el = document.getElementById('arena-instruction'),
@@ -167,5 +150,5 @@ function updateTutorialInstruction() {
   const changed = el.hidden === tutorial;
   el.hidden = !tutorial;
   if (tutorial) setHudText('arena-instruction', game.mode === 'tutorialSuccess' ? 'HIT! Jump → break shield → swing.' : game.lessonStage === 'attack' ? 'Shield broken! Aim at the dummy and hold left click.' : 'Press SPACE / JUMP and land close to the shield dummy.');
-  if (changed) fitPlayMode();
+  if (changed) fitArena();
 }

@@ -1,4 +1,4 @@
-/* Page and Codex styling, followed by viewport-fit Play-mode rules. */
+/* Game and Codex styling, followed by viewport-fit arena rules. */
 :root {
   color-scheme: dark;
   --cream: #eee9db;
@@ -1119,15 +1119,10 @@ footer {
   line-height: 1.1;
   margin: 12px 0;
 }
-body.play-mode {
+body {
   overflow: hidden;
 }
-body.play-mode > header,
-body.play-mode .intro,
-body.play-mode main > footer {
-  display: none;
-}
-body.play-mode main {
+body main {
   position: fixed;
   inset: 0;
   max-width: none;
@@ -1136,12 +1131,12 @@ body.play-mode main {
   align-items: center;
   justify-content: center;
 }
-body.play-mode .layout {
+body .layout {
   width: 100%;
   display: flex;
   justify-content: center;
 }
-body.play-mode .overlay {
+body .overlay {
   position: fixed;
   inset: 8px;
   max-width: 960px;

@@ -64,10 +64,11 @@ assert.ok(declarations.some(d => d.selector === '.choices' && d.property === 'gr
 assert.equal(last('.pause-primary', 'position'), 'sticky');
 assert.equal(last('[hidden]', 'display'), 'none !important');
 assert.equal(last('.arena-viewport', 'aspect-ratio'), '20 / 11');
-assert.equal(last('body.play-mode > header', 'display'), 'none');
-assert.equal(last('body.play-mode .overlay', 'position'), 'fixed');
+assert.equal(last('body main', 'position'), 'fixed');
+assert.equal(last('body', 'overflow'), 'hidden');
+assert.equal(last('body .overlay', 'position'), 'fixed');
 console.log('PASS readable HUD sizes, touch targets, stacked cards, sticky Resume and Play-mode CSS contracts');
 const html = fs.readFileSync('dist/index.html', 'utf8');
 assert.ok(!html.includes('<style>'));
-assert.ok(html.includes('styles.css?v=32'));
+assert.ok(html.includes('styles.css?v=33'));
 console.log('PASS stylesheet structure and shipped link');

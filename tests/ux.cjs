@@ -18,41 +18,32 @@ function start(options) {
   h.click('skip');
   return h;
 }
-test('Play mode fits width and height across phone portrait/landscape, tablet and laptop', () => {
+test('Arena fits width and height across phone portrait/landscape, tablet and laptop', () => {
   const h = harness();
   for (const [width, height, toolbar, footer] of [[390, 844, 82, 66], [844, 390, 76, 66], [768, 1024, 82, 66], [1366, 768, 82, 48], [320, 568, 82, 66]]) {
-    const size = h.run(`playStageSize(${width},${height},${toolbar},${footer})`);
+    const size = h.run(`arenaStageSize(${width},${height},${toolbar},${footer})`);
     assert.ok(size.width <= width - 16 + 1e-8);
     assert.ok(size.height <= height - 16 + 1e-8);
     assert.ok(size.width > 250);
     assert.ok(Math.abs((size.width - 2) / (size.height - toolbar - footer - 2) - 960 / 528) < 1e-8);
   }
 });
-test('starting enters Play mode; Page view and resize preserve the run and pause timers', () => {
-  const h = start({
-    width: 390,
-    height: 844,
-    footerHeight: 66
-  });
-  assert.ok(h.env.document.body.classList.contains('play-mode'));
-  assert.equal(h.el('play-mode').getAttribute('aria-pressed'), 'true');
+test('opening uses the fitted arena; resize and pause preserve the run without view switches', () => {
+  const h = harness(undefined, {width:390,height:844,footerHeight:66});
+  assert.ok(parseFloat(h.el('game-stage').style.width) <= 374);
+  for (const id of ['play-mode', 'overlay-view']) assert.equal(h.el(id), null);
+  assert.equal(h.run('typeof setPlayMode'), 'undefined');
+  h.click('start');
+  assert.equal(h.el('overlay-view'), null);
+  h.click('skip');
   const snapshot = h.run('JSON.stringify({time:game.time,player:game.player,room:game.room})');
-  h.click('play-mode');
-  assert.ok(!h.env.document.body.classList.contains('play-mode'));
-  assert.equal(h.el('game-stage').style.width, '');
-  h.click('play-mode');
-  const width = parseFloat(h.el('game-stage').style.width);
-  assert.ok(width <= 374);
-  assert.equal(h.run('JSON.stringify({time:game.time,player:game.player,room:game.room})'), snapshot);
   h.env.window.innerWidth = 844;
   h.env.window.innerHeight = 390;
   h.listeners.resize();
   assert.ok(parseFloat(h.el('game-stage').style.width) < 844);
+  assert.equal(h.run('JSON.stringify({time:game.time,player:game.player,room:game.room})'), snapshot);
   h.click('pause');
-  h.click('overlay-view');
-  assert.equal(h.run('game.mode'), 'paused');
-  assert.ok(!h.env.document.body.classList.contains('play-mode'));
-  h.click('overlay-view');
+  assert.equal(h.el('overlay-view'), null);
   h.frame(0);
   h.frame(50000);
   assert.equal(h.run('game.time'), 0);
@@ -181,7 +172,7 @@ test('Codex remains reachable and password locked from menus and paused Play mod
   h.click('menu-codex');
   h.click('debug-close');
   assert.equal(h.run('game.mode'), 'paused');
-  assert.ok(h.env.document.body.classList.contains('play-mode'));
+  assert.equal(h.el('play-mode'), null);
 });
 test('simulation and ability defaults match v23 apart from the Debug level label', () => {
   assert.equal(fs.readFileSync('dist/core.js', 'utf8').replace('DEBUG / LEVEL ${chapter}', 'DEBUG / CHAPTER ${chapter}'), cp.execFileSync('git', ['show', '3f1b5c37e77bd4b56fe2e28626db08a6e5027721:dist/core.js'], {

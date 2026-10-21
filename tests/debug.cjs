@@ -321,8 +321,8 @@ test('guide and shipped UI stay English and new script assets are present', () =
   assert.ok(html.includes('aria-labelledby="debug-title"'));
   assert.ok(!html.includes('id="interact"'));
   assert.ok(!/E: SUPPLY|<kbd>E<|E to interact/.test(html));
-  assert.ok(html.includes('debug.js?v=32'));
-  assert.ok(html.indexOf('debug.js?v=32') < html.indexOf('game.js?v=32'));
+  assert.ok(html.includes('debug.js?v=33'));
+  assert.ok(html.indexOf('debug.js?v=33') < html.indexOf('game.js?v=33'));
 });
 test('in-arena HUD, cooldown ring and touch readiness agree; pause holds details and Q does nothing', () => {
   const h = harness();
@@ -394,7 +394,7 @@ test('Updates shows the loaded release and ordered rollback milestones without c
   const snapshot = h.run('JSON.stringify({mode:game.mode,time:game.time,player:game.player,room:game.room,items:game.items})');
   h.click('debug-tab-updates');
   const html = h.el('debug-body').innerHTML;
-  for (const value of ['LOADED VERSION', '<h3>v32</h3>', 'CURRENT', 'Player stays visible after boss defeat', 'Landing-driven item builds', 'device playtest pending']) assert.ok(html.includes(value), value);
+  for (const value of ['LOADED VERSION', '<h3>0.1.1</h3>', 'Build 33', 'CURRENT', 'Player stays visible after boss defeat', 'Landing-driven item builds', 'device playtest pending']) assert.ok(html.includes(value), value);
   assert.ok(html.indexOf('v31 ·') < html.indexOf('v30 ·'));
   assert.ok(!html.includes('appgver_'));
   assert.ok(!html.includes('debug-wave-'));
@@ -405,11 +405,11 @@ test('Updates shows the loaded release and ordered rollback milestones without c
   assert.ok(h.el('debug-wave-0'));
   h.click('debug-close');
   assert.equal(h.run('game.mode'), 'play');
-  const changed = fs.readFileSync('dist/releases.js', 'utf8').replace('"currentVersion": 32', '"currentVersion": 99');
+  const changed = fs.readFileSync('dist/releases.js', 'utf8').replace('"currentVersion": 33', '"currentVersion": 99');
   const oldTab = harness(undefined, {sources: {'releases.js': changed}});
   oldTab.click('debug-open');
   oldTab.unlock('voiddebug');
   oldTab.click('debug-tab-updates');
-  assert.ok(oldTab.el('debug-body').innerHTML.includes('<h3>v99</h3>'), 'badge reads bundled release data');
+  assert.ok(oldTab.el('debug-body').innerHTML.includes('Build 99</span>'), 'badge reads bundled release data');
 });
 console.log(`${passed} debug/codex scenario groups passed. DOM and canvas tests use mocks; browser/device QA remains unverified.`);

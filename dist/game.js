@@ -48,5 +48,6 @@ const debugPanel = createDebugCodex({
 bindInput();
 syncOverlay();
 hud();
+fitArena();
 draw();
 requestAnimationFrame(loop);
