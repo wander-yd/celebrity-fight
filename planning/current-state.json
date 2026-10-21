@@ -43,7 +43,7 @@
     "status": "prepared-not-uploaded",
     "proposedRepository": "wander-yd/donald-void-arena",
     "references": "planning/published-versions.json",
-    "nextAction": "With user approval, use the browser to create the private repository and establish an authenticated Git transfer; verify branch and tags before marking synced."
+    "nextAction": "Complete GitHub sign-in/repository creation and authenticated Git push; verify remote branch, all38 tags and fresh clone before marking synced. Build38 mapping and offline restore package prepared."
   },
   "priorPublication": {
     "build": 37,

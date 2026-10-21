@@ -2,9 +2,11 @@
 
 ## Status
 
-Prepared, not yet uploaded. The intended repository is `wander-yd/donald-void-arena`, private. Confirm its creation, privacy and authenticated Git access before using it. The GitHub connector currently available can read/write files in existing repositories, but does not create repositories or transfer this complete Git history. Do not substitute a file-only upload for the history backup.
+Prepared through Build38, not yet uploaded. The intended repository is `wander-yd/donald-void-arena`, private. Confirm its creation, privacy and authenticated Git access before using it. The GitHub connector currently available can read/write files in existing repositories, but does not create repositories or transfer this complete Git history. Do not substitute a file-only upload for the history backup.
 
-The live game remains on Sites. This documentation-only setup does not publish a new game build or change its displayed version, currently 0.1.3 / Build 35.
+The live game remains on Sites. This documentation-only setup does not publish a new game build or change its displayed version, currently 0.2.2 / Build38.
+
+The current backup attempt confirmed that the target repository is not accessible through the connector and the cloud browser requires GitHub sign-in. This environment has no authenticated GitHub Git transport. Repository creation, actual GitHub upload and remote-clone verification remain pending; offline bundle restore is separate evidence.
 
 ## Initial setup
 

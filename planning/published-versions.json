@@ -4,16 +4,25 @@
   "proposedRepository": "wander-yd/donald-void-arena",
   "versions": [
     {
+      "build": 38,
+      "displayVersion": "0.2.2",
+      "tag": "v0.2.2-build38",
+      "commitSha": "6957530a3f15667e3e4266045b03fa54abcb5c2b",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_1b19fee4a0948191a4a8607be121b863"
+    },
+    {
       "build": 37,
       "displayVersion": "0.2.1",
       "commitSha": "fc392f796c695df6445ff36286d272f9f9b35256",
-      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_7c90a8740c14819193b87928606737bf"
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_7c90a8740c14819193b87928606737bf",
+      "tag": "v0.2.1-build37"
     },
     {
       "build": 36,
       "commitSha": "3dafa13495ac4c18e40063b34efff9cbffa902b5",
       "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_b391d10fc080819190eb2a356b272b82",
-      "displayVersion": "0.2.0"
+      "displayVersion": "0.2.0",
+      "tag": "v0.2.0-build36"
     },
     {
       "build": 35,
