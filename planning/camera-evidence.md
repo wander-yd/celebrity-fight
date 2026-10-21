@@ -11,3 +11,5 @@ Verified on 2026-10-21. Scope and acceptance IDs are in camera-plan.md.
 - A7: exact pushed source is packaged and published through native Sites. The returned saved-version/deployment result is the publication authority; the previous saved Build35 remains the rollback target.
 
 Limits: browser iframe resizing is not physical-phone touch testing. Offscreen attack fairness and zoom/easing comfort need user playtest. No claim of identical whole-arena trajectories after the square geometry change. No combat balance changes or new threat indicators.
+
+Publication succeeded: Build36 saved version `appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_b391d10fc080819190eb2a356b272b82`, source `3dafa13495ac4c18e40063b34efff9cbffa902b5`, deployment `appgdep_6ad8cab0b2748191bd30f29a2644a802`, status `succeeded`. Post-release documentation records these references; it does not change the deployed game.

@@ -96,17 +96,17 @@ Only Necessary Question: None.
 
 ## Execution Control
 
-- Current Stage: Build
+- Current Stage: User playtest
 - Gate Result: Pass
-- Next Stage: Build
+- Next Stage: User playtest
 - OpenAI Recommendation: High / H1
 - DeepSeek Effort: not-applicable
 - Handoff Mode: Automatic
-- Exact Next Action: Complete M3 regression and publication checks for the implemented camera delta, then publish to the existing Site and stop for user playtest.
+- Exact Next Action: Stop implementation; await user physical-device playtest of zoom, corner rotation, HUD overlap and offscreen threats.
 - Destination: Current agent in /workspace/sites/trump-void-arena
 - Handoff Packet/paths: planning/camera-plan.md and planning/camera-stage.json
-- Build Instructions: Complete M3 checks and same-Site publication only; no new features; stop for the user device playtest.
-- Current Action Evidence: Local geometry/projection changes are reversible, authorized and testable; no current publication or credential decision.
+- Build Instructions: M1–M3 completed and Build36 published successfully; no further implementation without user feedback.
+- Current Action Evidence: Automated checks, native browser preview and native publication succeeded; exact release references are in planning/camera-evidence.md. Only physical-device feedback remains.
 - Risk Tags: bounded_reversible
 - High Failures on Same Action: 0
 - Interacting M-class Risks: 0
@@ -114,24 +114,24 @@ Only Necessary Question: None.
 
 ## Durable Stage State
 
-- Stage: Build
+- Stage: User playtest
 - Status: Pass
 - Locked Decisions: Square668 interior; fixed-area270400 camera; soft edge96 and easing10; screen HUD/input; unchanged combat rules.
 - Allowed Changes: dist camera/core geometry/state/render/ui/input/game/index/styles/releases, geometry-aware tests, README/SPEC and planning controls. No other project/service targets.
 - Do Not Change: Numeric combat abilities/TYPES/THEMES/WAVES/items, original Boss behavior/scale/radii, reward visibility/owner-bomb immunity/landing safety, health-kit→item→level, Start/Resume text and existing icons, debug password/actions, source project identity/audience, GitHub backup status.
 - Remaining Blockers: None.
-- Resume Point: Complete M3 regression and publication checks for the implemented camera delta, then publish to the existing Site and stop for user playtest.
+- Resume Point: Stop implementation; await user physical-device playtest of zoom, corner rotation, HUD overlap and offscreen threats.
 - Authoritative Artifact: planning/camera-plan.md
 - Evidence Paths: dist/core.js,dist/render.js,dist/input.js,tests/,planning/current-state.json
 - Approved Paths: None supplied.
 - Location Assumptions: Use existing repository planning/ alongside canonical SPEC/current-state.
 
-Current Stage: Build
+Current Stage: User playtest
 Gate Result: Pass
-Next Stage: Build
+Next Stage: User playtest
 Recommended Intelligence: High
-Why Escalation Is/Isn't Triggered: H1 — Current-action: Complete M3 regression and publication checks for the implemented camera delta, then publish to the existing Site and stop for user playtest. @ Current agent in /workspace/sites/trump-void-arena; Local geometry/projection changes are reversible, authorized and testable; no current publication or credential decision.
+Why Escalation Is/Isn't Triggered: H1 — Current-action: Stop implementation; await user physical-device playtest of zoom, corner rotation, HUD overlap and offscreen threats. @ Current agent in /workspace/sites/trump-void-arena; Automated checks, native browser preview and native publication succeeded; exact release references are in planning/camera-evidence.md. Only physical-device feedback remains.
 Handoff Mode: Automatic
-Exact Next Action: Complete M3 regression and publication checks for the implemented camera delta, then publish to the existing Site and stop for user playtest.
+Exact Next Action: Stop implementation; await user physical-device playtest of zoom, corner rotation, HUD overlap and offscreen threats.
 Destination: Current agent in /workspace/sites/trump-void-arena
 Handoff Packet/paths: planning/camera-plan.md and planning/camera-stage.json

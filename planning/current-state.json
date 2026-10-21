@@ -33,7 +33,7 @@
     "command": "node tests/run.cjs",
     "result": "40 game +16 Debug/Codex +10 refactor +17 UX groups;63 pure camera corner/orientation/inverse cases;48 controlled900-step interior encounters vs Build35 plus unchanged combat config/art. Geometry-dependent assertions updated explicitly.",
     "syntax": "Changed JS syntax, HTML nesting/unique IDs, stylesheet contracts and diff whitespace pass",
-    "browser": "Native desktop preview and390\u00d7844/844\u00d7390 frames inspected; tutorial persists across frame rotation; physical phone touch feel and threat fairness pending."
+    "browser": "Native desktop preview and390×844/844×390 frames inspected; tutorial persists across frame rotation; physical phone touch feel and threat fairness pending."
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "nextAction": "Refresh and play one level on the normal phone; rotate near corners and judge zoom, HUD overlap and offscreen attacks.",
@@ -44,5 +44,13 @@
     "proposedRepository": "wander-yd/donald-void-arena",
     "references": "planning/published-versions.json",
     "nextAction": "With user approval, use the browser to create the private repository and establish an authenticated Git transfer; verify branch and tags before marking synced."
+  },
+  "published": {
+    "build": 36,
+    "commitSha": "3dafa13495ac4c18e40063b34efff9cbffa902b5",
+    "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_b391d10fc080819190eb2a356b272b82",
+    "deploymentId": "appgdep_6ad8cab0b2748191bd30f29a2644a802",
+    "status": "succeeded",
+    "url": "https://donald-trump.grassy-fawn-9947.chatgpt.site"
   }
 }

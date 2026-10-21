@@ -86,14 +86,14 @@ Open Decisions: None.
 Only Necessary Question: None.
 
 ## Execution Control
-Current Stage: Build
+Current Stage: User playtest
 Gate Result: Pass
-Next Stage: Build
-Exact Next Action: Complete M3 regression and publication checks for the implemented camera delta, then publish to the existing Site and stop for user playtest.
+Next Stage: User playtest
+Exact Next Action: Stop implementation; await user physical-device playtest of zoom, corner rotation, HUD overlap and offscreen threats.
 Destination: Current agent in /workspace/sites/trump-void-arena
 Handoff Packet/paths: planning/camera-plan.md and planning/camera-stage.json
-Build Instructions: Complete M3 checks and same-Site publication only; no new features; stop for the user device playtest.
-Current Action Evidence: Local geometry/projection changes are reversible, authorized and testable; no current publication or credential decision.
+Build Instructions: M1–M3 completed and Build36 published successfully; no further implementation without user feedback.
+Current Action Evidence: Automated checks, native browser preview and native publication succeeded; exact release references are in planning/camera-evidence.md. Only physical-device feedback remains.
 Risk Tags: bounded_reversible
 High Failures on Same Action: 0
 Interacting M-class Risks: 0
