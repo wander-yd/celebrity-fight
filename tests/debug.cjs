@@ -321,8 +321,8 @@ test('guide and shipped UI stay English and new script assets are present', () =
   assert.ok(html.includes('aria-labelledby="debug-title"'));
   assert.ok(!html.includes('id="interact"'));
   assert.ok(!/E: SUPPLY|<kbd>E<|E to interact/.test(html));
-  assert.ok(html.includes('debug.js?v=31'));
-  assert.ok(html.indexOf('debug.js?v=31') < html.indexOf('game.js?v=31'));
+  assert.ok(html.includes('debug.js?v=32'));
+  assert.ok(html.indexOf('debug.js?v=32') < html.indexOf('game.js?v=32'));
 });
 test('in-arena HUD, cooldown ring and touch readiness agree; pause holds details and Q does nothing', () => {
   const h = harness();
@@ -383,5 +383,33 @@ test('HTML contains in-stage vitals and menus with no external combat sidebar or
   h.click('debug-tab-items');
   const guide = h.el('debug-body').innerHTML;
   for (const value of ['Each item works alone', '0.6s', '2 to 10 damage', '40%', '30%', '20%']) assert.ok(guide.includes(value), value);
+});
+test('Updates shows the loaded release and ordered rollback milestones without changing the run', () => {
+  const h = harness();
+  h.click('start');
+  h.click('skip');
+  h.click('debug-open');
+  assert.equal(h.el('debug-tab-updates'), null, 'history stays behind the existing lock');
+  h.unlock('voiddebug');
+  const snapshot = h.run('JSON.stringify({mode:game.mode,time:game.time,player:game.player,room:game.room,items:game.items})');
+  h.click('debug-tab-updates');
+  const html = h.el('debug-body').innerHTML;
+  for (const value of ['LOADED VERSION', '<h3>v32</h3>', 'CURRENT', 'Player stays visible after boss defeat', 'Landing-driven item builds', 'device playtest pending']) assert.ok(html.includes(value), value);
+  assert.ok(html.indexOf('v31 ·') < html.indexOf('v30 ·'));
+  assert.ok(!html.includes('appgver_'));
+  assert.ok(!html.includes('debug-wave-'));
+  assert.equal(h.el('debug-tab-updates').getAttribute('aria-pressed'), 'true');
+  h.run("assert.equal(VoidReleases.entries[0].version,VoidReleases.currentVersion);for(let i=1;i<VoidReleases.entries.length;i++){const entry=VoidReleases.entries[i];assert.ok(entry.version<VoidReleases.entries[i-1].version);assert.match(entry.commitSha,/^[a-f0-9]{40}$/);assert.ok(entry.savedVersionId.startsWith(VoidReleases.projectId+'~appgver_'));}");
+  assert.equal(h.run('JSON.stringify({mode:game.mode,time:game.time,player:game.player,room:game.room,items:game.items})'), snapshot);
+  h.click('debug-tab-debug');
+  assert.ok(h.el('debug-wave-0'));
+  h.click('debug-close');
+  assert.equal(h.run('game.mode'), 'play');
+  const changed = fs.readFileSync('dist/releases.js', 'utf8').replace('"currentVersion": 32', '"currentVersion": 99');
+  const oldTab = harness(undefined, {sources: {'releases.js': changed}});
+  oldTab.click('debug-open');
+  oldTab.unlock('voiddebug');
+  oldTab.click('debug-tab-updates');
+  assert.ok(oldTab.el('debug-body').innerHTML.includes('<h3>v99</h3>'), 'badge reads bundled release data');
 });
 console.log(`${passed} debug/codex scenario groups passed. DOM and canvas tests use mocks; browser/device QA remains unverified.`);

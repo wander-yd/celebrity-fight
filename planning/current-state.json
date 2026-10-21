@@ -1,7 +1,7 @@
 {
-  "version": 31,
-  "authority": "User approved removal of floating shield and Jump-button countdown text; SPEC.md v31",
-  "productState": "v30 preserved; shared shield countdown label removed, touch button always JUMP with existing readiness dimming",
+  "version": 32,
+  "authority": "User approved compact read-only Updates tab; SPEC.md v32",
+  "productState": "v31 gameplay preserved; Updates tab records loaded version and concise verified release history",
   "removed": [
     "multi-room layout",
     "doors",
@@ -31,11 +31,11 @@
   ],
   "verification": {
     "command": "node tests/run.cjs",
-    "result": "Full suites plus combat/tutorial label absence, shield recovery visual, constant JUMP label and cooldown dimming; core unchanged",
+    "result": "Full suites plus Updates lock/access/data/order/read-only checks; historical refs verified against Sites versions; gameplay unchanged",
     "syntax": "Changed JS syntax, HTML nesting/unique IDs, stylesheet contracts and diff whitespace pass",
     "browser": "No supported browser QA; viewport math/DOM are fixtures, native layout/touch/visual polish remain unverified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Refresh and check shield and jump indicators during combat and practice.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_b762798eee1c81919a771fda5f2362c8"
+  "nextAction": "Open Debug & Codex \u2192 Updates and inspect the release milestones.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_c1de7267bab48191b4b9263027c97fa6"
 }

@@ -38,3 +38,9 @@ When editing rendering, preserve the threat layers: ground → actors/effects �
 Start automatically enters Play mode, which collapses page branding and fits the arena to the visual viewport. Menus offer Page view / Play mode; the toolbar also has a view toggle. The world keeps its original960×600 coordinates. The displayed viewport clips only the old top72px HUD region (960×528 remains visible); mouse/touch aiming uses the full canvas rectangle. Never resize the simulation or crop the bottom edge to fit a screen.
 
 Resume leads the Pause menu; Controls and Build are native collapsed details. Phone upgrade choices stack and show an action summary before full effects. Browser/device checks remain required for visual quality and touch comfort.
+
+## Release history
+
+`dist/releases.js` is the single human-maintained source for the Updates tab. Add one newest-first entry per published release, bump currentVersion and HTML asset queries together, and keep notes to one or two player-visible changes. Dates use Asia/Kuala_Lumpur. Record actual verification limits. No background fetch, local history or automatic code-change tracking is used.
+
+For each historical entry, copy savedVersionId and commitSha from Sites list_site_versions/get_site_version. The current release cannot embed its own resulting Git SHA or saved ID: it resolves through projectId + currentVersion using Sites version discovery; fill its exact references when preparing the next release. Never guess references. Rollback is a separate, explicitly requested Sites action; this tab is read-only. Older versions may lack later bug fixes (notably v30 reward visibility).

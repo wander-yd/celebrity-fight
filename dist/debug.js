@@ -95,7 +95,7 @@ function createDebugCodex({
     opened = false,
     returnMode = 'menu',
     tab = 'debug';
-  const tabs = [['debug', 'Debug'], ['player', 'Player'], ['enemies', 'Enemies · 7'], ['items', 'Items · 6'], ['bosses', 'Bosses · 3']];
+  const tabs = [['debug', 'Debug'], ['player', 'Player'], ['enemies', 'Enemies · 7'], ['items', 'Items · 6'], ['bosses', 'Bosses · 3'], ['updates', 'Updates']];
   const escape = value => String(value).replace(/[&<>"']/g, c => ({
     '&': '&amp;',
     '<': '&lt;',
@@ -174,6 +174,9 @@ function createDebugCodex({
       return '<article class="codex-card"><div class="codex-cardhead">' + image('boss', i, theme.name) + '<div><div class="codex-eyebrow">LEVEL 0' + (i + 1) + '</div><h3>' + theme.name + '</h3></div></div>' + facts([['HP', stats.hp], ['Move', stats.speed + ' px/s'], ['Volley', stats.normal.shots + ' → ' + stats.enraged.shots + ' shots'], ['Interval', stats.normal.interval + 's → ' + stats.enraged.interval + 's']]) + '<p>' + entry.attacks + '</p></article>';
     }).join('') + '</div>';
   }
+  function updatesPage() {
+    return '<section class="codex-card update-current"><div class="codex-eyebrow">LOADED VERSION</div><h3>v' + VoidReleases.currentVersion + '</h3></section><div class="update-history">' + VoidReleases.entries.map(entry => '<article class="codex-card"><div class="codex-eyebrow">v' + entry.version + ' · ' + escape(entry.date) + ' · ' + escape(entry.type) + (entry.version === VoidReleases.currentVersion ? ' · CURRENT' : '') + '</div><h3>' + escape(entry.title) + '</h3><ul>' + entry.changes.map(change => '<li>' + escape(change) + '</li>').join('') + '</ul><p class="update-verification">' + escape(entry.verification) + '</p></article>').join('') + '</div>';
+  }
   function render(focusId) {
     if (!unlocked) {
       body.innerHTML = '<div class="debug-lock"><div class="codex-eyebrow">LOCAL DEBUG ACCESS</div><h3>Unlock the test bench.</h3><p>Enter the debug password. The window pauses combat while you browse.</p><form id="debug-unlock-form"><label for="debug-password">Password</label><div class="debug-passwordrow"><input id="debug-password" type="password" autocomplete="off" maxlength="64" required><button type="submit">Unlock ↗</button></div><p id="debug-error" role="alert" aria-live="polite"></p></form><p class="codex-note">Browser-local convenience lock. Unlock lasts until this page reloads.</p></div>';
@@ -198,7 +201,8 @@ function createDebugCodex({
       player: playerPage,
       enemies: enemiesPage,
       items: itemsPage,
-      bosses: bossesPage
+      bosses: bossesPage,
+      updates: updatesPage
     }[tab]() + '</div>';
     for (const [id] of tabs) bind('debug-tab-' + id, () => {
       tab = id;
