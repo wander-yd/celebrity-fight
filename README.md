@@ -46,3 +46,9 @@ Resume leads Pause; Controls and Build are native collapsed details. Phone upgra
 For each historical entry, copy savedVersionId and commitSha from Sites list_site_versions/get_site_version. The current release cannot embed its own resulting Git SHA or saved ID: it resolves through projectId + currentVersion using Sites version discovery; fill its exact references when preparing the next release. Never guess references. Rollback is a separate, explicitly requested Sites action; this tab is read-only. Older versions may lack later bug fixes (notably v30 reward visibility).
 
 From Build33 onward, displayVersion uses 0.feature.patch: small fixes/UI cleanup increment patch, meaningful new features increment feature and reset patch. Reserve1.0.0 for an explicitly approved release milestone; no Alpha/Beta labels. Historical v22–v32 entries keep their original numbers.
+
+## GitHub backup workflow
+
+Sites remains the publishing source. GitHub is a one-way private backup of the same Git history, not a second editable game or a second deployment. See [backup and restore](docs/backup-and-restore.md). Exact published SHAs, Sites saved IDs and tag names are recorded in `planning/published-versions.json`.
+
+Setup status: prepared; repository creation and authenticated Git push are still pending. Do not report the backup as complete until GitHub branch and tags have been independently verified.
