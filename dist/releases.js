@@ -3,9 +3,20 @@
 // Human-maintained release history. Dates use Asia/Kuala_Lumpur.
 // Current publication resolves by projectId + version; exact historical IDs are filled next release.
 const VoidReleases = Object.freeze({
-  "currentVersion": 34,
+  "currentVersion": 35,
   "projectId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "entries": [
+    {
+      "version": 35,
+      "displayVersion": "0.1.3",
+      "date": "2026-10-21",
+      "type": "UI",
+      "title": "Text for Start and Resume",
+      "changes": [
+        "Restored plain START and RESUME buttons; other menu icons remain unchanged."
+      ],
+      "verification": "UI and guide checks passed; device playtest pending."
+    },
     {
       "version": 34,
       "displayVersion": "0.1.2",
@@ -15,7 +26,9 @@ const VoidReleases = Object.freeze({
       "changes": [
         "Added consistent play, pause, sound and close icons; shortened restart controls and removed the death-screen tip."
       ],
-      "verification": "Automated checks passed; device playtest pending."
+      "verification": "Automated checks passed; device playtest pending.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_50a0a5e373fc8191b7688ea9b2cd79dc",
+      "commitSha": "4aa1c65e585778ce8f9194591ac020a97b79bdb0"
     },
     {
       "version": 33,
@@ -163,5 +176,5 @@ const VoidReleases = Object.freeze({
       "commitSha": "a27a9bf599f4b9401eeb0e5b0467a135e8d2258b"
     }
   ],
-  "displayVersion": "0.1.2"
+  "displayVersion": "0.1.3"
 });

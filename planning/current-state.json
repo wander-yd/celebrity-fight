@@ -1,7 +1,7 @@
 {
-  "version": 34,
-  "authority": "User approved familiar menu icons and removal of death-screen tip; SPEC.md Build34",
-  "productState": "Fitted game layout with consistent SVG menu icons, concise restart controls and no death tip; gameplay preserved",
+  "version": 35,
+  "authority": "User approved plain START and RESUME only; SPEC.md Build35",
+  "productState": "Plain text START and RESUME; all other icons and gameplay preserved",
   "removed": [
     "multi-room layout",
     "doors",
@@ -31,12 +31,12 @@
   ],
   "verification": {
     "command": "node tests/run.cjs",
-    "result": "Full suites plus SVG/name/tooltip checks, sound toggle and persisted mute, death score/restart and existing menu flows",
+    "result": "UI, guide and stylesheet suites; plain Start/Resume, preserved sound and remaining icon controls, menu/tutorial and reward flows",
     "syntax": "Changed JS syntax, HTML nesting/unique IDs, stylesheet contracts and diff whitespace pass",
     "browser": "No supported browser QA; viewport math/DOM are fixtures, native layout/touch/visual polish remain unverified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Refresh and inspect the familiar controls on the normal device.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_8c9d60d638d88191b5ff66c1f5121995",
-  "displayVersion": "0.1.2"
+  "nextAction": "Refresh to inspect the restored START and RESUME text buttons.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_50a0a5e373fc8191b7688ea9b2cd79dc",
+  "displayVersion": "0.1.3"
 }

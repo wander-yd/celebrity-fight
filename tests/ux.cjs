@@ -126,7 +126,8 @@ test('clipping the covered top margin preserves pointer-to-world mapping', () =>
 test('tutorial instructions remain readable and the safe lesson still completes', () => {
   const h = harness();
   assert.equal(h.el('start').getAttribute('aria-label'), 'Start game');
-  assert.ok(h.el('start').children.some(c => c.tagName === 'svg'));
+  assert.ok(!h.el('start').children.some(c => c.tagName === 'svg'));
+  assert.ok(h.el('overlay').innerHTML.includes('>START</button>'));
   assert.ok(!h.el('overlay').innerHTML.includes('Biden →'));
   h.click('start');
   assert.ok(h.el('overlay').innerHTML.includes('Jump near the shield → land → swing.'));
@@ -281,7 +282,8 @@ test('icon controls retain accessible names, sound state and restart behavior wi
   }
   h.click('pause');
   assert.equal(h.el('resume').getAttribute('aria-label'), 'Resume');
-  assert.ok(h.el('resume').children.some(c => c.tagName === 'svg'));
+  assert.ok(!h.el('resume').children.some(c => c.tagName === 'svg'));
+  assert.ok(h.el('overlay').innerHTML.includes('>RESUME</button>'));
   assert.equal(h.el('sound').getAttribute('aria-pressed'), 'false');
   assert.equal(h.el('sound').getAttribute('aria-label'), 'Unmute sound');
   h.click('sound');
