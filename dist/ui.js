@@ -57,14 +57,15 @@ function syncOverlay() {
   frameClock.reset();
   updateTutorialInstruction();
   fitArena();
-  for (const id of ['jump']) document.getElementById(id).style.visibility = ['play', 'tutorial'].includes(game.mode) ? 'visible' : 'hidden';
+  release();
+  syncTouchControls();
   if (['play', 'tutorial', 'tutorialSuccess', 'reward', 'debug'].includes(game.mode)) {
     overlay.classList.add('hidden');
     overlay.innerHTML = '';
     return;
   }
   if (game.mode === 'menu') {
-    show('<h2>THE DONALD</h2><button class="primary" id="start" aria-label="Start game" title="Start game">START</button><div class="hint">WASD: Move · Hold click: Attack · Space: Jump<br>Touch: Drag to move · Tap Jump</div>');
+    show('<h2>THE DONALD</h2><button class="primary" id="start" aria-label="Start game" title="Start game">START</button><div class="hint">WASD: Move · Hold click: Attack · Space: Jump<br>Touch: Left stick to move · Tap Jump</div>');
     button('start', () => {
       game.start();
     });
@@ -76,7 +77,7 @@ function syncOverlay() {
     show('<h2>Practice complete</h2><button class="primary icon-button" id="lessonDone" aria-label="Play" title="Play">' + uiIcon('play') + '</button>');
     button('lessonDone', () => game.newRun());
   } else if (game.mode === 'paused') {
-    show('<div class="pause-primary"><div class="tag">ARENA PAUSED</div><button class="primary" id="resume" aria-label="Resume" title="Resume">RESUME</button></div><p class="pause-summary">Level ' + game.chapter + ' / 3 · Score ' + game.score + ' · ' + Math.floor(game.time) + ' seconds</p><details class="pause-section" id="pause-controls"><summary>Controls &amp; help</summary><p>WASD / arrows: move<br>Mouse: aim + hold click to swing<br>SPACE: jump · P / ESC: pause<br>Touch: drag to move + auto attack, tap JUMP<br>After a Boss, walk into the health kit to heal and choose an item.</p><p class="landscape-tip">On a phone, landscape gives you a larger arena.</p></details><details class="pause-section" id="pause-build"><summary>Your build · ' + game.items.length + ' items</summary><div class="pause-build"><b>YOUR BUILD · DOLLAR STACK</b>' + buildDetails() + '</div></details><div class="pause-settings"><button class="small icon-button" id="sound" aria-label="Mute sound" title="Mute sound"></button><button class="small restart-button" id="restart" aria-label="Restart run" title="Restart run">' + uiIcon('restart') + ' RESTART</button></div>');
+    show('<div class="pause-primary"><div class="tag">ARENA PAUSED</div><button class="primary" id="resume" aria-label="Resume" title="Resume">RESUME</button></div><p class="pause-summary">Level ' + game.chapter + ' / 3 · Score ' + game.score + ' · ' + Math.floor(game.time) + ' seconds</p><details class="pause-section" id="pause-controls"><summary>Controls &amp; help</summary><p>WASD / arrows: move<br>Mouse: aim + hold click to swing<br>SPACE: jump · P / ESC: pause<br>Touch: left stick to move + auto attack, tap JUMP<br>After a Boss, walk into the health kit to heal and choose an item.</p></details><details class="pause-section" id="pause-build"><summary>Your build · ' + game.items.length + ' items</summary><div class="pause-build"><b>YOUR BUILD · DOLLAR STACK</b>' + buildDetails() + '</div></details><div class="pause-settings"><button class="small icon-button" id="sound" aria-label="Mute sound" title="Mute sound"></button><button class="small restart-button" id="restart" aria-label="Restart run" title="Restart run">' + uiIcon('restart') + ' RESTART</button></div>');
     button('resume', () => game.pause());
     button('restart', () => game.newRun());
     document.getElementById('resume').focus();
@@ -133,6 +134,8 @@ function hud() {
   const jump = document.getElementById('jump');
   if (jump.textContent !== 'JUMP') jump.textContent = 'JUMP';
   jump.style.opacity = p.jumpCd > 0 ? '.65' : '1';
+  const charge = Math.round((1 - clamp(p.jumpCd / PLAYER_ABILITIES.jump.cooldown, 0, 1)) * 100);
+  jump.style.background = `linear-gradient(#213529,#213529) padding-box, conic-gradient(#d9fb76 ${charge}%,#45513d 0) border-box`;
   jump.setAttribute('aria-label', p.jumpCd > 0 ? 'Jump ready in ' + p.jumpCd.toFixed(1) + ' seconds' : 'Jump ready');
   updateTutorialInstruction();
   const message = document.getElementById('arena-message');

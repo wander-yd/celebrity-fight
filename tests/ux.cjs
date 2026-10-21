@@ -209,12 +209,14 @@ test('menu controls keep native Space/Enter activation while canvas Space still 
   assert.equal(prevented, true);
   assert.ok(h.run('game.player.jump') > 0);
 });
-test('touch Jump stays in the floating bottom HUD', () => {
+test('touch Jump floats independently inside the game stage', () => {
   const h = start();
-  assert.equal(h.el('jump').parent.id, 'boss-panel');
+  assert.equal(h.el('jump').parent.id, 'game-stage');
   assert.equal(h.el('game').parent.id, 'arena-viewport');
   const hp = h.run('game.player.hp');
   h.el('jump').onpointerdown({
+    pointerType: 'touch',
+    pointerId: 2,
     preventDefault() {}
   });
   assert.ok(h.run('game.player.jump') > 0);
@@ -320,16 +322,22 @@ test('rotating the viewport preserves combat and clears screen-based touch drag 
       pointerType: 'touch',
       pointerId: 1,
       clientX: 100,
-      clientY: 100
+      clientY: 100,
+      preventDefault() {}
     });
     h.canvasListeners.pointermove({
       pointerType: 'touch',
+      pointerId: 1,
       clientX: 130,
       clientY: 160
     });
-    assert.equal(h.run('touchMove.x'), .5);
-    assert.equal(h.run('touchMove.y'), 1);
-    h.canvasListeners.pointerup({});
+    assert.ok(h.run('Math.hypot(touchMove.x,touchMove.y)') > 0);
+    assert.ok(h.run('Math.hypot(touchMove.x,touchMove.y)') <= 1);
+    h.canvasListeners.pointerup({
+      pointerType: 'touch',
+      pointerId: 1
+    });
+    assert.equal(h.run('touchMove'), null);
   }
   const groundTarget = h.run('JSON.stringify(camera.target(game.player))');
   h.run('game.player.jump=.3');

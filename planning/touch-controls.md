@@ -1,0 +1,9 @@
+# Touch controls — 0.2.1 / Build37
+
+Approved scope: visible left floating stick with an idle home position; 84px inset Jump in portrait and landscape; independently owned movement/Jump fingers; actual input switches touch controls on/off. Preserve existing mobile auto attack/aim, keyboard/mouse behavior, camera and combat rules. No layout editor, second aiming stick, dependencies or new mechanics. Stop after one verified publication and physical-phone user playtest.
+
+Implementation: input mode starts from the primary pointer capability, never viewport width. Touch input shows controls; keyboard/mouse activity returns to desktop presentation. The stick accepts one left-side finger, uses CSS-screen coordinates, a 6px deadzone and a 40px throw with radial speed limiting. Releasing Jump or unrelated fingers does not release movement. Pointer cancellation/capture loss, pause, Debug, viewport resize and room/mode transitions clear appropriate held input. Release restores the idle stick position. Jump remains unavailable during reward, while the movement stick can reach the health kit.
+
+Verification: `node tests/run.cjs` passes, including 10 new touch scenario groups, existing 17 UX, 40 gameplay, 16 Debug/Codex and 10 refactor groups, plus camera/parity/art/styles checks. Core simulation is byte-identical to the previous source. Native browser inspected keyboard-only desktop and touch-forced iframe layouts 390×844 / 844×390. Temporary preview fixture was removed. Frame layout inspection and synthetic pointer fixtures do not establish physical-phone comfort or real multitouch delivery; user playtest remains the stopping point.
+
+Rollback: Build36 / 0.2.0 saved version `appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_b391d10fc080819190eb2a356b272b82`, source `3dafa13495ac4c18e40063b34efff9cbffa902b5`.

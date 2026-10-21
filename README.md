@@ -57,3 +57,8 @@ From Build33 onward, displayVersion uses 0.feature.patch: small fixes/UI cleanup
 Sites remains the publishing source. GitHub is a one-way private backup of the same Git history, not a second editable game or a second deployment. See [backup and restore](docs/backup-and-restore.md). Exact published SHAs, Sites saved IDs and tag names are recorded in `planning/published-versions.json`.
 
 Setup status: prepared; repository creation and authenticated Git push are still pending. Do not report the backup as complete until GitHub branch and tags have been independently verified.
+# Mobile controls (0.2.1 / Build37)
+
+Touch uses a visible left floating stick and an inset 84px Jump button. Hold/drag on the left to move with the existing auto aim/attack; use the other thumb to jump. A small neutral zone filters finger jitter; maximum movement speed is unchanged. Controls follow touch versus mouse/keyboard input, not screen width. Mouse/keyboard keeps WASD/arrows, mouse aiming/hold attack and Space to jump. Rotate or open Pause/Debug to safely release held touch.
+
+`tests/touch.cjs` covers input switching, radial movement, independent fingers, capture cancellation and transitions. Browser frame layouts were inspected; physical-device touch comfort still needs playtest. See `planning/touch-controls.md`.

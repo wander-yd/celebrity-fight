@@ -195,6 +195,11 @@ function harness(coreOverride, options = {}) {
     window: {
       innerWidth: options.width ?? 1280,
       innerHeight: options.height ?? 800,
+      matchMedia() {
+        return {
+          matches: !!options.coarse
+        };
+      },
       addEventListener(key, fn) {
         listeners[key] = fn;
       }

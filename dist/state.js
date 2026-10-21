@@ -34,6 +34,9 @@ const game = new Arena(),
     down: false
   };
 let lastMode = '',
+  inputMode = 'keyboard',
+  touchPointerId = null,
+  jumpPointerId = null,
   touchOrigin = null,
   touchMove = null,
   sound = false,

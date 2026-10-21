@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="A cartoon dollar-stack roguelite with three arenas, chasing bosses and synergistic builds.">
     <title>The Donald — Void Arena</title>
-    <link rel="stylesheet" href="styles.css?v=36">
+    <link rel="stylesheet" href="styles.css?v=37">
   </head>
   <body>
     <main>
@@ -31,8 +31,9 @@
               <div id="boss-label"></div>
               <div id="boss-meter" class="boss-meter" role="progressbar" aria-label="Boss health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" hidden><i id="boss-fill"></i></div>
             </div>
-            <button class="touch" id="jump" aria-label="Jump ready">JUMP</button>
           </div>
+          <div id="move-stick" class="move-stick" aria-hidden="true" hidden><div id="move-thumb" class="move-thumb"></div></div>
+          <button type="button" class="touch" id="jump" aria-label="Jump ready" hidden>JUMP</button>
           <div id="arena-message" class="arena-message" hidden></div>
           <div id="arena-prompt" class="arena-prompt" hidden></div>
           <div id="overlay" class="overlay"></div>
@@ -51,15 +52,15 @@
       </header>
       <div id="debug-body" class="debug-body"></div>
     </dialog>
-    <script src="core.js?v=36"></script>
-    <script src="timing.js?v=36"></script>
-    <script src="camera.js?v=36"></script>
-    <script src="state.js?v=36"></script>
-    <script src="render.js?v=36"></script>
-    <script src="ui.js?v=36"></script>
-    <script src="releases.js?v=36"></script>
-    <script src="debug.js?v=36"></script>
-    <script src="input.js?v=36"></script>
-    <script src="game.js?v=36"></script>
+    <script src="core.js?v=37"></script>
+    <script src="timing.js?v=37"></script>
+    <script src="camera.js?v=37"></script>
+    <script src="state.js?v=37"></script>
+    <script src="render.js?v=37"></script>
+    <script src="ui.js?v=37"></script>
+    <script src="releases.js?v=37"></script>
+    <script src="debug.js?v=37"></script>
+    <script src="input.js?v=37"></script>
+    <script src="game.js?v=37"></script>
   </body>
 </html>

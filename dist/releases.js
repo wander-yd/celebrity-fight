@@ -3,9 +3,21 @@
 // Human-maintained release history. Dates use Asia/Kuala_Lumpur.
 // Current publication resolves by projectId + version; exact historical IDs are filled next release.
 const VoidReleases = Object.freeze({
-  "currentVersion": 36,
+  "currentVersion": 37,
   "projectId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "entries": [
+    {
+      "version": 37,
+      "displayVersion": "0.2.1",
+      "date": "2026-10-22",
+      "type": "Controls",
+      "title": "Thumb-friendly mobile controls",
+      "changes": [
+        "Visible floating movement stick with a small deadzone; larger inset Jump button in both orientations.",
+        "Move and jump independently with two fingers; touch controls hide when using mouse or keyboard."
+      ],
+      "verification": "Automated input and regression checks passed; browser layout preview inspected. Physical-phone feel pending."
+    },
     {
       "version": 36,
       "displayVersion": "0.2.0",
@@ -16,7 +28,9 @@ const VoidReleases = Object.freeze({
         "Square arena with near-original area, closer smooth camera and floating HUD.",
         "Portrait/landscape keep the same visible world area; rotation preserves combat and player visibility."
       ],
-      "verification": "Automated checks and desktop/portrait/landscape browser previews passed; physical phone feel pending."
+      "verification": "Automated checks and desktop/portrait/landscape browser previews passed; physical phone feel pending.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_b391d10fc080819190eb2a356b272b82",
+      "commitSha": "3dafa13495ac4c18e40063b34efff9cbffa902b5"
     },
     {
       "version": 35,
@@ -190,5 +204,5 @@ const VoidReleases = Object.freeze({
       "commitSha": "a27a9bf599f4b9401eeb0e5b0467a135e8d2258b"
     }
   ],
-  "displayVersion": "0.2.0"
+  "displayVersion": "0.2.1"
 });
