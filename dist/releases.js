@@ -3,9 +3,20 @@
 // Human-maintained release history. Dates use Asia/Kuala_Lumpur.
 // Current publication resolves by projectId + version; exact historical IDs are filled next release.
 const VoidReleases = Object.freeze({
-  "currentVersion": 33,
+  "currentVersion": 34,
   "projectId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "entries": [
+    {
+      "version": 34,
+      "displayVersion": "0.1.2",
+      "date": "2026-10-21",
+      "type": "UI",
+      "title": "Familiar menu icons",
+      "changes": [
+        "Added consistent play, pause, sound and close icons; shortened restart controls and removed the death-screen tip."
+      ],
+      "verification": "Automated checks passed; device playtest pending."
+    },
     {
       "version": 33,
       "displayVersion": "0.1.1",
@@ -15,7 +26,9 @@ const VoidReleases = Object.freeze({
       "changes": [
         "Game layout now fits the screen from opening; removed Page view and view-switching buttons."
       ],
-      "verification": "Automated checks passed; device playtest pending."
+      "verification": "Automated checks passed; device playtest pending.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_8c9d60d638d88191b5ff66c1f5121995",
+      "commitSha": "58a86eb26208b4c3d4d2f0af5f615a2a44b295d2"
     },
     {
       "version": 32,
@@ -150,5 +163,5 @@ const VoidReleases = Object.freeze({
       "commitSha": "a27a9bf599f4b9401eeb0e5b0467a135e8d2258b"
     }
   ],
-  "displayVersion": "0.1.1"
+  "displayVersion": "0.1.2"
 });

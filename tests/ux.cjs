@@ -125,7 +125,8 @@ test('clipping the covered top margin preserves pointer-to-world mapping', () =>
 });
 test('tutorial instructions remain readable and the safe lesson still completes', () => {
   const h = harness();
-  assert.match(h.el('overlay').innerHTML, /id="start">START<\/button>/);
+  assert.equal(h.el('start').getAttribute('aria-label'), 'Start game');
+  assert.ok(h.el('start').children.some(c => c.tagName === 'svg'));
   assert.ok(!h.el('overlay').innerHTML.includes('Biden →'));
   h.click('start');
   assert.ok(h.el('overlay').innerHTML.includes('Jump near the shield → land → swing.'));
@@ -139,7 +140,7 @@ test('tutorial instructions remain readable and the safe lesson still completes'
   assert.ok(h.el('arena-instruction').textContent.includes('HIT!'));
   h.run('for(let i=0;i<80;i++)game.step(1/60,{});syncOverlay();hud()');
   assert.ok(h.el('overlay').innerHTML.includes('Practice complete'));
-  assert.match(h.el('overlay').innerHTML, /id="lessonDone">PLAY<\/button>/);
+  assert.equal(h.el('lessonDone').getAttribute('aria-label'), 'Play');
   h.click('lessonDone');
   assert.equal(h.run('game.mode'), 'play');
   assert.equal(h.el('arena-instruction').hidden, true);
@@ -270,5 +271,41 @@ test('shield-break labels are absent in combat and tutorial; shield recovery and
       assert.equal(h.el('jump').style.opacity, cd > 0 ? '.65' : '1');
     }
   }
+});
+test('icon controls retain accessible names, sound state and restart behavior without the death tip', () => {
+  const h = start();
+  for (const id of ['pause', 'debug-close']) {
+    assert.ok(h.el(id).getAttribute('aria-label'));
+    assert.ok(h.el(id).getAttribute('title'));
+    assert.ok(h.el(id).children.some(c => c.tagName === 'svg'));
+  }
+  h.click('pause');
+  assert.equal(h.el('resume').getAttribute('aria-label'), 'Resume');
+  assert.ok(h.el('resume').children.some(c => c.tagName === 'svg'));
+  assert.equal(h.el('sound').getAttribute('aria-pressed'), 'false');
+  assert.equal(h.el('sound').getAttribute('aria-label'), 'Unmute sound');
+  h.click('sound');
+  const soundOn = h.el('sound').innerHTML;
+  assert.equal(h.el('sound').getAttribute('aria-pressed'), 'true');
+  h.click('sound');
+  assert.equal(h.run('sound'), false);
+  assert.equal(h.el('sound').getAttribute('aria-pressed'), 'false');
+  assert.equal(h.el('sound').getAttribute('aria-label'), 'Unmute sound');
+  assert.equal(h.el('sound').getAttribute('title'), 'Unmute sound');
+  assert.notEqual(h.el('sound').innerHTML, soundOn);
+  h.click('resume');
+  h.click('pause');
+  assert.equal(h.el('sound').getAttribute('aria-pressed'), 'false');
+  h.click('sound');
+  assert.equal(h.el('sound').innerHTML, soundOn);
+  assert.equal(h.el('sound').getAttribute('aria-label'), 'Mute sound');
+  h.click('resume');
+  h.run("game.mode='dead';game.score=123;syncOverlay()");
+  assert.ok(!h.el('overlay').innerHTML.includes('Keep moving. Mind your melee range.'));
+  assert.ok(h.el('overlay').innerHTML.includes('Score 123'));
+  assert.equal(h.el('again').getAttribute('aria-label'), 'Restart run');
+  h.click('again');
+  assert.equal(h.run('game.mode'), 'play');
+  assert.equal(h.run('game.player.hp'), 6);
 });
 console.log(`${passed} UI/UX scenario groups passed. Geometry/DOM checks are fixtures, not browser layout/device verification.`);

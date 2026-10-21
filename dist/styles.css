@@ -1211,3 +1211,42 @@ body .overlay {
   font-size: 12px;
   color: #aebba5;
 }
+
+.ui-icon {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  vertical-align: middle;
+  pointer-events: none;
+}
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+.primary.icon-button {
+  width: 80px;
+  height: 72px;
+  padding: 16px;
+}
+.primary.icon-button .ui-icon {
+  width: 36px;
+  height: 36px;
+}
+.restart-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.debug-header #debug-close {
+  width: 44px;
+  min-height: 44px;
+  padding: 8px;
+}
+button:focus-visible {
+  outline: 3px solid #fff1b8;
+  outline-offset: 3px;
+}

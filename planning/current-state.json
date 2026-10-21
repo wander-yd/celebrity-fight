@@ -1,7 +1,7 @@
 {
-  "version": 33,
-  "authority": "User approved sole fitted game layout and simplified versioning; SPEC.md Build33",
-  "productState": "Viewport-fit game layout from opening; Page view and switches removed; gameplay preserved",
+  "version": 34,
+  "authority": "User approved familiar menu icons and removal of death-screen tip; SPEC.md Build34",
+  "productState": "Fitted game layout with consistent SVG menu icons, concise restart controls and no death tip; gameplay preserved",
   "removed": [
     "multi-room layout",
     "doors",
@@ -31,12 +31,12 @@
   ],
   "verification": {
     "command": "node tests/run.cjs",
-    "result": "Full suites including initial arena fit, absent view switches, resize and pause timing, loaded semantic version/Build and unchanged gameplay",
+    "result": "Full suites plus SVG/name/tooltip checks, sound toggle and persisted mute, death score/restart and existing menu flows",
     "syntax": "Changed JS syntax, HTML nesting/unique IDs, stylesheet contracts and diff whitespace pass",
     "browser": "No supported browser QA; viewport math/DOM are fixtures, native layout/touch/visual polish remain unverified"
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Refresh and play using the sole fitted layout on the normal device.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_f780eed2acb081918314e27873409ace",
-  "displayVersion": "0.1.1"
+  "nextAction": "Refresh and inspect the familiar controls on the normal device.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_8c9d60d638d88191b5ff66c1f5121995",
+  "displayVersion": "0.1.2"
 }

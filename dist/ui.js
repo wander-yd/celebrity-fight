@@ -19,6 +19,24 @@ function tone(f = 250, d = .07, type = 'triangle', v = .025) {
     o.stop(audio.currentTime + d);
   } catch (e) {}
 }
+function uiIcon(name) {
+  const paths = {
+    "play": "<path d=\"M8 5v14l11-7z\" fill=\"currentColor\" stroke=\"none\"/>",
+    "pause": "<path d=\"M8 5v14M16 5v14\" stroke-width=\"4\"/>",
+    "volume": "<path d=\"M11 5 6 9H3v6h3l5 4z\"/><path d=\"M15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14\"/>",
+    "mute": "<path d=\"M11 5 6 9H3v6h3l5 4z\"/><path d=\"m16 9 6 6m0-6-6 6\"/>",
+    "close": "<path d=\"m6 6 12 12M18 6 6 18\"/>",
+    "restart": "<path d=\"M3 10a9 9 0 1 1 1 8M3 4v6h6\"/>"
+  };
+  return '<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + paths[name] + '</svg>';
+}
+function updateSoundButton() {
+  const control = document.getElementById('sound');
+  control.innerHTML = uiIcon(sound ? 'volume' : 'mute');
+  control.setAttribute('aria-label', sound ? 'Mute sound' : 'Unmute sound');
+  control.setAttribute('title', sound ? 'Mute sound' : 'Unmute sound');
+  control.setAttribute('aria-pressed', String(sound));
+}
 function show(html) {
   overlay.dataset.mode = game.mode;
   overlay.innerHTML = html + '<div class="overlay-tools"><button type="button" class="small" id="menu-codex">DEBUG / CODEX</button></div>';
@@ -46,7 +64,7 @@ function syncOverlay() {
     return;
   }
   if (game.mode === 'menu') {
-    show('<h2>THE DONALD</h2><button class="primary" id="start">START</button><div class="hint">WASD: Move · Hold click: Attack · Space: Jump<br>Touch: Drag to move · Tap Jump</div>');
+    show('<h2>THE DONALD</h2><button class="primary icon-button" id="start" aria-label="Start game" title="Start game">' + uiIcon('play') + '</button><div class="hint">WASD: Move · Hold click: Attack · Space: Jump<br>Touch: Drag to move · Tap Jump</div>');
     button('start', () => {
       game.start();
     });
@@ -55,16 +73,17 @@ function syncOverlay() {
     button('practice', () => game.practice());
     button('skip', () => game.skipLesson());
   } else if (game.mode === 'tutorialDone') {
-    show('<h2>Practice complete</h2><button class="primary" id="lessonDone">PLAY</button>');
+    show('<h2>Practice complete</h2><button class="primary icon-button" id="lessonDone" aria-label="Play" title="Play">' + uiIcon('play') + '</button>');
     button('lessonDone', () => game.newRun());
   } else if (game.mode === 'paused') {
-    show('<div class="pause-primary"><div class="tag">ARENA PAUSED</div><button class="primary" id="resume">RESUME ↗</button></div><p class="pause-summary">Level ' + game.chapter + ' / 3 · Score ' + game.score + ' · ' + Math.floor(game.time) + ' seconds</p><details class="pause-section" id="pause-controls"><summary>Controls &amp; help</summary><p>WASD / arrows: move<br>Mouse: aim + hold click to swing<br>SPACE: jump · P / ESC: pause<br>Touch: drag to move + auto attack, tap JUMP<br>After a Boss, walk into the health kit to heal and choose an item.</p><p class="landscape-tip">On a phone, landscape gives you a larger arena.</p></details><details class="pause-section" id="pause-build"><summary>Your build · ' + game.items.length + ' items</summary><div class="pause-build"><b>YOUR BUILD · DOLLAR STACK</b>' + buildDetails() + '</div></details><div class="pause-settings"><button class="small" id="sound">' + (sound ? '♪ SOUND ON' : '♪ SOUND OFF') + '</button><button class="small" id="restart">↻ RESTART RUN</button></div>');
+    show('<div class="pause-primary"><div class="tag">ARENA PAUSED</div><button class="primary icon-button" id="resume" aria-label="Resume" title="Resume">' + uiIcon('play') + '</button></div><p class="pause-summary">Level ' + game.chapter + ' / 3 · Score ' + game.score + ' · ' + Math.floor(game.time) + ' seconds</p><details class="pause-section" id="pause-controls"><summary>Controls &amp; help</summary><p>WASD / arrows: move<br>Mouse: aim + hold click to swing<br>SPACE: jump · P / ESC: pause<br>Touch: drag to move + auto attack, tap JUMP<br>After a Boss, walk into the health kit to heal and choose an item.</p><p class="landscape-tip">On a phone, landscape gives you a larger arena.</p></details><details class="pause-section" id="pause-build"><summary>Your build · ' + game.items.length + ' items</summary><div class="pause-build"><b>YOUR BUILD · DOLLAR STACK</b>' + buildDetails() + '</div></details><div class="pause-settings"><button class="small icon-button" id="sound" aria-label="Mute sound" title="Mute sound"></button><button class="small restart-button" id="restart" aria-label="Restart run" title="Restart run">' + uiIcon('restart') + ' RESTART</button></div>');
     button('resume', () => game.pause());
     button('restart', () => game.newRun());
     document.getElementById('resume').focus();
+    updateSoundButton();
     document.getElementById('sound').onclick = () => {
       sound = !sound;
-      document.getElementById('sound').textContent = sound ? '♪ SOUND ON' : '♪ SOUND OFF';
+      updateSoundButton();
       tone(500);
     };
   } else if (game.mode === 'upgrade') {
@@ -78,7 +97,7 @@ function syncOverlay() {
     } else game.offer.forEach((_, i) => button('pick' + i, () => game.takeOffer(i)));
   } else if (['dead', 'win'].includes(game.mode)) {
     const win = game.mode === 'win';
-    show('<div class="tag">' + (win ? 'THREE BOSSES. NO LOOSE ENDS.' : 'CAMPAIGN ENDED') + '</div><h2>' + (win ? 'Victory.<br><em>At what cost?</em>' : 'Dropped<br><em>the cash.</em>') + '</h2><p>' + (win ? 'All three bosses and their surviving minions are defeated.' : 'Keep moving. Mind your melee range. Jump to break shields and trigger your landing items.') + '<br>Score ' + game.score + ' · ' + Math.floor(game.time) + ' seconds</p><button class="primary" id="again">RUN IT BACK ↗</button>');
+    show('<div class="tag">' + (win ? 'THREE BOSSES. NO LOOSE ENDS.' : 'CAMPAIGN ENDED') + '</div><h2>' + (win ? 'Victory.<br><em>At what cost?</em>' : 'Dropped<br><em>the cash.</em>') + '</h2><p>' + (win ? 'All three bosses and their surviving minions are defeated.<br>' : '') + 'Score ' + game.score + ' · ' + Math.floor(game.time) + ' seconds</p><button class="primary restart-button" id="again" aria-label="Restart run" title="Restart run">' + uiIcon('restart') + ' RESTART</button>');
     button('again', () => game.newRun());
   }
 }
