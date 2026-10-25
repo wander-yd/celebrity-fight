@@ -1,8 +1,17 @@
 {
   "projectId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "githubBackupStatus": "verified-through-build47; GitHub main source tree",
+  "githubBackupStatus": "Build48 source is published; private GitHub backup sync pending",
   "proposedRepository": "wander-yd/celebrity-fight",
   "versions": [
+    {
+      "build": 48,
+      "displayVersion": "0.4.0",
+      "tag": "v0.4.0-build48",
+      "commitSha": "2b708bbb6cfa0116dac8bbf8c5f40eef6e6c5df8",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_6e0a0b1237fc8191a2d54ecd0e621934",
+      "deploymentId": "appgdep_6ade96b9bf848191b0b74765d6405b91",
+      "status": "succeeded"
+    },
     {
       "build": 47,
       "displayVersion": "0.3.7",

@@ -225,6 +225,7 @@ function harness(coreOverride, options = {}) {
   vm.createContext(env);
   const scripts = [...html.matchAll(/<script\b[^>]*src="([^"]+)"[^>]*>/g)].map(match => match[1].split('?')[0]);
   for (const file of scripts) {
+    if (/^https:\/\//.test(file)) continue;
     assert.ok(/^[\w-]+\.js$/.test(file), 'unexpected script path');
     vm.runInContext(file === 'core.js' && coreOverride ? coreOverride : options.sources?.[file] ?? fs.readFileSync(path.join('dist', file), 'utf8'), env, {
       filename: file

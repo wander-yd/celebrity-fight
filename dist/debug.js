@@ -79,7 +79,8 @@ function createDebugCodex({
   syncOverlay,
   hud,
   drawEnemy,
-  drawPerson
+  drawPerson,
+  network
 }) {
   const {
     TYPES,
@@ -139,7 +140,7 @@ function createDebugCodex({
     }
   }
   function debugPage() {
-    return '<div class="debug-summary"><span><b>3</b> levels</span><span><b>7</b> enemy types</span><span><b>6</b> build items</span></div><section class="debug-toggle"><div><h3>Infinite hearts</h3></div><button type="button" id="debug-infinite" aria-pressed="' + game.debugInvincible + '" class="debug-switch">' + (game.debugInvincible ? 'ON' : 'OFF') + '</button></section><section class="codex-card"><div class="codex-eyebrow">CONTROL TEST</div><h3>Boss Practice</h3><p>Control Khamenei against a moving Hunter. Test the radial volley and warned missile strike.</p><div class="debug-actions"><button type="button" id="debug-practice-boss">Start Boss Practice ↗</button></div></section><div class="debug-chapters">' + THEMES.map((theme, i) => '<article class="codex-card"><div class="codex-eyebrow">LEVEL 0' + (i + 1) + '</div><h3>' + theme.name + '</h3>' + facts([['Wave', WAVES[i].count + ' enemies'], ['Boss', theme.hp + ' HP']]) + '<div class="debug-actions"><button type="button" id="debug-wave-' + i + '">Start wave ↗</button><button type="button" id="debug-boss-' + i + '">Start Boss ↗</button></div></article>').join('') + '</div>';
+    return '<div class="debug-summary"><span><b>3</b> levels</span><span><b>7</b> enemy types</span><span><b>6</b> build items</span></div><section class="debug-toggle"><div><h3>Infinite hearts</h3></div><button type="button" id="debug-infinite" aria-pressed="' + game.debugInvincible + '" class="debug-switch">' + (game.debugInvincible ? 'ON' : 'OFF') + '</button></section><section class="codex-card"><div class="codex-eyebrow">NETWORK TEST · TWO DEVICES</div><h3>Boss vs Hunter</h3><p>One device hosts the Boss. A second device joins as the Hunter. The Boss device owns combat and health state.</p><div class="debug-actions"><button type="button" id="debug-network-host">Host as Boss</button></div><label class="network-join-label" for="debug-network-room">Boss room code</label><div class="network-join-row"><input id="debug-network-room" type="text" autocomplete="off" spellcheck="false" maxlength="80" placeholder="Paste room code"><button type="button" id="debug-network-join">Join as Hunter</button></div><p id="debug-network-feedback" class="network-feedback" role="status" aria-live="polite"></p></section><section class="codex-card"><div class="codex-eyebrow">CONTROL TEST</div><h3>Boss Practice</h3><p>Control Khamenei against a moving Hunter. Test the radial volley and warned missile strike.</p><div class="debug-actions"><button type="button" id="debug-practice-boss">Start Boss Practice ↗</button></div></section><div class="debug-chapters">' + THEMES.map((theme, i) => '<article class="codex-card"><div class="codex-eyebrow">LEVEL 0' + (i + 1) + '</div><h3>' + theme.name + '</h3>' + facts([['Wave', WAVES[i].count + ' enemies'], ['Boss', theme.hp + ' HP']]) + '<div class="debug-actions"><button type="button" id="debug-wave-' + i + '">Start wave ↗</button><button type="button" id="debug-boss-' + i + '">Start Boss ↗</button></div></article>').join('') + '</div>';
   }
   const number = value => String(Number(value.toFixed(2)));
   const seconds = value => number(value) + 's';
@@ -337,6 +338,8 @@ function createDebugCodex({
         bind('debug-boss-' + i, () => jump(i + 1, true));
       }
       bind('debug-practice-boss', startBossPractice);
+      bind('debug-network-host', startNetworkHost);
+      bind('debug-network-join', startNetworkJoin);
     }
     if (tab === 'controls') bindControls();
     paintArt();
@@ -374,6 +377,27 @@ function createDebugCodex({
     if (!opened || !unlocked || !game.startBossPractice()) return false;
     returnMode = 'bossPractice';
     close();
+    return true;
+  }
+  function startNetworkHost() {
+    if (!opened || !unlocked || !network.host()) return false;
+    releaseInput();
+    game.startBossPractice();
+    returnMode = 'bossPractice';
+    close();
+    syncOverlay();
+    hud();
+    return true;
+  }
+  function startNetworkJoin() {
+    const field = document.getElementById('debug-network-room');
+    if (!opened || !unlocked || !network.join(field?.value)) return false;
+    releaseInput();
+    game.startBossPractice();
+    returnMode = 'bossPractice';
+    close();
+    syncOverlay();
+    hud();
     return true;
   }
   bind('debug-open', open);

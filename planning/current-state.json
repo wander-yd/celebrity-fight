@@ -1,7 +1,7 @@
 {
-  "version": 47,
-  "authority": "User approved Debug Boss Practice; SPEC.md Build47",
-  "productState": "Debug-only Boss Practice lets the player control Khamenei against a moving, attacking, telegraph-dodging Hunter opponent.",
+  "version": 48,
+  "authority": "User approved bounded two-device Boss vs Hunter validation; SPEC.md Build48",
+  "productState": "Debug has an isolated network test: Boss device hosts the authoritative simulation; Hunter device sends movement/attack input and renders host snapshots.",
   "removed": [
     "multi-room layout",
     "doors",
@@ -31,38 +31,38 @@
   ],
   "verification": {
     "command": "node tests/run.cjs",
-    "result": "Full regression, deterministic historical frame-by-frame combat parity, and Boss Practice scenarios passed.",
-    "browser": "DOM/canvas fixtures passed; physical desktop/mobile playtest remains pending."
+    "result": "Full regression, deterministic historical frame-by-frame combat parity, Boss Practice, and host-authority/snapshot scenarios passed.",
+    "browser": "DOM/canvas fixtures passed; two-device connection and physical desktop/mobile playtest remain pending."
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Play Boss Practice on desktop and phone; check Boss movement, volley readability, missile warning, opponent pressure, touch buttons and cooldown feedback.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_28049ba0876881919764aa991a526e87",
-  "displayVersion": "0.3.7",
+  "nextAction": "Open the published game on two devices, host as Boss, join as Hunter, check movement/attack/health/death synchronization, then disconnect and exit on both.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_0dd2dab91d1c8191a0ec5172468ee544",
+  "displayVersion": "0.4.0",
   "githubBackup": {
-    "status": "verified-through-build47; GitHub main source tree",
+    "status": "published Build48; private GitHub backup sync pending",
     "repository": "wander-yd/celebrity-fight",
     "references": "planning/published-versions.json",
-    "nextAction": "GitHub main was updated with Build47 files and verified against the pushed practice test.",
+    "nextAction": "Back up the exact published Build48 source and release tag to the private GitHub repository, then verify the branch and tag.",
     "sourceSnapshotCommit": "507e2735bd936fd90e5183eb63d37d0ce5da544f",
     "githubCommitSha": "73f538d834580bd581e82de738ce008349d7d456",
     "bundle": "GitHub source tree; prior complete-history bundle retained through Build46"
   },
   "priorPublication": {
-    "build": 46,
-    "displayVersion": "0.3.6",
-    "tag": "v0.3.6-build46",
-    "commitSha": "654397e1f086472e5528f3359ff3dfa7ffae3a83",
-    "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_28049ba0876881919764aa991a526e87",
-    "deploymentId": "appgdep_6ade8c1ebf308191a0b1c003bdfe1d31",
-    "status": "succeeded"
-  },
-  "publication": {
     "build": 47,
     "displayVersion": "0.3.7",
     "tag": "v0.3.7-build47",
     "commitSha": "507e2735bd936fd90e5183eb63d37d0ce5da544f",
     "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_0dd2dab91d1c8191a0ec5172468ee544",
     "deploymentId": "appgdep_6ade90403e188191b388f91de4d2c00d",
+    "status": "succeeded"
+  },
+  "publication": {
+    "build": 48,
+    "displayVersion": "0.4.0",
+    "tag": "v0.4.0-build48",
+    "commitSha": "2b708bbb6cfa0116dac8bbf8c5f40eef6e6c5df8",
+    "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_6e0a0b1237fc8191a2d54ecd0e621934",
+    "deploymentId": "appgdep_6ade96b9bf848191b0b74765d6405b91",
     "status": "succeeded"
   }
 }

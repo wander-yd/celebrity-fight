@@ -4,7 +4,7 @@
 const playerController = {
   read() { return VoidInput.command((inputMode === 'touch' ? touchController : keyboardController).read()); },
   clear() { keyboardController.clear(); touchController.clear(); },
-  jump() { return game.applyInputActions(VoidInput.command({ ...this.read(), jumpPressed: true })); },
+  jump() { if (typeof networkTest !== 'undefined' && networkTest.isClient) return false; return game.applyInputActions(VoidInput.command({ ...this.read(), jumpPressed: true })); },
   afterStep(command, previousSwing) {
     const started = game.room.melee.some(swing => swing.origin === game.player && swing !== previousSwing);
     if (command.attackPressed && started) touchController.acceptAttack();
@@ -23,7 +23,7 @@ function syncTouchControls() {
   const touch = inputMode === 'touch';
   document.getElementById('game-stage').dataset.input = inputMode;
   document.getElementById('move-stick').hidden = !touch || !['play', 'tutorial', 'reward', 'bossPractice'].includes(game.mode);
-  document.getElementById('jump').hidden = !touch || !['play', 'tutorial', 'bossPractice'].includes(game.mode);
+  document.getElementById('jump').hidden = !touch || !['play', 'tutorial', 'bossPractice'].includes(game.mode) || (typeof networkTest !== 'undefined' && networkTest.isClient);
   document.getElementById('attack').hidden = !touch || !['play', 'tutorial', 'bossPractice'].includes(game.mode);
   updateControlHints();
 }

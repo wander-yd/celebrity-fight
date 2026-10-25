@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="A cartoon dollar-stack roguelite with three arenas, chasing bosses and synergistic builds.">
     <title>The Donald — Void Arena</title>
-    <link rel="stylesheet" href="styles.css?v=47">
+    <link rel="stylesheet" href="styles.css?v=48">
   </head>
   <body>
     <main>
@@ -39,6 +39,7 @@
           <div id="touch-aim" aria-hidden="true" hidden></div>
           <div id="arena-message" class="arena-message" hidden></div>
           <div id="arena-prompt" class="arena-prompt" hidden></div>
+          <div id="network-status" class="network-status" hidden aria-live="polite"><span id="network-status-text"></span><span id="network-room-code"></span><button type="button" id="network-copy" hidden>COPY CODE</button><button type="button" id="network-leave">LEAVE TEST</button></div>
           <div id="overlay" class="overlay"></div>
           <div class="sr-only"><span id="jumptext"></span><span id="debug-status" role="status" hidden>Infinite hearts enabled</span></div>
         </section>
@@ -55,25 +56,27 @@
       </header>
       <div id="debug-body" class="debug-body"></div>
     </dialog>
-    <script src="pickup.js?v=47"></script>
-    <script src="actor-state.js?v=47"></script>
-    <script src="effects.js?v=47"></script>
-    <script src="projectile.js?v=47"></script>
-    <script src="boss-skills.js?v=47"></script>
-    <script src="weapon.js?v=47"></script>
-    <script src="core.js?v=47"></script>
-    <script src="timing.js?v=47"></script>
-    <script src="camera.js?v=47"></script>
-    <script src="state.js?v=47"></script>
-    <script src="touch-layout.js?v=47"></script>
-    <script src="render.js?v=47"></script>
-    <script src="ui.js?v=47"></script>
-    <script src="releases.js?v=47"></script>
-    <script src="debug.js?v=47"></script>
-    <script src="controller.js?v=47"></script>
-    <script src="input-keyboard.js?v=47"></script>
-    <script src="input-touch.js?v=47"></script>
-    <script src="input.js?v=47"></script>
-    <script src="game.js?v=47"></script>
+    <script src="pickup.js?v=48"></script>
+    <script src="actor-state.js?v=48"></script>
+    <script src="effects.js?v=48"></script>
+    <script src="projectile.js?v=48"></script>
+    <script src="boss-skills.js?v=48"></script>
+    <script src="weapon.js?v=48"></script>
+    <script src="core.js?v=48"></script>
+    <script src="timing.js?v=48"></script>
+    <script src="camera.js?v=48"></script>
+    <script src="state.js?v=48"></script>
+    <script src="touch-layout.js?v=48"></script>
+    <script src="render.js?v=48"></script>
+    <script src="ui.js?v=48"></script>
+    <script src="releases.js?v=48"></script>
+    <script src="debug.js?v=48"></script>
+    <script src="controller.js?v=48"></script>
+    <script src="input-keyboard.js?v=48"></script>
+    <script src="input-touch.js?v=48"></script>
+    <script src="input.js?v=48"></script>
+    <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js" crossorigin="anonymous"></script>
+    <script src="network.js?v=48"></script>
+    <script src="game.js?v=48"></script>
   </body>
 </html>

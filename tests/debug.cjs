@@ -236,6 +236,21 @@ test('Debug launches Boss Practice, closes into that mode, and shows Boss-specif
   h.click('resume');
   assert.equal(h.run('game.mode'), 'bossPractice');
 });
+
+test('network test stays behind the Debug lock and explains unavailable peer transport without entering combat', () => {
+  const h = harness();
+  h.click('debug-open');
+  assert.equal(h.el('debug-network-host'), null, 'network controls are not rendered before unlock');
+  h.unlock('voiddebug');
+  assert.ok(h.el('debug-network-host'));
+  assert.ok(h.el('debug-network-room'));
+  assert.ok(h.el('debug-network-join'));
+  h.click('debug-network-join');
+  assert.match(h.el('debug-network-feedback').textContent, /room code/i);
+  h.click('debug-network-host');
+  assert.equal(h.run('game.mode'), 'debug', 'missing PeerJS does not start a broken practice session');
+  assert.match(h.el('debug-network-feedback').textContent, /unavailable/i);
+});
 test('guide shows all enemies, live stats, all six items, every supported synergy and all Boss portraits', () => {
   const h = harness();
   h.click('debug-open');
@@ -351,8 +366,8 @@ test('guide and shipped UI stay English and new script assets are present', () =
   assert.ok(html.includes('aria-labelledby="debug-title"'));
   assert.ok(!html.includes('id="interact"'));
   assert.ok(!/E: SUPPLY|<kbd>E<|E to interact/.test(html));
-  assert.ok(html.includes('debug.js?v=47'));
-  assert.ok(html.indexOf('debug.js?v=47') < html.indexOf('game.js?v=47'));
+  assert.ok(html.includes('debug.js?v=48'));
+  assert.ok(html.indexOf('debug.js?v=48') < html.indexOf('game.js?v=48'));
 });
 test('in-arena HUD, cooldown ring and touch readiness agree; pause holds details and Q does nothing', () => {
   const h = harness();
@@ -424,7 +439,7 @@ test('Updates shows the loaded release and ordered rollback milestones without c
   const snapshot = h.run('JSON.stringify({mode:game.mode,time:game.time,player:game.player,room:game.room,items:game.items})');
   h.click('debug-tab-updates');
   const html = h.el('debug-body').innerHTML;
-  for (const value of ['LOADED VERSION', '<h3>0.3.7</h3>', 'Build 47', 'CURRENT', 'Boss Practice', 'Player stays visible after boss defeat', 'Landing-driven item builds', 'device playtest pending']) assert.ok(html.includes(value), value);
+  for (const value of ['LOADED VERSION', '<h3>0.4.0</h3>', 'Build 48', 'CURRENT', 'Boss Practice', 'Player stays visible after boss defeat', 'Landing-driven item builds', 'device playtest pending']) assert.ok(html.includes(value), value);
   assert.ok(html.indexOf('v31 ·') < html.indexOf('v30 ·'));
   assert.ok(!html.includes('appgver_'));
   assert.ok(!html.includes('debug-wave-'));
@@ -435,7 +450,7 @@ test('Updates shows the loaded release and ordered rollback milestones without c
   assert.ok(h.el('debug-wave-0'));
   h.click('debug-close');
   assert.equal(h.run('game.mode'), 'play');
-  const changed = fs.readFileSync('dist/releases.js', 'utf8').replace('"currentVersion": 47', '"currentVersion": 99');
+  const changed = fs.readFileSync('dist/releases.js', 'utf8').replace('"currentVersion": 48', '"currentVersion": 99');
   const oldTab = harness(undefined, {sources: {'releases.js': changed}});
   oldTab.click('debug-open');
   oldTab.unlock('voiddebug');

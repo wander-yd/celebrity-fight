@@ -3,9 +3,24 @@
 // Human-maintained release history. Dates use Asia/Kuala_Lumpur.
 // Current publication resolves by projectId + version; exact historical IDs are filled next release.
 const VoidReleases = Object.freeze({
-  "currentVersion": 47,
+  "currentVersion": 48,
+  "displayVersion": "0.4.0",
   "projectId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "entries": [
+    {
+      "version": 48,
+      "displayVersion": "0.4.0",
+      "date": "2026-10-25",
+      "type": "Multiplayer test",
+      "title": "Two-device Boss vs Hunter test",
+      "changes": [
+        "Debug can host as the Boss or join as the Hunter from a second device.",
+        "The Boss host owns combat and health; both devices receive the same live arena state."
+      ],
+      "verification": "Automated regressions, host damage authority and safe snapshot serialization passed. Cross-device network behavior still needs a two-device playtest.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_6e0a0b1237fc8191a2d54ecd0e621934",
+      "commitSha": "2b708bbb6cfa0116dac8bbf8c5f40eef6e6c5df8"
+    },
     {
       "version": 47,
       "displayVersion": "0.3.7",
@@ -346,5 +361,5 @@ const VoidReleases = Object.freeze({
       "commitSha": "a27a9bf599f4b9401eeb0e5b0467a135e8d2258b"
     }
   ],
-  "displayVersion": "0.3.7"
+  "displayVersion": "0.4.0"
 });

@@ -1290,6 +1290,38 @@ body main { padding:0; }
   line-height:1.35;
   padding:4px 0;
 }
+.network-status {
+  position:absolute;
+  z-index:5;
+  top:max(66px, calc(env(safe-area-inset-top) + 58px));
+  left:50%;
+  transform:translateX(-50%);
+  width:min(94%, 560px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+  padding:8px 10px;
+  border:1px solid #d9fb7655;
+  border-radius:8px;
+  background:#151d26eF;
+  color:#e9efdF;
+  font-size:12px;
+  text-align:center;
+}
+.network-status #network-room-code {
+  color:var(--lime);
+  font:12px monospace;
+  user-select:all;
+  overflow-wrap:anywhere;
+}
+.network-status button { padding:6px 9px; font-size:10px; }
+.network-join-label { display:block; margin:16px 0 6px; font-size:12px; color:#c0cbb8; }
+.network-join-row { display:flex; gap:8px; }
+.network-join-row input { min-width:0; flex:1; }
+.network-join-row button { white-space:nowrap; }
+.network-feedback { min-height:18px; margin:8px 0 0; font-size:12px; color:var(--lime); }
 .boss-panel {
   position:absolute;
   left:max(12px, env(safe-area-inset-left));

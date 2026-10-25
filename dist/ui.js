@@ -214,6 +214,8 @@ function updateTutorialInstruction() {
 }
 
 function controlDescription() {
+  if (game.mode === 'bossPractice' && networkTest.isActive && networkTest.isClient) return inputMode === 'touch' ? 'Left stick: move Hunter · Hold ATTACK: melee' : 'WASD / arrows: move Hunter · Hold click: melee';
+  if (game.mode === 'bossPractice' && networkTest.isActive) return inputMode === 'touch' ? 'Left stick: move Boss · ATTACK: radial volley · JUMP: warned missile' : 'WASD / arrows: move Boss · Hold click: radial volley · SPACE: warned missile strike';
   if (game.mode === 'bossPractice') return inputMode === 'touch' ? 'Left stick: move Boss · VOLLEY: radial shots · STRIKE: warned missile' : 'WASD / arrows: move Boss · Hold click: radial volley · SPACE: warned missile strike · P / ESC: pause';
   return inputMode === 'touch' ? 'Left stick: move · Hold ATTACK: auto aim · Drag ATTACK: manual aim · JUMP: jump' : 'WASD / arrows: move · Mouse: aim + hold click to attack · SPACE: jump · P / ESC: pause';
 }

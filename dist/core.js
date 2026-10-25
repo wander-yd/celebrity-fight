@@ -312,6 +312,7 @@
       this.debugInvincible = false;
       this.practiceCooldowns = null;
       this.practiceHunterRespawn = 0;
+      this.practiceHunterAttackQueued = false;
       this.practiceResetTimer = 0;
       this.player = ActorState.player(PLAYER_ABILITIES, { x: 80, y: 336 });
       this.offer = [];
@@ -831,6 +832,7 @@
       this.player.inv = 0;
       this.player.attackCd = 0;
       this.practiceHunterRespawn = 0;
+      this.practiceHunterAttackQueued = false;
       this.practiceResetTimer = 0;
       this.practiceCooldowns = { volley: 0, strike: 0 };
       this.createBoss();
@@ -856,18 +858,31 @@
       this.practiceCooldowns.strike = 3.8;
       return true;
     }
-    updatePracticeHunter(dt) {
+    updatePracticeHunter(dt, input = null) {
       const hunter = this.player,
         boss = this.boss;
       hunter.inv = Math.max(0, hunter.inv - dt);
       hunter.attackCd = Math.max(0, hunter.attackCd - dt);
       if (hunter.hp <= 0) {
+        this.practiceHunterAttackQueued = false;
         this.practiceHunterRespawn -= dt;
         if (this.practiceHunterRespawn <= 0) {
           hunter.hp = hunter.maxhp;
           hunter.x = ARENA.centerX - 135;
           hunter.y = ARENA.centerY;
           hunter.inv = 1.1;
+        }
+        return;
+      }
+      if (input) {
+        const mx = input.mx || 0, my = input.my || 0, n = Math.max(1, Math.hypot(mx, my));
+        moveBody(this.room, hunter, mx / n * hunter.speed * dt, my / n * hunter.speed * dt);
+        hunter.face = Math.atan2(boss.y - hunter.y, boss.x - hunter.x);
+        if (input.attackPressed) this.practiceHunterAttackQueued = true;
+        if ((input.attack || this.practiceHunterAttackQueued) && hunter.attackCd <= 0 && dist(hunter, boss) <= PLAYER_ABILITIES.melee.range + boss.r) {
+          this.beginSwing(hunter, boss);
+          hunter.attackCd = PLAYER_ABILITIES.melee.cycle;
+          this.practiceHunterAttackQueued = false;
         }
         return;
       }
@@ -909,7 +924,7 @@
         hunter.attackCd = 1.15;
       }
     }
-    stepBossPractice(dt, input) {
+    stepBossPractice(dt, input, hunterInput = null) {
       this.time += dt;
       this.practiceCooldowns.volley = Math.max(0, this.practiceCooldowns.volley - dt);
       this.practiceCooldowns.strike = Math.max(0, this.practiceCooldowns.strike - dt);
@@ -942,17 +957,17 @@
           if (input.attack && this.practiceCooldowns.volley <= 0) this.practiceBossVolley();
         }
       }
-      this.updatePracticeHunter(dt);
+      this.updatePracticeHunter(dt, hunterInput);
       this.updateMelee(dt, { x: this.boss.x, y: this.boss.y });
       this.updateProjectiles(dt);
       this.updateHazards(dt);
       this.animate(dt);
     }
-    step(dt, input = {}) {
+    step(dt, input = {}, hunterInput = null) {
       dt = clamp(dt, 0, .05);
       this.applyInputActions(input);
       if (this.mode === 'bossPractice') {
-        this.stepBossPractice(dt, input);
+        this.stepBossPractice(dt, input, hunterInput);
         return;
       }
       if (this.mode === 'reward') {

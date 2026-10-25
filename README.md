@@ -59,7 +59,7 @@ From Build33 onward, displayVersion uses 0.feature.patch: small fixes/UI cleanup
 
 Sites remains the publishing source. GitHub is a one-way private backup of the same Git history, not a second editable game or a second deployment. See [backup and restore](docs/backup-and-restore.md). Exact published SHAs, Sites saved IDs and tag names are recorded in `planning/published-versions.json`.
 
-Setup status: prepared; repository creation and authenticated Git push are still pending. Do not report the backup as complete until GitHub branch and tags have been independently verified.
+Private repository `wander-yd/celebrity-fight` is verified through Build47; Build48 backup is pending this release. Do not report it as complete until the Build48 branch and release tag are independently verified.
 # Mobile controls (0.2.1 / Build37)
 
 Touch uses a visible left floating stick and an inset 84px Jump button. Hold/drag on the left to move with the existing auto aim/attack; use the other thumb to jump. A small neutral zone filters finger jitter; maximum movement speed is unchanged. Controls follow touch versus mouse/keyboard input, not screen width. Mouse/keyboard keeps WASD/arrows, mouse aiming/hold attack and Space to jump. Rotate or open Pause/Debug to safely release held touch.
@@ -123,3 +123,9 @@ Full regression and historical frame-by-frame parity pass. The small modularizat
 The password-locked Debug tab can start Boss Practice, a standalone Khamenei test room. The player controls the Boss with WASD/arrow keys or the mobile movement stick; hold/click Attack for the radial volley and press Space/Strike for a delayed missile warning. A Hunter opponent moves around the Boss, attacks with the existing melee weapon, and attempts to leave missile warning circles. Defeated Hunters respawn, and a defeated practice Boss resets so the session continues. Pause/resume preserves the practice mode; starting a normal run clears practice state.
 
 The two practice attacks call helpers in `boss-skills.js`, and the normal chapter-three AI composes those same helpers in its original order and cooldown. Practice suppresses only the campaign threshold bombardment; normal-level Boss behavior remains parity-tested. Tests cover attack cooldowns, telegraph dodging, opponent attacks, resets, pause/resume, Debug entry and isolation from normal runs. Physical mobile control feel remains untested.
+
+## Two-device network test (0.4.0 / Build48)
+
+Debug → Network Test offers `Host as Boss` and `Join as Hunter`. Open the same game on two devices; the Boss device copies its displayed room code for the Hunter device. On desktop, Boss uses WASD/arrows, click/hold for radial volley and Space for the warned missile; Hunter uses WASD/arrows and click/hold to melee. On touch, both use the movement stick and ATTACK; the Hunter's Jump control is hidden in this first validation slice. `LEAVE TEST` exits and closes the connection on either device.
+
+The Boss host is the only device that advances combat, resolves hits and changes health. It sends state snapshots at15Hz; the Hunter sends movement/attack commands at30Hz and renders those host snapshots. The Hunter attack tap is queued until it can swing. This prototype has no account, database, matchmaking, persistent results or anti-cheat. It uses the free PeerJS Cloud only for WebRTC signaling; game state travels directly between browsers when their networks allow it. Some restrictive NAT/firewall combinations may need a TURN relay, which is not included. This is a connectivity/combat validation, not production multiplayer. `tests/network.cjs` checks host damage authority and snapshot actor references; automated tests cannot replace a real two-device session.
