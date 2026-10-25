@@ -354,6 +354,7 @@
     }
     setupChapter() {
       this.pausedFrom = null;
+      this.landingContacts = new Map();
       this.arena = this.makeArena();
       this.boss = null;
       this.waveTotal = WAVES[this.chapter - 1].count;
@@ -437,6 +438,7 @@
       return this.room.mobs.filter(e => e.hp > 0).length;
     }
     beginReward() {
+      this.landingContacts.clear();
       const pos = nearestFree(this.room, clamp(this.boss.x, ARENA.left + 70, ARENA.right - 70), clamp(this.boss.y, ARENA.top + 70, ARENA.bottom - 70), 22);
       this.room.pickup = {
         ...pos,
@@ -497,7 +499,10 @@
       this.player.inv = PLAYER_ABILITIES.health.hurtProtection;
       this.effect(this.player.x, this.player.y, 40, '#ff876f');
       this.events.push('hurt');
-      if (this.player.hp <= 0) this.mode = 'dead';
+      if (this.player.hp <= 0) {
+        this.landingContacts.clear();
+        this.mode = 'dead';
+      }
     }
     damage(e, n, source = 'hit') {
       if (e.hp <= 0) return;
@@ -519,6 +524,7 @@
         if (e.hp <= 0) {
           e.hp = 0;
           e.dead = true;
+          this.landingContacts.delete(e.id);
           this.score += 1000;
           this.say(`BOSS DOWN / ENEMIES LEFT: ${this.remaining()}`, 4);
           this.effect(e.x, e.y, 120, '#ffde9e');
@@ -577,62 +583,38 @@
           e.broken = a.landing.shieldBreak;
         }
         this.damage(e, a.landing.damage, 'landing');
+        // Only bodies overlapping this impact get an exit window. Never refresh
+        // an existing window just because another landing happens nearby.
+        if (e.hp > 0 && dist(e, p) < p.r + e.r && !this.landingContacts.has(e.id)) {
+          this.landingContacts.set(e.id, { remaining: .3 });
+        }
         this.label(e.x, e.y - e.r - 30, e.type === 'shield' ? `SHIELD BROKEN: ${a.landing.shieldBreak}s` : e.type === 'boss' ? 'BOSS STAGGERED' : 'STUNNED');
       }
       if (!hit) this.label(p.x, p.y - 35, 'LANDING PULSE');
-      this.separateLanding();
       p.jumpOrigin = null;
       return hit;
     }
-    separateLanding() {
-      const p = this.player,
-        targets = this.targets(),
-        overlapping = targets.filter(e => dist(p, e) < p.r + e.r);
-      if (!overlapping.length) return false;
-      const origin = {
-        x: p.x,
-        y: p.y
-      };
-      let dx = p.x - (p.jumpOrigin?.x ?? p.x),
-        dy = p.y - (p.jumpOrigin?.y ?? p.y);
-      if (Math.hypot(dx, dy) < .01) {
-        dx = Math.cos(p.face);
-        dy = Math.sin(p.face);
-      }
-      const preferred = Math.atan2(dy, dx);
-      let best = null,
-        score = Infinity;
-      const consider = point => {
-        if (!free(this.room, point.x, point.y, p.r) || targets.some(e => dist(point, e) < p.r + e.r + 4)) return;
-        const d = dist(origin, point);
-        if (d > 96) return;
-        const s = d + .01 * (1 - Math.cos(Math.atan2(point.y - origin.y, point.x - origin.x) - preferred));
-        if (s < score) {
-          score = s;
-          best = point;
+    updateLandingContacts(dt) {
+      if (!this.landingContacts.size) return;
+      const targets = new Map(this.targets().map(e => [e.id, e]));
+      for (const [id, contact] of this.landingContacts) {
+        const e = targets.get(id);
+        if (!e || dist(this.player, e) >= this.player.r + e.r) {
+          this.landingContacts.delete(id);
+          continue;
         }
-      };
-      for (const e of overlapping) {
-        const base = dist(p, e) > .01 ? Math.atan2(p.y - e.y, p.x - e.x) : preferred;
-        for (let i = 0; i < 32; i++) {
-          const a = base + i * TAU / 32,
-            r = p.r + e.r + 6;
-          consider({
-            x: e.x + Math.cos(a) * r,
-            y: e.y + Math.sin(a) * r
-          });
-        }
+        // Called before stun timers tick: charge only the portion after recovery.
+        contact.remaining -= Math.max(0, dt - Math.max(0, e.stun));
+        if (contact.remaining <= 0) this.landingContacts.delete(id);
       }
-      if (!best) for (let r = 8; r <= 96; r += 8) for (let i = 0; i < 32; i++) {
-        const a = preferred + i * TAU / 32;
-        consider({
-          x: origin.x + Math.cos(a) * r,
-          y: origin.y + Math.sin(a) * r
-        });
+    }
+    hurtByContact(e) {
+      if (dist(e, this.player) >= e.r + this.player.r) {
+        this.landingContacts.delete(e.id);
+        return;
       }
-      if (!best) return false;
-      Object.assign(p, best);
-      return true;
+      if (e.hp <= 0 || e.dead || e.stun > 0 || this.landingContacts.has(e.id)) return;
+      this.hurt();
     }
     echo(source, visited, kind = 'echo') {
       const candidates = this.targets().filter(e => !visited.includes(e.id) && dist(source, e) < 260).sort((a, b) => dist(source, a) - dist(source, b));
@@ -664,8 +646,13 @@
       });
       return true;
     }
-    updateMelee(dt) {
+    updateMelee(dt, aim) {
       for (const swing of this.room.melee) {
+        if (!swing.clone && aim) {
+          swing.origin.face = Math.atan2(aim.y - swing.origin.y, aim.x - swing.origin.x);
+          // Sample aim up to the windup boundary; the downswing commits this hit.
+          if (swing.elapsed < PLAYER_ABILITIES.melee.windup) swing.face = swing.origin.face;
+        }
         swing.elapsed += dt;
         if (swing.clone && swing.origin.life <= 0) {
           swing.elapsed = 1;
@@ -673,11 +660,12 @@
         }
         if (!swing.hit && swing.elapsed >= PLAYER_ABILITIES.melee.impact) {
           swing.hit = true;
-          const o = swing.origin;
+          const o = swing.origin, facing = o.face;
           this.attack(o, {
             x: o.x + Math.cos(swing.face) * 100,
             y: o.y + Math.sin(swing.face) * 100
           }, swing.clone);
+          if (!swing.clone && aim) o.face = facing;
         }
       }
       this.room.melee = this.room.melee.filter(s => s.elapsed < PLAYER_ABILITIES.melee.cycle);
@@ -803,7 +791,7 @@
           }
         } else steer(this.room, e, this.player, e.speed * scale, dt);
         this.applyConveyor(e, dt);
-        if (dist(e, this.player) < e.r + this.player.r) this.hurt();
+        this.hurtByContact(e);
       }
     }
     applyConveyor(e, dt) {
@@ -842,7 +830,7 @@
           });
         }
       }
-      if (dist(b, this.player) < b.r + this.player.r) this.hurt();
+      this.hurtByContact(b);
     }
     fireOriginalBoss(b, a) {
       const enraged = b.hp < b.maxhp * .5;
@@ -971,6 +959,7 @@
       const dead = this.room.mobs.filter(e => e.hp <= 0);
       this.room.mobs = this.room.mobs.filter(e => e.hp > 0);
       for (const e of dead) {
+        this.landingContacts.delete(e.id);
         this.score += e.type === 'mini' ? 15 : 50;
         this.effect(e.x, e.y, 25, e.color);
         if (this.has('chain') && e.mark > 0 && !e.noChain) this.fragments(e);
@@ -989,6 +978,10 @@
       this.room.clones = this.room.clones.filter(c => c.life > 0);
     }
     aimFor(input, origin = this.player) {
+      if (Number.isFinite(input.aimAngle)) return {
+        x: origin.x + Math.cos(input.aimAngle) * 100,
+        y: origin.y + Math.sin(input.aimAngle) * 100
+      };
       if (input.autoAim) {
         const e = this.targets().sort((a, b) => dist(a, origin) - dist(b, origin))[0];
         if (e) return e;
@@ -1013,8 +1006,12 @@
       for (const s of this.room.swings) s.life -= dt;
       this.room.swings = this.room.swings.filter(s => s.life > 0);
     }
+    applyInputActions(input) {
+      return input.jumpPressed ? this.jump() : false;
+    }
     step(dt, input = {}) {
       dt = clamp(dt, 0, .05);
+      this.applyInputActions(input);
       if (this.mode === 'reward') {
         this.updateReward(dt, input);
         return;
@@ -1055,6 +1052,7 @@
       if (p.jump <= 0 && this.room.puddles.some(pool => dist(pool, p) < pool.r)) speed *= .55;
       moveBody(this.room, p, mx / n * speed * dt, my / n * speed * dt);
       this.applyConveyor(p, dt);
+      this.updateLandingContacts(0);
       if (wasJump && p.jump === 0) this.land();
       const aim = this.aimFor(input);
       p.face = Math.atan2(aim.y - p.y, aim.x - p.x);
@@ -1062,8 +1060,9 @@
         this.beginSwing(p, aim);
         p.attackCd = PLAYER_ABILITIES.melee.cycle;
       }
-      this.updateMelee(dt);
+      this.updateMelee(dt, aim);
       this.updateFields(dt);
+      this.updateLandingContacts(dt);
       this.tickBoss(dt);
       this.updateMobs(dt);
       this.updateBoss(dt);
@@ -1148,6 +1147,7 @@
       }
     }
     practice() {
+      this.landingContacts = new Map();
       this.arena = this.makeArena();
       this.room.mobs = [];
       this.player.x = ARENA.centerX;
@@ -1179,14 +1179,14 @@
       p.jump = Math.max(0, p.jump - dt);
       const n = Math.max(1, Math.hypot(input.mx || 0, input.my || 0));
       moveBody(this.room, p, (input.mx || 0) / n * PLAYER_ABILITIES.movement.speed * dt, (input.my || 0) / n * PLAYER_ABILITIES.movement.speed * dt);
-      p.face = Math.atan2((input.aim?.y ?? ARENA.centerY + 30) - p.y, (input.aim?.x ?? ARENA.centerX) - p.x);
+      p.face = Number.isFinite(input.aimAngle) ? input.aimAngle : Math.atan2((input.aim?.y ?? ARENA.centerY + 30) - p.y, (input.aim?.x ?? ARENA.centerX) - p.x);
       for (const e of this.room.mobs) if (e.hp > 0) e.face = Math.atan2(p.y - e.y, p.x - e.x);
       if (was && p.jump === 0 && this.land()) this.lessonStage = 'attack';
       if (input.attack && p.attackCd <= 0) {
         this.beginSwing(p, this.aimFor(input));
         p.attackCd = PLAYER_ABILITIES.melee.cycle;
       }
-      this.updateMelee(dt);
+      this.updateMelee(dt, this.aimFor(input));
     }
   }
   globalThis.VoidArena = {

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="A cartoon dollar-stack roguelite with three arenas, chasing bosses and synergistic builds.">
     <title>The Donald — Void Arena</title>
-    <link rel="stylesheet" href="styles.css?v=38">
+    <link rel="stylesheet" href="styles.css?v=43">
   </head>
   <body>
     <main>
@@ -35,6 +35,8 @@
           <div id="control-safe-area" aria-hidden="true"></div>
           <div id="move-stick" class="move-stick" aria-hidden="true" hidden><div id="move-thumb" class="move-thumb"></div></div>
           <button type="button" class="touch" id="jump" aria-label="Jump ready" hidden>JUMP</button>
+          <button type="button" class="touch" id="attack" aria-label="Hold Attack; drag to aim" hidden>ATTACK</button>
+          <div id="touch-aim" aria-hidden="true" hidden></div>
           <div id="arena-message" class="arena-message" hidden></div>
           <div id="arena-prompt" class="arena-prompt" hidden></div>
           <div id="overlay" class="overlay"></div>
@@ -53,16 +55,19 @@
       </header>
       <div id="debug-body" class="debug-body"></div>
     </dialog>
-    <script src="core.js?v=38"></script>
-    <script src="timing.js?v=38"></script>
-    <script src="camera.js?v=38"></script>
-    <script src="state.js?v=38"></script>
-    <script src="touch-layout.js?v=38"></script>
-    <script src="render.js?v=38"></script>
-    <script src="ui.js?v=38"></script>
-    <script src="releases.js?v=38"></script>
-    <script src="debug.js?v=38"></script>
-    <script src="input.js?v=38"></script>
-    <script src="game.js?v=38"></script>
+    <script src="core.js?v=43"></script>
+    <script src="timing.js?v=43"></script>
+    <script src="camera.js?v=43"></script>
+    <script src="state.js?v=43"></script>
+    <script src="touch-layout.js?v=43"></script>
+    <script src="render.js?v=43"></script>
+    <script src="ui.js?v=43"></script>
+    <script src="releases.js?v=43"></script>
+    <script src="debug.js?v=43"></script>
+    <script src="controller.js?v=43"></script>
+    <script src="input-keyboard.js?v=43"></script>
+    <script src="input-touch.js?v=43"></script>
+    <script src="input.js?v=43"></script>
+    <script src="game.js?v=43"></script>
   </body>
 </html>

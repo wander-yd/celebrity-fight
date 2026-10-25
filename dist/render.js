@@ -157,8 +157,13 @@ function person(x, y, kind = 'trump', scale = 1, paint = ctx) {
 }
 function weaponPose(origin) {
   const swing = game.room.melee.find(s => s.origin === origin);
-  const face = swing ? swing.face : origin.face || 0,
-    c = Math.cos(face),
+  let face = swing ? swing.face : origin.face || 0;
+  if (swing && !swing.clone && swing.elapsed >= PLAYER_ABILITIES.melee.impact) {
+    const recovery = clamp((swing.elapsed - PLAYER_ABILITIES.melee.impact) / (PLAYER_ABILITIES.melee.cycle - PLAYER_ABILITIES.melee.impact), 0, 1);
+    const turn = Math.atan2(Math.sin((origin.face || 0) - face), Math.cos((origin.face || 0) - face));
+    face += turn * recovery;
+  }
+  const c = Math.cos(face),
     d = Math.sin(face),
     idle = {
       hx: origin.x + c * 14,

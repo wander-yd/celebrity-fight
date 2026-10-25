@@ -1,8 +1,6 @@
 'use strict';
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const cp = require('node:child_process');
 const {
   harness
 } = require('./harness.cjs');
@@ -132,7 +130,7 @@ test('released stick stays in place; a new higher touch survives stale release e
   assert.equal(h.run('touchMove.x'), 1);
   assert.equal(h.el('move-stick').style.top, '400px');
 });
-test('right Jump and its release leave left movement and auto attack running', () => {
+test('right Jump and its release leave independent left movement running', () => {
   const h = start();
   down(h);
   move(h);
@@ -211,20 +209,21 @@ test('reward retains movement stick, hides Jump and clears controls at item sele
   assert.equal(h.el('move-stick').hidden, true);
   assert.equal(h.run('touchMove'), null);
 });
-test('touch holds original auto aim/attack behavior; original simulation is unchanged', () => {
+test('movement touch no longer requests attacks; Attack has its own input', () => {
   const h = start();
   down(h);
   h.run('var received;game.step=(dt,input)=>{received=input}');
   h.frame(17);
-  assert.equal(h.run('received.autoAim'), true);
+  assert.equal(h.run('received.autoAim'), false);
+  assert.equal(h.run('received.attack'), false);
+  h.el('attack').onpointerdown(finger(2,300,650));
+  h.frame(34);
   assert.equal(h.run('received.attack'), true);
+  h.el('attack').onpointercancel(finger(2));
   assert.equal(h.run('received.mx'), 0);
   h.canvasListeners.pointerup(finger(1));
-  h.frame(34);
+  h.frame(51);
   assert.equal(h.run('received.attack'), false);
   assert.equal(h.run('received.autoAim'), false);
-  assert.equal(fs.readFileSync('dist/core.js', 'utf8'), cp.execFileSync('git', ['show', '700c4fabf8867b04a05e4de829d90ab73872ba53:dist/core.js'], {
-    encoding: 'utf8'
-  }));
 });
 console.log(`${passed} touch input scenario groups passed; physical-device comfort still needs playtest.`);

@@ -760,7 +760,8 @@ test('landing-frame projectiles, explosions and contact cannot remove a heart', 
     assert.equal(g.player.hp, 6, kind);
     assert.equal(g.player.jump, 0);
     assert.ok(g.player.inv >= .29);
-    assert.ok(C.dist(g.player, b) >= g.player.r + b.r + 3);
+    assert.equal(g.player.x, 480);
+    assert.equal(g.player.y, 360);
     assert.equal(b.hp, kind === 'blast' ? 96 : 101);
   }
 });
@@ -781,7 +782,7 @@ test('landing grace expires, preserves longer invulnerability and does not grant
   assert.equal(g.player.hp, 5);
   assert.equal(g.player.jumpCd, 0);
 });
-test('landing separation handles exact overlap, arena edges and nearby groups without moving enemies', () => {
+test('landing preserves player and enemy positions at exact overlap, arena edges and nearby groups', () => {
   for (const point of [{
     x: 480,
     y: 360
@@ -809,8 +810,8 @@ test('landing separation handles exact overlap, arena edges and nearby groups wi
     };
     g.land();
     assert.ok(C.free(g.room, g.player.x, g.player.y, g.player.r));
-    assert.ok(C.dist(g.player, b) >= g.player.r + b.r + 3);
-    assert.ok(C.dist(g.player, point) <= 96);
+    assert.equal(g.player.x, point.x);
+    assert.equal(g.player.y, point.y);
     assert.equal(b.x, before.x);
     assert.equal(b.y, before.y);
   }
@@ -824,7 +825,9 @@ test('landing separation handles exact overlap, arena edges and nearby groups wi
     e.hp = 20;
   }
   g.land();
-  for (const e of g.targets()) assert.ok(C.dist(g.player, e) >= g.player.r + e.r + 3);
+  assert.equal(g.player.x, 480);
+  assert.equal(g.player.y, 360);
+  assert.deepEqual(g.targets().map(e => e.x), [465, 480, 495]);
 });
 test('non-overlapping landing keeps position and landing zones stay at the true impact point', () => {
   const g = fresh();
@@ -966,7 +969,7 @@ test('pull and slow preserve Boss modifiers without changing firing or body radi
   assert.equal(b.maxhp, 105);
   assert.equal(b.speed, 30);
 });
-test('overlapping settlements expire once each; new fields remain at impact before separation', () => {
+test('overlapping settlements expire once each; fields and player remain at the impact point', () => {
   const g = fresh();
   clear(g);
   g.items = ['settle', 'pull', 'landing'];
@@ -984,7 +987,8 @@ test('overlapping settlements expire once each; new fields remain at impact befo
     assert.equal(z.x, point.x);
     assert.equal(z.y, point.y);
   }
-  assert.ok(C.dist(g.player, b) > 41);
+  assert.equal(g.player.x, point.x);
+  assert.equal(g.player.y, point.y);
   g.items = ['settle'];
   Object.assign(g.player, point);
   g.land();

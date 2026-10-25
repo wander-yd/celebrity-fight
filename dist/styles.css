@@ -1439,3 +1439,8 @@ body .overlay { z-index:5; }
   .control-profiles { margin:10px 0; }
   .control-fields { margin:0 0 12px; gap:8px; }
 }
+
+/* Independent mobile attack and short manual-aim guide. */
+#attack { border-radius:50%; background:#372b20; border-color:#ffcb86; }
+#touch-aim { position:absolute; z-index:3; width:72px; height:3px; background:#ffdf9d; transform-origin:0 50%; pointer-events:none; box-shadow:0 0 3px #000; }
+#touch-aim::after { content:""; position:absolute; right:-1px; top:-4px; width:9px; height:9px; border-top:3px solid #ffdf9d; border-right:3px solid #ffdf9d; transform:rotate(45deg); }

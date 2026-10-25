@@ -115,7 +115,7 @@ test('camera projection maps mouse input and refreshes stationary aim during cam
   assert.ok(Math.abs(projected.x - expected.x) < 1e-8);
   assert.ok(Math.abs(projected.y - expected.y) < 1e-8);
   const oldAim = h.run('pointer.x');
-  h.run('game.player.x+=60;camera.follow(game.player,.1);refreshAim()');
+  h.run('game.player.x+=60;camera.follow(game.player,.1);keyboardController.refreshAim()');
   assert.notEqual(h.run('pointer.x'), oldAim);
   projected = JSON.parse(h.run('JSON.stringify(camera.worldToScreen(pointer))'));
   assert.ok(Math.abs(projected.x - expected.x) < 1e-8);

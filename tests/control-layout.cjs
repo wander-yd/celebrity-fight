@@ -72,7 +72,7 @@ test('portrait and landscape edits persist independently across reload, reset on
   assert.equal(again.run('touchLayout.get().landscape.y'), .75);
   assert.equal(again.run('touchLayout.get().landscape.x'), .9);
   h.click('controls-reset');
-  assert.equal(h.run('touchLayout.get().landscape.y'), .7);
+  assert.equal(h.run('touchLayout.get().landscape.y'), .43);
   assert.equal(h.run('touchLayout.get().portrait.y'), .6);
 });
 test('relative layout remains inside safe bounds across devices and extreme edits', () => {
@@ -91,7 +91,7 @@ test('corrupt, future, invalid and unavailable storage all leave usable defaults
       storage: memory(initial)
     });
     const c = JSON.parse(h.run('touchLayout.export()'));
-    assert.equal(c.version, 1);
+    assert.equal(c.version, 2);
     assert.ok(c.portrait.x >= .55 && c.portrait.x <= .95);
     assert.ok(c.portrait.y >= .35 && c.portrait.y <= .88);
     assert.ok(c.portrait.size >= 64 && c.portrait.size <= 112);
@@ -142,9 +142,10 @@ test('drag owns one pointer, updates configuration, cancellation stops edits', (
     button: 0,
     preventDefault() {}
   });
+  const initialY = h.run('touchLayout.get().portrait.y');
   button.onpointerdown(e(1, 197, 406));
   button.onpointermove(e(2, 100, 200));
-  assert.equal(h.run('touchLayout.get().portrait.y'), .78);
+  assert.equal(h.run('touchLayout.get().portrait.y'), initialY);
   button.onpointermove(e(1, 170, 300));
   assert.ok(h.run('touchLayout.get().portrait.y') < .6);
   const saved = h.run('touchLayout.export()');
@@ -191,6 +192,50 @@ test('preview and live Jump use the same current-device safe area', () => {
   assert.ok(Math.abs(parseFloat(h.el('controls-preview-jump').style.left) / 100 * 390 - x) < 1e-7);
   assert.ok(Math.abs(parseFloat(h.el('controls-preview-jump').style.top) / 100 * 844 - y) < 1e-7);
   assert.ok(x - 42 >= 20 && x + 42 <= 370 && y - 42 >= 24 && y + 42 <= 804);
+});
+test('legacy Jump layouts migrate without overwriting the original saved profile', () => {
+  const legacy = JSON.stringify({ version: 1, portrait: { x: .72, y: .58, size: 90 }, landscape: { x: .9, y: .7, size: 100 } });
+  const storage = memory(legacy);
+  const h = open({ storage });
+  assert.equal(h.run('touchLayout.get().portrait.y'), .58);
+  assert.equal(h.run('touchLayout.get().landscape.size'), 100);
+  h.click('controls-edit-attack');
+  slider(h, 'size', 108);
+  slider(h, 'height', 22);
+  const again = harness(undefined, { storage });
+  assert.equal(again.run('touchLayout.get().portrait.attack.size'), 108);
+  assert.equal(again.run('touchLayout.get().portrait.attack.y'), .78);
+  assert.equal(again.run('touchLayout.get().portrait.y'), .58);
+  assert.equal(storage.getItem('void-arena-touch-layout-v1'), legacy);
+});
+test('dual buttons never overlap across defaults, extreme edits and narrow safe areas', () => {
+  const h = harness();
+  for (const [w, height] of [[320, 568], [390, 844], [844, 390], [1024, 768], [280, 240]]) {
+    for (const x of [.55, .95]) for (const y of [.35, .88]) {
+      const placed = JSON.parse(h.run(`JSON.stringify(VoidTouchLayout.layout({x:${x},y:${y},size:112,attack:{x:${x},y:${y},size:112}},${w},${height},{left:20,top:16,width:${w - 40},height:${height - 32}}))`));
+      for (const p of Object.values(placed)) {
+        assert.ok(p.x - p.size / 2 >= 20 && p.x + p.size / 2 <= w - 20);
+        assert.ok(p.y - p.size / 2 >= 16 && p.y + p.size / 2 <= height - 16);
+      }
+      assert.ok(Math.hypot(placed.jump.x - placed.attack.x, placed.jump.y - placed.attack.y) >= (placed.jump.size + placed.attack.size) / 2 + 9.99);
+    }
+  }
+});
+test('editing Attack has matching live/preview geometry and cancels a selected-control drag', () => {
+  const h = open({ storage: memory() });
+  h.click('controls-edit-attack');
+  slider(h, 'height', 25);
+  slider(h, 'size', 100);
+  assert.equal(h.el('attack').style.width, '100px');
+  assert.ok(Math.abs(parseFloat(h.el('controls-preview-attack').style.left) / 100 * 390 - parseFloat(h.el('attack').style.left)) < 1e-7);
+  assert.ok(Math.abs(parseFloat(h.el('controls-preview-attack').style.top) / 100 * 844 - parseFloat(h.el('attack').style.top)) < 1e-7);
+  const button = h.el('controls-preview-attack');
+  const e = { pointerId: 4, clientX: 100, clientY: 200, preventDefault() {} };
+  button.onpointerdown(e);
+  h.click('controls-edit-jump');
+  const snapshot = h.run('touchLayout.export()');
+  button.onpointermove({ ...e, clientX: 150 });
+  assert.equal(h.run('touchLayout.export()'), snapshot);
 });
 test('copy exports exactly both local profiles; denied clipboard exposes selectable text', async () => {
   let copied;

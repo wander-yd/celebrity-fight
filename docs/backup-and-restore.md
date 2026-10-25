@@ -2,11 +2,20 @@
 
 ## Status
 
-Prepared through Build38, not yet uploaded. The intended repository is `wander-yd/donald-void-arena`, private. Confirm its creation, privacy and authenticated Git access before using it. The GitHub connector currently available can read/write files in existing repositories, but does not create repositories or transfer this complete Git history. Do not substitute a file-only upload for the history backup.
+Repository: private `wander-yd/celebrity-fight`. Game publication remains on Sites at 0.3.3 / Build43.
 
-The live game remains on Sites. This documentation-only setup does not publish a new game build or change its displayed version, currently 0.2.2 / Build38.
+The connector sync uploads the current tracked source and a full Git bundle at `backups/celebrity-fight-build43.bundle`. The bundle retains exact original commits and all release tags through Build43. GitHub main keeps its pre-existing history and gains a source-backup commit; newer original commits/tags are inside the bundle, not native GitHub refs. This is a complete restorable history backup, not an ordinary Git push. Remote verification is recorded separately in `backups/manifest.json`.
 
-The current backup attempt confirmed that the target repository is not accessible through the connector and the cloud browser requires GitHub sign-in. This environment has no authenticated GitHub Git transport. Repository creation, actual GitHub upload and remote-clone verification remain pending; offline bundle restore is separate evidence.
+Restore the exact history after cloning/downloading the bundle:
+
+```sh
+git clone backups/celebrity-fight-build43.bundle ../celebrity-fight-restored
+cd ../celebrity-fight-restored
+git tag --list
+node tests/run.cjs
+```
+
+Keep GitHub native branch history separate from the restored Sites history until an authenticated Git migration is chosen. Do not force-push either history.
 
 ## Initial setup
 
@@ -16,7 +25,7 @@ The current backup attempt confirmed that the target repository is not accessibl
 
    ```sh
    git remote get-url github-backup
-   git remote add github-backup https://github.com/wander-yd/donald-void-arena.git
+   git remote add github-backup https://github.com/wander-yd/celebrity-fight.git
    ```
 
    Run the add command only if that remote is absent. An unexpected existing URL requires inspection, not replacement.

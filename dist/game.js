@@ -4,20 +4,15 @@
 const frameClock = VoidTiming.createClock();
 function loop(t) {
   syncCameraRoom();
-  refreshAim();
+  keyboardController.refreshAim();
   const cameraDt = cameraStamp === null ? 0 : Math.max(0, Math.min(.25, (t - cameraStamp) / 1000));
   cameraStamp = t;
-  const input = {
-    mx: touchMove ? touchMove.x : (keys.d || keys.arrowright ? 1 : 0) - (keys.a || keys.arrowleft ? 1 : 0),
-    my: touchMove ? touchMove.y : (keys.s || keys.arrowdown ? 1 : 0) - (keys.w || keys.arrowup ? 1 : 0),
-    aim: pointer,
-    attack: pointer.down || !!touchMove,
-    autoAim: !!touchMove
-  };
   frameClock.advance(t, game.room, !document.hidden && ['play', 'tutorial', 'tutorialSuccess', 'reward'].includes(game.mode), dt => {
     const mode = game.mode,
       room = game.room;
-    game.step(dt, input);
+    const command = playerController.read(), previousSwing = game.room.melee.find(swing => swing.origin === game.player);
+    game.step(dt, VoidInput.simulation(command));
+    playerController.afterStep(command, previousSwing);
     if (game.player.hp < lastHp) heartFlash = .35;
     if (lastJumpCd > 0 && game.player.jumpCd <= 0) jumpFlash = .2;
     lastHp = game.player.hp;
@@ -28,9 +23,10 @@ function loop(t) {
   });
   syncCameraRoom();
   if (!document.hidden && ['play', 'tutorial', 'tutorialSuccess', 'reward'].includes(game.mode)) camera.follow(game.player, cameraDt);
-  refreshAim();
+  keyboardController.refreshAim();
   syncOverlay();
   hud();
+  touchController.drawAim();
   draw();
   for (const e of game.events.splice(0)) {
     if (e === 'swing') tone(160, .065, 'triangle', .018);
@@ -45,7 +41,6 @@ const debugPanel = createDebugCodex({
   game,
   releaseInput() {
     release();
-    for (const k of Object.keys(keys)) keys[k] = false;
   },
   syncOverlay,
   hud,

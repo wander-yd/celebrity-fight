@@ -1,0 +1,10 @@
+{
+  "build": 43,
+  "displayVersion": "0.3.3",
+  "sourceHead": "eef650dbbe7c239c6042f91f84a3b4d1fc4a4688",
+  "publishedSource": "7c4cf99c15458cc1926d23bfaac3ec704107575d",
+  "bundle": "backups/celebrity-fight-build43.bundle",
+  "bundleSha256": "a5b1224dbf0366bbb3c3b50a5b6f8fc2e4f9282c74b76ac87833a164cbc1b852",
+  "history": "Complete exact original commits and release tags are stored inside the bundle. GitHub main preserves its previous history and adds a snapshot commit.",
+  "verification": "Bundle cloned successfully; original game regression passed; remote blob/tree verification is required before reporting completion."
+}

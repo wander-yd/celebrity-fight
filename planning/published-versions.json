@@ -1,8 +1,45 @@
 {
   "projectId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "githubBackupStatus": "pending-repository-creation-and-authenticated-git-push",
-  "proposedRepository": "wander-yd/donald-void-arena",
+  "githubBackupStatus": "prepared-through-build43; connector-source-and-complete-history-bundle; remote-verification-pending",
+  "proposedRepository": "wander-yd/celebrity-fight",
   "versions": [
+    {
+      "build": 43,
+      "displayVersion": "0.3.3",
+      "tag": "v0.3.3-build43",
+      "commitSha": "7c4cf99c15458cc1926d23bfaac3ec704107575d",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_48bf603f20bc81919fd07d84cfcf7cfc",
+      "deploymentId": "appgdep_6ade84b404c08191bb83f051095bbba7",
+      "status": "succeeded"
+    },
+    {
+      "build": 42,
+      "displayVersion": "0.3.2",
+      "tag": "v0.3.2-build42",
+      "commitSha": "1a06ec9773f52961fbfb71bec72044b4ba4d18ba",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_4f1bc686796881918f850b5a7c8595d8"
+    },
+    {
+      "build": 41,
+      "displayVersion": "0.3.1",
+      "tag": "v0.3.1-build41",
+      "commitSha": "eb9a019c20fcfa2efb0b32f6db139a836ed931a7",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_57be2bd99f9c8191baabdf79a8390cea"
+    },
+    {
+      "build": 40,
+      "displayVersion": "0.3.0",
+      "tag": "v0.3.0-build40",
+      "commitSha": "cfb1dc73fa5a3cea33c557fd5155371918eb10a6",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_8cb085c577848191b0a04d83c7857f94"
+    },
+    {
+      "build": 39,
+      "displayVersion": "0.2.3",
+      "tag": "v0.2.3-build39",
+      "commitSha": "0b8eef73a3e68847db4dc5e9279039f59da1cc71",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_ddbe005d2888819186b24f7600c0275d"
+    },
     {
       "build": 38,
       "displayVersion": "0.2.2",

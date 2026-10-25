@@ -13,7 +13,10 @@ A buildless browser game. The intended rules and change boundaries live in `SPEC
 | `dist/render.js` | Character art and ordered canvas drawing passes |
 | `dist/ui.js` | Menus, HUD text and sound |
 | `dist/debug.js` | Pausing Debug & Codex dialog |
-| `dist/input.js` | Keyboard, mouse, touch and interruption handlers |
+| `dist/controller.js` | Pure device-independent command format and simulation mapping |
+| `dist/input-keyboard.js` | Keyboard/mouse adapter |
+| `dist/input-touch.js` | Touch gestures, soft/manual aim and feedback adapter |
+| `dist/input.js` | Adapter coordination, command dispatch and interruption clearing |
 | `dist/game.js` | Clock integration and startup |
 | `dist/styles.css` | Page, arena, menus and Codex styling |
 | `dist/index.html` | Page structure and explicit classic-script load order |
@@ -68,3 +71,31 @@ Touch uses a visible left floating stick and an inset 84px Jump button. Hold/dra
 The movement stick now fades at its release point instead of returning to a home corner. Debug → Controls lets you drag/resize Jump or use the labelled sliders, independently for Portrait and Landscape. Changes autosave on the current browser; Reset restores the selected profile; Copy config copies or exposes selectable JSON to share for default tuning. This does not change other players' defaults. Relative positions are constrained to the current safe area; opposite-orientation preview is approximate until rotation. Storage failure falls back to session-only settings with a visible message.
 
 `touch-layout.js` owns versioned layout validation/storage and safe positioning; `debug.js` owns the paused editor. See `planning/touch-layout-tuning.md` for limits and verification.
+
+## Landing contact fix (0.2.3 / Build39)
+
+Landing no longer relocates overlapping bodies. A per-target contact-only exit window waits for stun recovery, then expires after 0.3 seconds or immediately on separation. It never extends projectile/explosion immunity. Jump damage, shield breaking and item interactions remain unchanged. `tests/landing-contact.cjs` covers recovery, re-entry, unrelated enemies, resistant Bosses, projectile/blast damage, pause and resets. Historical combat parity disables only the baseline's former landing relocation; dedicated scenarios verify the intentional difference.
+
+## Independent mobile attack (0.3.0 / Build40)
+
+Left touch movement no longer attacks. Tap ATTACK requests one swing at the next available normal cooldown; hold repeats. Drag12 CSS pixels to switch the current press to manual aim; release ends repeat, while an initiated swing completes. A single pending tap cannot accumulate repeated clicks. Soft aim selects visible targets, prioritizes melee reach, retains nearby targets to reduce flicker and keeps facing if none are visible. It never changes reach/damage/cadence. Input adapters feed the existing simulation aim/attack interface.
+
+ATTACK defaults to96px and Jump84px above-left, with safe-area and non-overlap placement. Debug Controls edits both buttons independently in portrait/landscape; Reset resets the selected orientation. Version2 local storage migrates version1 Jump settings without overwriting the old storage key. Layout can shrink on tiny viewports to keep buttons separate. Help follows actual touch/keyboard mode. Keyboard/mouse and landing behavior remain unchanged.
+
+`tests/attack.cjs` covers independent fingers, tap/hold cadence, manual direction, target stability/visibility/reach, interruptions and desktop inputs. Layout tests cover migration, both buttons and extreme placement. Browser editor checks complement fixtures; physical-phone ergonomics and fast Attack→Jump thumb switching remain playtest evidence.
+
+## Swing aiming (0.3.1 / Build41)
+
+Player swings track live aim during0.12s windup, commit direction for the downswing/0.20s impact, and visually turn back toward live aim during recovery to0.42s via the shortest angle. Impact never overwrites the player's live aim or hits twice. Clone rules and melee stats are unchanged. `tests/swing-aim.cjs` covers boundary locking, damage, recovery, clones and combat/tutorial/touch integration. Historical parity explicitly excludes the new steering behavior. Physical-device feel remains pending.
+
+## Controller extraction (0.3.2 / Build42)
+
+Device adapters emit moveX/moveY, world aim, attackHeld, attackPressed and jumpPressed. `controller.js` snapshots those commands without DOM dependencies and maps them onto the retained simulation interface. `input.js` selects the adapter, clears both on interruption, and acknowledges pending taps only after a swing starts. Immediate Jump requests pass through `Arena.applyInputActions`; normal fixed steps never replay the request. Existing shared browser state remains in state.js; Actor/Ability/state encapsulation and networking are deferred.
+
+`tests/controllers.cjs` verifies identical device commands, immediate one-shot Jump, pending taps, clearing without deleting swings, and representative keyboard/touch replay against Build41. Existing full regression remains required. Stop for desktop/phone smoke playtest before extracting an Ability.
+
+## Frozen touch aim (0.3.3 / Build43)
+
+Normal ATTACK release captures the last direction, including a single pending tap. Idle and released reads never query targets; a new press restores assisted aim. Touch manual/frozen commands carry an optional aimAngle so movement cannot shift facing through stale world coordinates. Mouse aim, damage, cadence and swing locking remain unchanged. Cancellation clears the pending attack without selecting a target.
+
+Five regression groups cover idle combat/tutorial movement, queued release, enemy motion after release, manual movement and cancellation. Full regression passes; physical-phone feel remains pending.

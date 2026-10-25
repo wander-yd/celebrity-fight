@@ -42,6 +42,7 @@ function show(html) {
   overlay.innerHTML = html + '<div class="overlay-tools"><button type="button" class="small" id="menu-codex">DEBUG / CODEX</button></div>';
   document.getElementById('menu-codex').onclick = () => debugPanel.open();
   overlay.classList.remove('hidden');
+  updateControlHints();
 }
 function button(id, fn) {
   document.getElementById(id).onclick = () => {
@@ -65,7 +66,7 @@ function syncOverlay() {
     return;
   }
   if (game.mode === 'menu') {
-    show('<h2>THE DONALD</h2><button class="primary" id="start" aria-label="Start game" title="Start game">START</button><div class="hint">WASD: Move · Hold click: Attack · Space: Jump<br>Touch: Left stick to move · Tap Jump</div>');
+    show('<h2>THE DONALD</h2><button class="primary" id="start" aria-label="Start game" title="Start game">START</button><div class="hint" id="control-hint"></div>');
     button('start', () => {
       game.start();
     });
@@ -77,7 +78,7 @@ function syncOverlay() {
     show('<h2>Practice complete</h2><button class="primary icon-button" id="lessonDone" aria-label="Play" title="Play">' + uiIcon('play') + '</button>');
     button('lessonDone', () => game.newRun());
   } else if (game.mode === 'paused') {
-    show('<div class="pause-primary"><div class="tag">ARENA PAUSED</div><button class="primary" id="resume" aria-label="Resume" title="Resume">RESUME</button></div><p class="pause-summary">Level ' + game.chapter + ' / 3 · Score ' + game.score + ' · ' + Math.floor(game.time) + ' seconds</p><details class="pause-section" id="pause-controls"><summary>Controls &amp; help</summary><p>WASD / arrows: move<br>Mouse: aim + hold click to swing<br>SPACE: jump · P / ESC: pause<br>Touch: left stick to move + auto attack, tap JUMP<br>After a Boss, walk into the health kit to heal and choose an item.</p></details><details class="pause-section" id="pause-build"><summary>Your build · ' + game.items.length + ' items</summary><div class="pause-build"><b>YOUR BUILD · DOLLAR STACK</b>' + buildDetails() + '</div></details><div class="pause-settings"><button class="small icon-button" id="sound" aria-label="Mute sound" title="Mute sound"></button><button class="small restart-button" id="restart" aria-label="Restart run" title="Restart run">' + uiIcon('restart') + ' RESTART</button></div>');
+    show('<div class="pause-primary"><div class="tag">ARENA PAUSED</div><button class="primary" id="resume" aria-label="Resume" title="Resume">RESUME</button></div><p class="pause-summary">Level ' + game.chapter + ' / 3 · Score ' + game.score + ' · ' + Math.floor(game.time) + ' seconds</p><details class="pause-section" id="pause-controls"><summary>Controls &amp; help</summary><p id="controls-help-text"></p></details><details class="pause-section" id="pause-build"><summary>Your build · ' + game.items.length + ' items</summary><div class="pause-build"><b>YOUR BUILD · DOLLAR STACK</b>' + buildDetails() + '</div></details><div class="pause-settings"><button class="small icon-button" id="sound" aria-label="Mute sound" title="Mute sound"></button><button class="small restart-button" id="restart" aria-label="Restart run" title="Restart run">' + uiIcon('restart') + ' RESTART</button></div>');
     button('resume', () => game.pause());
     button('restart', () => game.newRun());
     document.getElementById('resume').focus();
@@ -103,7 +104,7 @@ function syncOverlay() {
   }
 }
 function buildDetails() {
-  return '<p class="builddesc">Aim with your mouse. Hold click to swing. Jump and land to break shields.</p>' + game.items.map(id => {
+  return '<p class="builddesc">' + controlDescription() + '</p>' + game.items.map(id => {
     const u = ITEMS.find(u => u.id === id);
     return '<div class="pause-item"><b>' + u.icon + ' ' + u.name + '</b><p>' + u.desc + '</p></div>';
   }).join('') + (game.items.length === 2 && synergy(...game.items) ? '<p class="buildsynergy">SYNERGY: ' + synergy(...game.items) + '</p>' : '') + (game.items.length ? '' : '<p>No items equipped yet.</p>');
@@ -167,7 +168,7 @@ function syncCameraRoom() {
   camera.snap(game.player);
   cameraStamp = null;
   release();
-  refreshAim();
+  keyboardController.refreshAim();
 }
 function fitArena() {
   const size = arenaStageSize(window.visualViewport?.width || window.innerWidth || W, window.visualViewport?.height || window.innerHeight || H);
@@ -189,13 +190,25 @@ function fitArena() {
   release();
   frameClock.reset();
   cameraStamp = null;
-  refreshAim();
+  keyboardController.refreshAim();
 }
 function updateTutorialInstruction() {
   const el = document.getElementById('arena-instruction'),
     tutorial = ['tutorial', 'tutorialSuccess'].includes(game.mode);
   const changed = el.hidden === tutorial;
   el.hidden = !tutorial;
-  if (tutorial) setHudText('arena-instruction', game.mode === 'tutorialSuccess' ? 'HIT! Jump → break shield → swing.' : game.lessonStage === 'attack' ? 'Shield broken! Aim at the dummy and hold left click.' : 'Press SPACE / JUMP and land close to the shield dummy.');
+  if (tutorial) setHudText('arena-instruction', game.mode === 'tutorialSuccess' ? 'HIT! Jump → break shield → swing.' : game.lessonStage === 'attack' ? inputMode === 'touch' ? 'Shield broken! Hold ATTACK near the dummy.' : 'Shield broken! Aim at the dummy and hold left click.' : inputMode === 'touch' ? 'Tap JUMP and land close to the shield dummy.' : 'Press SPACE and land close to the shield dummy.');
   if (changed) fitArena();
+}
+
+function controlDescription() {
+  return inputMode === 'touch' ? 'Left stick: move · Hold ATTACK: auto aim · Drag ATTACK: manual aim · JUMP: jump' : 'WASD / arrows: move · Mouse: aim + hold click to attack · SPACE: jump · P / ESC: pause';
+}
+function updateControlHints() {
+  for (const id of ['control-hint', 'controls-help-text']) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = controlDescription() + (id === 'controls-help-text' ? '. After a Boss, walk into the health kit to heal and choose an item.' : '');
+  }
+  canvas.setAttribute('aria-label', controlDescription());
+  updateTutorialInstruction();
 }

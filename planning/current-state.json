@@ -1,7 +1,7 @@
 {
-  "version": 38,
-  "authority": "User approved local Debug Controls tuning and release-in-place joystick fade; SPEC.md Build38",
-  "productState": "Higher Jump defaults with local per-orientation Debug layout tuning; release-in-place stick fade; unchanged simulation/camera",
+  "version": 43,
+  "authority": "User approved frozen mobile aim fix; SPEC.md Build43",
+  "productState": "Mobile release freezes aim direction; idle/manual movement preserves facing",
   "removed": [
     "multi-room layout",
     "doors",
@@ -31,25 +31,35 @@
   ],
   "verification": {
     "command": "node tests/run.cjs",
-    "result": "40 game +16 Debug/Codex +10 refactor +17 UX +11 touch +8 control-layout groups;63 camera cases;48 controlled900-step parity encounters and art/styles checks. core.js unchanged.",
-    "syntax": "Changed JS syntax, HTML nesting/unique IDs, stylesheet contracts and diff whitespace pass",
-    "browser": "Native drag, reload persistence, Copy config fallback, Reset and390×844/844×390 Controls layout checks passed; physical-phone comfort remains pending."
+    "result": "Full regression and five frozen-touch-aim groups passed.",
+    "browser": "No new browser or physical-device verification for this logic fix; phone playtest pending."
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Phone: Debug → Controls, tune Portrait/Landscape Jump reach and size, close to playtest; Copy config to share preferred defaults.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_7c90a8740c14819193b87928606737bf",
-  "displayVersion": "0.2.2",
+  "nextAction": "Phone playtest: release a queued tap, move without Attack, manual aim while moving, press again for assistance. Stop before further refactor.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_4f1bc686796881918f850b5a7c8595d8",
+  "displayVersion": "0.3.3",
   "githubBackup": {
-    "status": "prepared-not-uploaded",
-    "proposedRepository": "wander-yd/donald-void-arena",
+    "status": "prepared-through-build43; connector-source-and-complete-history-bundle; remote-verification-pending",
+    "repository": "wander-yd/celebrity-fight",
     "references": "planning/published-versions.json",
-    "nextAction": "Complete GitHub sign-in/repository creation and authenticated Git push; verify remote branch, all38 tags and fresh clone before marking synced. Build38 mapping and offline restore package prepared."
+    "nextAction": "Verify GitHub main source and backups/celebrity-fight-build43.bundle. Native Git refs through Build38; newer exact refs are retained in the bundle."
   },
   "priorPublication": {
-    "build": 37,
-    "commitSha": "fc392f796c695df6445ff36286d272f9f9b35256",
-    "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_7c90a8740c14819193b87928606737bf",
-    "deploymentId": "appgdep_6ad9293e26b88191ad6ba556b856b8f9",
+    "build": 42,
+    "displayVersion": "0.3.2",
+    "tag": "v0.3.2-build42",
+    "commitSha": "1a06ec9773f52961fbfb71bec72044b4ba4d18ba",
+    "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_4f1bc686796881918f850b5a7c8595d8",
+    "deploymentId": "appgdep_6add2d345bf08191ae55b26ce28d39e8",
+    "status": "succeeded"
+  },
+  "publication": {
+    "build": 43,
+    "displayVersion": "0.3.3",
+    "tag": "v0.3.3-build43",
+    "commitSha": "7c4cf99c15458cc1926d23bfaac3ec704107575d",
+    "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_48bf603f20bc81919fd07d84cfcf7cfc",
+    "deploymentId": "appgdep_6ade84b404c08191bb83f051095bbba7",
     "status": "succeeded"
   }
 }

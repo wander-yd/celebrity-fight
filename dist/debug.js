@@ -98,6 +98,7 @@ function createDebugCodex({
   const tabs = [['debug', 'Debug'], ['controls', 'Controls'], ['player', 'Player'], ['enemies', 'Enemies · 7'], ['items', 'Items · 6'], ['bosses', 'Bosses · 3'], ['updates', 'Updates']];
   let controlOrientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
   let cancelControlDrag = () => {};
+  let controlButton = 'jump';
   const escape = value => String(value).replace(/[&<>"']/g, c => ({
     '&': '&amp;',
     '<': '&lt;',
@@ -164,7 +165,7 @@ function createDebugCodex({
     }).join('') + '</div>';
   }
   function itemsPage() {
-    return '<div class="codex-basics"><b>SPACE · JUMP</b><span>Avoid damage in the air. Landing stuns normal enemies, breaks shields, grants ' + PLAYER_ABILITIES.landing.protection + 's protection and separates overlapping bodies.</span><b>LANDING ITEMS</b><span>Each item works alone. Seizure Order pulls for ' + PLAYER_ABILITIES.items.pullDuration + 's. Final Settlement detonates after ' + PLAYER_ABILITIES.items.settleDuration + 's for ' + PLAYER_ABILITIES.items.settleBase + ' to ' + (PLAYER_ABILITIES.items.settleBase + PLAYER_ABILITIES.items.settleBonusCap) + ' damage. Default Cascade marks landing targets for ' + PLAYER_ABILITIES.items.markDuration + 's.</span><b>LANDING CLAUSE</b><span>' + PLAYER_ABILITIES.landingZone.duration + 's slowing zone: ' + reduction(PLAYER_ABILITIES.landingZone.normalMoveMultiplier) + ' slower normal movement, ' + Math.round((PLAYER_ABILITIES.landingZone.normalAttackIntervalMultiplier - 1) * 100) + '% longer normal attack intervals, ' + reduction(PLAYER_ABILITIES.landingZone.bossMoveMultiplier) + ' slower Boss movement. Slow lingers ' + PLAYER_ABILITIES.landingZone.linger + 's; Boss firing is unchanged. Overlapping slows and pulls do not stack.</span></div><div class="codex-grid">' + ITEMS.map(item => {
+    return '<div class="codex-basics"><b>SPACE · JUMP</b><span>Avoid damage in the air. Landing stuns normal enemies, breaks shields, grants ' + PLAYER_ABILITIES.landing.protection + 's protection without pushing the player out of overlapping enemies.</span><b>LANDING ITEMS</b><span>Each item works alone. Seizure Order pulls for ' + PLAYER_ABILITIES.items.pullDuration + 's. Final Settlement detonates after ' + PLAYER_ABILITIES.items.settleDuration + 's for ' + PLAYER_ABILITIES.items.settleBase + ' to ' + (PLAYER_ABILITIES.items.settleBase + PLAYER_ABILITIES.items.settleBonusCap) + ' damage. Default Cascade marks landing targets for ' + PLAYER_ABILITIES.items.markDuration + 's.</span><b>LANDING CLAUSE</b><span>' + PLAYER_ABILITIES.landingZone.duration + 's slowing zone: ' + reduction(PLAYER_ABILITIES.landingZone.normalMoveMultiplier) + ' slower normal movement, ' + Math.round((PLAYER_ABILITIES.landingZone.normalAttackIntervalMultiplier - 1) * 100) + '% longer normal attack intervals, ' + reduction(PLAYER_ABILITIES.landingZone.bossMoveMultiplier) + ' slower Boss movement. Slow lingers ' + PLAYER_ABILITIES.landingZone.linger + 's; Boss firing is unchanged. Overlapping slows and pulls do not stack.</span></div><div class="codex-grid">' + ITEMS.map(item => {
       const partners = ITEMS.filter(other => synergy(item.id, other.id));
       return '<article class="codex-card"><div class="codex-cardhead"><span class="codex-itemart" aria-hidden="true">' + item.icon + '</span><div><div class="codex-eyebrow">' + (game.has(item.id) ? 'IN YOUR BUILD' : 'BUILD ITEM') + '</div><h3>' + item.name + '</h3></div></div><p>' + item.desc + '</p><div class="codex-counter"><b>SUPPORTED SYNERGIES</b><ul>' + partners.map(other => '<li><strong>' + other.name + '</strong> — ' + synergy(item.id, other.id) + '</li>').join('') + '</ul></div></article>';
     }).join('') + '</div>';
@@ -180,11 +181,12 @@ function createDebugCodex({
     return '<section class="codex-card update-current"><div class="codex-eyebrow">LOADED VERSION</div><h3>' + escape(VoidReleases.displayVersion) + '</h3><span>Build ' + VoidReleases.currentVersion + '</span></section><div class="update-history">' + VoidReleases.entries.map(entry => '<article class="codex-card"><div class="codex-eyebrow">' + (entry.displayVersion ? escape(entry.displayVersion) + ' · Build ' + entry.version : 'v' + entry.version) + ' · ' + escape(entry.date) + ' · ' + escape(entry.type) + (entry.version === VoidReleases.currentVersion ? ' · CURRENT' : '') + '</div><h3>' + escape(entry.title) + '</h3><ul>' + entry.changes.map(change => '<li>' + escape(change) + '</li>').join('') + '</ul><p class="update-verification">' + escape(entry.verification) + '</p></article>').join('') + '</div>';
   }
   function controlsPage() {
-    return '<section class="control-editor"><p>Drag JUMP. Each orientation saves on this browser.</p><div class="control-profiles"><button type="button" id="controls-portrait">Portrait</button><button type="button" id="controls-landscape">Landscape</button></div><div class="control-workspace"><div id="controls-preview" class="controls-preview" aria-label="Touch layout preview"><span>Move: touch anywhere on the left</span><button type="button" id="controls-preview-jump" class="control-jump" aria-label="Drag Jump position">JUMP</button></div><div class="control-settings"><div class="control-fields"><label for="controls-x">Horizontal <output id="controls-x-value"></output></label><input type="range" id="controls-x" min="55" max="95" step="1"><label for="controls-height">Height from bottom <output id="controls-height-value"></output></label><input type="range" id="controls-height" min="12" max="65" step="1"><label for="controls-size">Size <output id="controls-size-value"></output></label><input type="range" id="controls-size" min="64" max="112" step="2"></div><div class="debug-actions"><button type="button" id="controls-reset">Reset</button><button type="button" id="controls-copy">Copy config</button></div><p id="controls-status" role="status" aria-live="polite"></p><textarea id="controls-export" aria-label="Touch controls config" readonly hidden rows="8"></textarea></div></div></section>';
+    return '<section class="control-editor"><p>Drag ATTACK or JUMP. Each orientation saves on this browser.</p><div class="control-profiles"><button type="button" id="controls-portrait">Portrait</button><button type="button" id="controls-landscape">Landscape</button></div><div class="control-profiles"><button type="button" id="controls-edit-jump">Jump</button><button type="button" id="controls-edit-attack">Attack</button></div><div class="control-workspace"><div id="controls-preview" class="controls-preview" aria-label="Touch layout preview"><span>Move: touch anywhere on the left</span><button type="button" id="controls-preview-jump" class="control-jump" aria-label="Drag Jump position">JUMP</button><button type="button" id="controls-preview-attack" class="control-jump" aria-label="Drag Attack position">ATTACK</button></div><div class="control-settings"><div class="control-fields"><label for="controls-x">Horizontal <output id="controls-x-value"></output></label><input type="range" id="controls-x" min="55" max="95" step="1"><label for="controls-height">Height from bottom <output id="controls-height-value"></output></label><input type="range" id="controls-height" min="12" max="65" step="1"><label for="controls-size">Size <output id="controls-size-value"></output></label><input type="range" id="controls-size" min="64" max="112" step="2"></div><div class="debug-actions"><button type="button" id="controls-reset">Reset</button><button type="button" id="controls-copy">Copy config</button></div><p id="controls-status" role="status" aria-live="polite"></p><textarea id="controls-export" aria-label="Touch controls config" readonly hidden rows="8"></textarea></div></div></section>';
   }
   function updateControls(status) {
     if (!opened || !unlocked || tab !== 'controls') return;
     const profile = touchLayout.get()[controlOrientation];
+    const selected = controlButton === 'attack' ? profile.attack : profile;
     const w = window.visualViewport?.width || window.innerWidth,
       h = window.visualViewport?.height || window.innerHeight;
     const same = (w > h ? 'landscape' : 'portrait') === controlOrientation;
@@ -194,14 +196,18 @@ function createDebugCodex({
     preview.style.aspectRatio = width + ' / ' + height;
     preview.style.maxWidth = controlOrientation === 'portrait' ? '220px' : '640px';
     const safe = same ? controlSafeBounds() : undefined;
-    const p = VoidTouchLayout.position(profile, width, height, safe);
-    const button = document.getElementById('controls-preview-jump');
-    button.style.left = p.x / width * 100 + '%';
-    button.style.top = p.y / height * 100 + '%';
-    button.style.width = p.size / width * 100 + '%';
-    button.style.height = p.size / height * 100 + '%';
+    const placed = VoidTouchLayout.layout(profile, width, height, safe);
+    for (const id of ['jump', 'attack']) {
+      const button = document.getElementById('controls-preview-' + id), p = placed[id];
+      button.style.left = p.x / width * 100 + '%';
+      button.style.top = p.y / height * 100 + '%';
+      button.style.width = p.size / width * 100 + '%';
+      button.style.height = p.size / height * 100 + '%';
+      button.style.fontSize = Math.max(5, Math.min(10, p.size / width * preview.getBoundingClientRect().width / 5)) + 'px';
+      document.getElementById('controls-edit-' + id).setAttribute('aria-pressed', String(controlButton === id));
+    }
     for (const key of ['portrait', 'landscape']) document.getElementById('controls-' + key).setAttribute('aria-pressed', String(controlOrientation === key));
-    for (const [id, value, unit] of [['x', Math.round(profile.x * 100), '%'], ['height', Math.round((1 - profile.y) * 100), '%'], ['size', profile.size, 'px']]) {
+    for (const [id, value, unit] of [['x', Math.round(selected.x * 100), '%'], ['height', Math.round((1 - selected.y) * 100), '%'], ['size', selected.size, 'px']]) {
       document.getElementById('controls-' + id).value = value;
       document.getElementById('controls-' + id + '-value').textContent = value + unit;
     }
@@ -210,7 +216,8 @@ function createDebugCodex({
   }
   function bindControls() {
     const edited = patch => {
-      const saved = touchLayout.update(controlOrientation, patch);
+      const saved = touchLayout.update(controlOrientation, patch, controlButton);
+      release();
       applyTouchLayout();
       updateControls(saved ? 'Saved on this browser.' : 'Temporary only: browser storage unavailable.');
     };
@@ -229,46 +236,39 @@ function createDebugCodex({
         size: value
       });
     };
-    const preview = document.getElementById('controls-preview'),
-      button = document.getElementById('controls-preview-jump');
+    const preview = document.getElementById('controls-preview');
     let drag = null;
-    cancelControlDrag = () => {
-      drag = null;
-    };
-    button.onpointerdown = e => {
-      if (drag || e.button !== undefined && e.button !== 0) return;
-      e.preventDefault();
-      const rect = preview.getBoundingClientRect();
-      drag = {
-        id: e.pointerId,
-        x: (e.clientX - rect.left) / rect.width - parseFloat(button.style.left) / 100,
-        y: (e.clientY - rect.top) / rect.height - parseFloat(button.style.top) / 100
+    cancelControlDrag = () => { drag = null; };
+    for (const id of ['jump', 'attack']) {
+      bind('controls-edit-' + id, () => { cancelControlDrag(); controlButton = id; updateControls(); });
+      const button = document.getElementById('controls-preview-' + id);
+      button.onpointerdown = e => {
+        if (drag || e.button !== undefined && e.button !== 0) return;
+        e.preventDefault();
+        controlButton = id;
+        updateControls();
+        const rect = preview.getBoundingClientRect();
+        drag = { id: e.pointerId, control: id,
+          x: (e.clientX - rect.left) / rect.width - parseFloat(button.style.left) / 100,
+          y: (e.clientY - rect.top) / rect.height - parseFloat(button.style.top) / 100 };
+        button.setPointerCapture(e.pointerId);
       };
-      button.setPointerCapture(e.pointerId);
-    };
-    button.onpointermove = e => {
-      if (!drag || e.pointerId !== drag.id) return;
-      e.preventDefault();
-      const rect = preview.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - drag.x,
-        y = (e.clientY - rect.top) / rect.height - drag.y;
-      const w = window.visualViewport?.width || window.innerWidth,
-        h = window.visualViewport?.height || window.innerHeight;
-      const safe = (w > h ? 'landscape' : 'portrait') === controlOrientation ? controlSafeBounds() : undefined;
-      edited(safe ? {
-        x: (x * w - safe.left) / safe.width,
-        y: (y * h - safe.top) / safe.height
-      } : {
-        x,
-        y
-      });
-    };
-    const end = e => {
-      if (drag?.id === e.pointerId) drag = null;
-    };
-    button.onpointerup = end;
-    button.onpointercancel = end;
-    button.onlostpointercapture = end;
+      button.onpointermove = e => {
+        if (!drag || e.pointerId !== drag.id || drag.control !== id) return;
+        e.preventDefault();
+        const rect = preview.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - drag.x,
+          y = (e.clientY - rect.top) / rect.height - drag.y;
+        const w = window.visualViewport?.width || window.innerWidth,
+          h = window.visualViewport?.height || window.innerHeight;
+        const safe = (w > h ? 'landscape' : 'portrait') === controlOrientation ? controlSafeBounds() : undefined;
+        edited(safe ? { x: (x * w - safe.left) / safe.width, y: (y * h - safe.top) / safe.height } : { x, y });
+      };
+      const end = e => { if (drag?.id === e.pointerId) drag = null; };
+      button.onpointerup = end;
+      button.onpointercancel = end;
+      button.onlostpointercapture = end;
+    }
     bind('controls-reset', () => {
       cancelControlDrag();
       const saved = touchLayout.reset(controlOrientation);

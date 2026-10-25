@@ -34,6 +34,14 @@ function make(source, chapter, boss, items) {
   g.player.inv = 999;
   g.spawnTimer = 999;
   g.applyConveyor = () => {};
+  // Build39 intentionally removes landing relocation. Disable only that old
+  // behavior in the baseline; dedicated landing-contact scenarios cover the delta.
+  g.separateLanding = () => false;
+  // Steering intentionally changes hits when aim moves mid-windup (Build41).
+  // Keep this historical comparison on captured-direction swings; dedicated
+  // steering tests exercise the new input/impact/recovery contract.
+  const capturedMelee = g.updateMelee;
+  g.updateMelee = dt => capturedMelee.call(g, dt);
   for (const [i, type] of ['shield', 'turret', 'charger', 'shooter'].entries()) {
     const e = g.spawnMob(type, g.room, {
       x: 400 + i * 40,
@@ -108,7 +116,7 @@ for (const chapter of [1, 2, 3]) for (const boss of [false, true]) for (const it
   }
   count++;
 }
-console.log(`PASS unchanged combat config and ${count} seeded 900-step interior encounters vs Build35 (boundaries/conveyors/long projectile travel excluded)`);
+console.log(`PASS unchanged combat config and ${count} seeded 900-step interior encounters vs Build35 (boundaries/conveyors/long projectile travel/old landing relocation/windup steering excluded)`);
 function art(h) {
   h.drawCalls.length = 0;
   h.run(`for(const kind of ['trump','biden','pooh','mojtaba'])person(200,200,kind,1.3);for(const type of Object.keys(VoidArena.TYPES)){const e={...VoidArena.TYPES[type],type,x:300,y:300,hp:2,maxhp:7,face:.3,age:.5,broken:1,stun:1,slow:1,mark:1,flash:0};drawMob(e,ctx,3);}for(const face of [0,1,2,3]){game.player.face=face;downwardCash(game.player,0);}`);

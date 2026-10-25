@@ -3,9 +3,77 @@
 // Human-maintained release history. Dates use Asia/Kuala_Lumpur.
 // Current publication resolves by projectId + version; exact historical IDs are filled next release.
 const VoidReleases = Object.freeze({
-  "currentVersion": 38,
+  "currentVersion": 43,
   "projectId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "entries": [
+    {
+      "version": 43,
+      "displayVersion": "0.3.3",
+      "date": "2026-10-26",
+      "type": "Fix",
+      "title": "Stable mobile aim after release",
+      "changes": [
+        "Releasing ATTACK freezes direction, including a tap waiting for cooldown.",
+        "Moving without ATTACK or while manually aiming no longer shifts facing; press again to resume assisted aim."
+      ],
+      "verification": "Full regression and five frozen-aim scenario groups passed; device playtest pending."
+    },
+    {
+      "version": 42,
+      "displayVersion": "0.3.2",
+      "date": "2026-10-25",
+      "type": "Refactor",
+      "title": "Shared player input commands",
+      "changes": [
+        "Keyboard/mouse and touch now use separate adapters with shared movement, aim, attack and Jump commands.",
+        "Centralized input clearing; existing controls and combat rules are preserved."
+      ],
+      "verification": "Automated adapter, one-shot, clearing, Build41 replay and regression checks passed; physical-device smoke playtest pending.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_4f1bc686796881918f850b5a7c8595d8",
+      "commitSha": "1a06ec9773f52961fbfb71bec72044b4ba4d18ba"
+    },
+    {
+      "version": 41,
+      "displayVersion": "0.3.1",
+      "date": "2026-10-25",
+      "type": "Fix",
+      "title": "More responsive melee aiming",
+      "changes": [
+        "Dollar stack follows aim during windup, locks for the downswing, then turns toward live aim while recovering.",
+        "Damage stays aligned with the committed swing; attack speed, reach and damage are unchanged."
+      ],
+      "verification": "Automated steering, damage, recovery and input regressions passed; physical-device feel pending.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_57be2bd99f9c8191baabdf79a8390cea",
+      "commitSha": "eb9a019c20fcfa2efb0b32f6db139a836ed931a7"
+    },
+    {
+      "version": 40,
+      "displayVersion": "0.3.0",
+      "date": "2026-10-22",
+      "type": "Controls",
+      "title": "Independent mobile attack and aim",
+      "changes": [
+        "Left stick moves only; tap or hold ATTACK for assisted aim, drag for manual aim.",
+        "Larger paired Attack/Jump controls with local layout tuning and device-specific help."
+      ],
+      "verification": "Automated gesture, targeting, persistence, interruption and regression checks passed; physical-phone comfort pending.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_8cb085c577848191b0a04d83c7857f94",
+      "commitSha": "cfb1dc73fa5a3cea33c557fd5155371918eb10a6"
+    },
+    {
+      "version": 39,
+      "displayVersion": "0.2.3",
+      "date": "2026-10-22",
+      "type": "Fix",
+      "title": "Land without sudden shoves",
+      "changes": [
+        "Landing no longer relocates the player when overlapping enemies.",
+        "Overlapping landing targets give a brief contact-only exit window after stun; leaving ends it immediately."
+      ],
+      "verification": "Automated landing/contact and regression checks passed; physical-phone combat feel pending.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_ddbe005d2888819186b24f7600c0275d",
+      "commitSha": "0b8eef73a3e68847db4dc5e9279039f59da1cc71"
+    },
     {
       "version": 38,
       "displayVersion": "0.2.2",
@@ -16,7 +84,9 @@ const VoidReleases = Object.freeze({
         "Movement stick fades out where released; higher Jump defaults for portrait and landscape.",
         "Debug Controls previews and saves Jump position/size per orientation on this browser, with Reset and Copy config."
       ],
-      "verification": "Automated regression and control-layout checks passed; physical-phone comfort pending."
+      "verification": "Automated regression and control-layout checks passed; physical-phone comfort pending.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_1b19fee4a0948191a4a8607be121b863",
+      "commitSha": "6957530a3f15667e3e4266045b03fa54abcb5c2b"
     },
     {
       "version": 37,
@@ -218,5 +288,5 @@ const VoidReleases = Object.freeze({
       "commitSha": "a27a9bf599f4b9401eeb0e5b0467a135e8d2258b"
     }
   ],
-  "displayVersion": "0.2.2"
+  "displayVersion": "0.3.3"
 });
