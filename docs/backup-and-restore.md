@@ -4,7 +4,7 @@
 
 Repository: private `wander-yd/celebrity-fight`. Game publication remains on Sites at 0.3.3 / Build43.
 
-The connector sync uploads the current tracked source and a full Git bundle at `backups/celebrity-fight-build43.bundle`. The bundle retains exact original commits and all release tags through Build43. GitHub main keeps its pre-existing history and gains a source-backup commit; newer original commits/tags are inside the bundle, not native GitHub refs. This is a complete restorable history backup, not an ordinary Git push. Remote verification is recorded separately in `backups/manifest.json`.
+The connector sync uploads the current tracked source and a full Git bundle at `backups/celebrity-fight-build43.bundle`. The bundle retains exact original commits and all release tags through Build43. GitHub main keeps its pre-existing history and gains a source-backup commit; newer original commits/tags are inside the bundle, not native GitHub refs. This is a complete restorable history backup, not an ordinary Git push. Verified: all 51 tracked source files and the bundle blob match GitHub; GitHub main points to backup commit 713eb4d1ac1a26f49175394fe7b1495fe6176918; independent bundle restore passes the full regression suite. See `backups/manifest.json`.
 
 Restore the exact history after cloning/downloading the bundle:
 

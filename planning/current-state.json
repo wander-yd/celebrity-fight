@@ -39,10 +39,12 @@
   "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_4f1bc686796881918f850b5a7c8595d8",
   "displayVersion": "0.3.3",
   "githubBackup": {
-    "status": "prepared-through-build43; connector-source-and-complete-history-bundle; remote-verification-pending",
+    "status": "verified-through-build43; source-snapshot-and-complete-history-bundle",
     "repository": "wander-yd/celebrity-fight",
     "references": "planning/published-versions.json",
-    "nextAction": "Verify GitHub main source and backups/celebrity-fight-build43.bundle. Native Git refs through Build38; newer exact refs are retained in the bundle."
+    "nextAction": "For exact original history and all tags, restore the Git bundle using docs/backup-and-restore.md. No automatic GitHub sync configured.",
+    "sourceSnapshotCommit": "713eb4d1ac1a26f49175394fe7b1495fe6176918",
+    "bundle": "backups/celebrity-fight-build43.bundle"
   },
   "priorPublication": {
     "build": 42,

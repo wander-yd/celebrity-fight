@@ -1,0 +1,9 @@
+{
+  "build": 43,
+  "sourceSnapshotCommit": "713eb4d1ac1a26f49175394fe7b1495fe6176918",
+  "trackedSourceFilesVerified": 51,
+  "bundleBlob": "10fe54cfa0c3e27da80574291dc5451e19eee989",
+  "bundleRestoreTests": "node tests/run.cjs passed",
+  "privacy": "private",
+  "nativeTags": "Newer exact tags and original commits are inside the bundle."
+}
