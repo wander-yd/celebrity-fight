@@ -229,3 +229,27 @@ Stages: split pure contract and device adapters → connect coordinator/simulati
 ## Approved delta — 0.3.3 / Build43
 
 Freeze mobile aim on normal Attack release, including a single tap waiting for cooldown. Keep the pending swing, but never query or track enemies for it after release. Preserve last facing when idle/moving; use a direction angle rather than a world point calculated before movement. The shared input contract gains an optional fixed aimAngle for touch manual/frozen aim; world-point mouse and held assisted aim stay unchanged. Rebuild fixed-direction world aim after simulation movement, also in tutorial. New Attack press resumes assistance; cancel/clear removes pending input without looking up a new target. Keep downswing lock, recovery steering, reach, damage, cadence and target eligibility unchanged. Validate idle movement, pending tap target motion, manual movement, resuming assistance, one-hit and interrupt behavior; full regression before same-site publication. Stop for phone playtest. Rollback0.3.2/Build42.
+
+
+
+## Approved modularization slice — Build44
+
+Extract the existing Dollar Stack primary weapon into its own module; separate Arena health pickup collection; name the between-level build catalog UPGRADES. Preserve combat/pickup/reward behavior. This is only the first slice; actor state and boss special skills/projectile/effects remain queued.
+
+
+
+## Modularization slice — Build45
+
+Extract plain actor-state constructors, Xi's existing radial Boss volley, and bullet/hazard constructors. Keep Arena authoritative for state mutation, collision, and damage. Do not retune attack behavior or generalize all Boss attacks yet. Full regression plus historical parity is the acceptance gate.
+
+
+
+## Modularization slice — Build46
+
+Move all existing Boss attack patterns into the Boss skill module; move bullet/hazard ticking and visual effect lifetime into their modules. Arena remains authoritative for collision and damage. Preserve all three Boss behavior via historical parity.
+
+## Approved Boss Practice slice — Build47
+
+Add a password-locked Debug-only Boss Practice entry using Khamenei and two existing chapter-three attacks: radial volley on Attack and warned missile strike on Jump/Space. The user controls Boss movement with the existing keyboard or touch movement interface. Reuse the standard Arena player record as a moving Hunter sparring opponent; it should approach/orbit, attack with the existing melee weapon, dodge delayed missile telegraphs, and respawn after defeat. Reset the practice Boss after defeat so the mode continues. Pause/resume returns to Boss Practice; a new normal run clears practice state. Show Boss-specific touch labels/cooldown rings and concise controls in the game view.
+
+Keep the normal campaign Boss attack composition and values unchanged. Suppress only the campaign phase-threshold bombardment in the test room so the practice attacks remain legible. Do not add multiplayer, role selection, weapon changes, or skill-balance tuning. Tests must cover Debug launch, separate attack cooldowns, warning-circle avoidance, Hunter offense, respawn/reset, pause/resume and normal-run isolation. Full suite and historical combat parity are required before same-Site publication. Stop for desktop/phone smoke playtest.

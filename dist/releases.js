@@ -3,9 +3,65 @@
 // Human-maintained release history. Dates use Asia/Kuala_Lumpur.
 // Current publication resolves by projectId + version; exact historical IDs are filled next release.
 const VoidReleases = Object.freeze({
-  "currentVersion": 43,
+  "currentVersion": 47,
   "projectId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
   "entries": [
+    {
+      "version": 47,
+      "displayVersion": "0.3.7",
+      "date": "2026-10-25",
+      "type": "Gameplay",
+      "title": "Debug Boss Practice",
+      "changes": [
+        "Added a Debug practice where you control Khamenei against a moving Hunter opponent.",
+        "Separated the existing radial volley and warned missile strike into two manual attacks; normal Boss behavior is unchanged."
+      ],
+      "verification": "Full regression, deterministic historical parity, and Boss Practice scenarios passed. Physical-device feel remains to be tested.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_0dd2dab91d1c8191a0ec5172468ee544",
+      "commitSha": "507e2735bd936fd90e5183eb63d37d0ce5da544f"
+    },
+    {
+      "version": 46,
+      "displayVersion": "0.3.6",
+      "date": "2026-10-26",
+      "type": "Refactor",
+      "title": "Separate Boss skills, projectiles and effects",
+      "changes": [
+        "All three existing Boss attack patterns now live in the Boss skill module.",
+        "Bullet and hazard timing, effect creation and visual-effect lifetimes are separate modules; Arena retains collision and damage authority."
+      ],
+      "verification": "Full regression and deterministic historical frame-by-frame combat parity passed.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_28049ba0876881919764aa991a526e87",
+      "commitSha": "654397e1f086472e5528f3359ff3dfa7ffae3a83"
+    },
+    {
+      "version": 45,
+      "displayVersion": "0.3.5",
+      "date": "2026-10-26",
+      "type": "Refactor",
+      "title": "Actor state and Boss attack modules",
+      "changes": [
+        "Player, minion and Boss state records now use shared factories while Arena remains authoritative.",
+        "Xi radial volley is an isolated Boss skill; bullet and telegraph constructors are separate modules."
+      ],
+      "verification": "Full regression and historical frame-by-frame combat parity passed. Other Boss attacks and projectile/effect ticking remain in Arena for later slices.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_a55f9ff277c081919d706c9b890c8007",
+      "commitSha": "c66b1ceaa0e0417c8307f1cb67cf160d0783b875"
+    },
+    {
+      "version": 44,
+      "displayVersion": "0.3.4",
+      "date": "2026-10-26",
+      "type": "Refactor",
+      "title": "Separate weapons, pickups and upgrades",
+      "changes": [
+        "Dollar Stack primary-attack timing and hit resolution now live in a weapon module.",
+        "Ground pickup collection is separate from the Upgrade draft catalog; Upgrade wording is explicit."
+      ],
+      "verification": "Full regression including combat parity and pickup/upgrade flows passed; special-skill and actor-state extraction remain queued.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_293942ac7870819193167efcd405f18e",
+      "commitSha": "9606455c7099007ef4c4b540be1f55e2c9d01ec3"
+    },
     {
       "version": 43,
       "displayVersion": "0.3.3",
@@ -16,7 +72,9 @@ const VoidReleases = Object.freeze({
         "Releasing ATTACK freezes direction, including a tap waiting for cooldown.",
         "Moving without ATTACK or while manually aiming no longer shifts facing; press again to resume assisted aim."
       ],
-      "verification": "Full regression and five frozen-aim scenario groups passed; device playtest pending."
+      "verification": "Full regression and five frozen-aim scenario groups passed; device playtest pending.",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_48bf603f20bc81919fd07d84cfcf7cfc",
+      "commitSha": "7c4cf99c15458cc1926d23bfaac3ec704107575d"
     },
     {
       "version": 42,
@@ -288,5 +346,5 @@ const VoidReleases = Object.freeze({
       "commitSha": "a27a9bf599f4b9401eeb0e5b0467a135e8d2258b"
     }
   ],
-  "displayVersion": "0.3.3"
+  "displayVersion": "0.3.7"
 });

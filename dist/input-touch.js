@@ -41,7 +41,7 @@ const touchController = (() => {
   }
   function drawTouchAim() {
     const line = document.getElementById('touch-aim');
-    line.hidden = !(inputMode === 'touch' && attackPointerId !== null && attackManual && ['play', 'tutorial'].includes(game.mode));
+    line.hidden = !(inputMode === 'touch' && attackPointerId !== null && attackManual && ['play', 'tutorial', 'bossPractice'].includes(game.mode));
     if (line.hidden) return;
     const p = camera.worldToScreen(game.player);
     line.style.left = p.x + 'px';
@@ -115,7 +115,7 @@ const touchController = (() => {
       e.preventDefault();
       if (e.pointerType !== 'touch' || jumpPointerId !== null) return;
       setInputMode('touch');
-      if (!['play', 'tutorial'].includes(game.mode)) return;
+      if (!['play', 'tutorial', 'bossPractice'].includes(game.mode)) return;
       jumpPointerId = e.pointerId;
       jump.setPointerCapture(e.pointerId);
       playerController.jump();
@@ -125,7 +125,7 @@ const touchController = (() => {
     jump.onlostpointercapture = cancelPointer;
     const attack = document.getElementById('attack');
     attack.onpointerdown = e => {
-      if (e.pointerType !== 'touch' || attackPointerId !== null || !['play', 'tutorial'].includes(game.mode)) return;
+      if (e.pointerType !== 'touch' || attackPointerId !== null || !['play', 'tutorial', 'bossPractice'].includes(game.mode)) return;
       e.preventDefault();
       setInputMode('touch');
       attackPointerId = e.pointerId;

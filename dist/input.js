@@ -22,9 +22,9 @@ function setInputMode(mode) {
 function syncTouchControls() {
   const touch = inputMode === 'touch';
   document.getElementById('game-stage').dataset.input = inputMode;
-  document.getElementById('move-stick').hidden = !touch || !['play', 'tutorial', 'reward'].includes(game.mode);
-  document.getElementById('jump').hidden = !touch || !['play', 'tutorial'].includes(game.mode);
-  document.getElementById('attack').hidden = !touch || !['play', 'tutorial'].includes(game.mode);
+  document.getElementById('move-stick').hidden = !touch || !['play', 'tutorial', 'reward', 'bossPractice'].includes(game.mode);
+  document.getElementById('jump').hidden = !touch || !['play', 'tutorial', 'bossPractice'].includes(game.mode);
+  document.getElementById('attack').hidden = !touch || !['play', 'tutorial', 'bossPractice'].includes(game.mode);
   updateControlHints();
 }
 function screenCoords(e) {
@@ -49,7 +49,7 @@ function bindInput() {
   });
   canvas.addEventListener('pointerdown', e => {
     setInputMode(e.pointerType === 'touch' ? 'touch' : 'keyboard');
-    if (!['play', 'tutorial', 'reward'].includes(game.mode)) return;
+    if (!['play', 'tutorial', 'reward', 'bossPractice'].includes(game.mode)) return;
     if (e.pointerType === 'touch') touchController.start(e); else keyboardController.start(e);
   });
   canvas.addEventListener('pointermove', e => {
@@ -65,7 +65,7 @@ function bindInput() {
   function blur() {
     frameClock.reset();
     release();
-    if (['play', 'reward'].includes(game.mode)) game.pause();
+    if (['play', 'reward', 'bossPractice'].includes(game.mode)) game.pause();
     syncOverlay();
   }
   window.addEventListener('blur', blur);

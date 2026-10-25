@@ -168,7 +168,7 @@
       color: '#f7c6b9'
     }
   };
-  const ITEMS = [{
+  const UPGRADES = [{
     id: 'pull',
     name: 'Seizure Order',
     en: 'Seizure Order',
@@ -263,6 +263,7 @@
   class Arena {
     constructor(random = Math.random) {
       this.random = random;
+      this.weapon = VoidWeapon.create({ rules: PLAYER_ABILITIES.melee, dist, angleDiff });
       this.uid = 0;
       this.taught = false;
       this.newRun();
@@ -291,14 +292,7 @@
       this.messageTime = seconds;
     }
     effect(x, y, r, color = '#d9fb76') {
-      this.room.effects.push({
-        x,
-        y,
-        r,
-        color,
-        life: .5,
-        max: .5
-      });
+      this.room.effects.push(VoidEffects.create(x, y, r, color));
     }
     label(x, y, text, color = '#d9fb76') {
       this.room.labels.push({
@@ -316,20 +310,10 @@
       this.time = 0;
       this.items = [];
       this.debugInvincible = false;
-      this.player = {
-        x: 80,
-        y: 336,
-        r: PLAYER_ABILITIES.movement.radius,
-        hp: PLAYER_ABILITIES.health.max,
-        maxhp: PLAYER_ABILITIES.health.max,
-        speed: PLAYER_ABILITIES.movement.speed,
-        jump: 0,
-        jumpCd: 0,
-        inv: PLAYER_ABILITIES.health.spawnProtection,
-        attackCd: 0,
-        face: 0,
-        jumpOrigin: null
-      };
+      this.practiceCooldowns = null;
+      this.practiceHunterRespawn = 0;
+      this.practiceResetTimer = 0;
+      this.player = ActorState.player(PLAYER_ABILITIES, { x: 80, y: 336 });
       this.offer = [];
       this.events = [];
       this.setupChapter();
@@ -382,52 +366,12 @@
         if (free(room, p.x, p.y, cfg.r) && dist(p, this.player) > 170) point = p;
       }
       point = nearestFree(room, point?.x ?? ARENA.right - 60, point?.y ?? ARENA.centerY, cfg.r + 1);
-      const e = {
-        ...cfg,
-        ...point,
-        id: this.uid++,
-        type,
-        maxhp: cfg.hp,
-        t: this.rand(1, 1.8),
-        face: 0,
-        age: 0,
-        slow: 0,
-        mark: 0,
-        stun: 0,
-        broken: 0,
-        flash: 0,
-        charge: 0,
-        vx: 0,
-        vy: 0
-      };
+      const e = ActorState.mob(cfg, point, this.uid++, (min, max) => this.rand(min, max), type);
       room.mobs.push(e);
       return e;
     }
     createBoss() {
-      this.boss = {
-        id: this.uid++,
-        type: 'boss',
-        name: this.theme.boss,
-        x: ARENA.centerX,
-        y: ARENA.top + 110,
-        r: 27,
-        hp: this.theme.hp,
-        maxhp: this.theme.hp,
-        speed: 30,
-        phase: 0,
-        face: 0,
-        age: 0,
-        slow: 0,
-        mark: 0,
-        stun: 0,
-        broken: 0,
-        staggerCd: 0,
-        flash: 0,
-        cd: 1.5,
-        cycle: 0,
-        grace: .8,
-        dead: false
-      };
+      this.boss = ActorState.boss(this.theme, { x: ARENA.centerX, y: ARENA.top + 110 }, this.uid++);
       this.room.bullets = [];
       this.room.hazards = [];
       this.room.puddles = [];
@@ -451,17 +395,18 @@
       this.say('ARENA CLEAR / WALK INTO THE HEALTH KIT', 4);
     }
     collectSupply() {
-      const kit = this.room.pickup;
-      if (this.mode !== 'reward' || !kit || kit.used || dist(this.player, kit) > this.player.r + kit.r) return false;
-      kit.used = true;
-      this.player.hp = Math.min(this.player.maxhp, this.player.hp + PLAYER_ABILITIES.health.supplyHeal);
-      this.effect(kit.x, kit.y, 80, '#f9dc8b');
-      this.mode = 'upgrade';
-      this.makeOffer();
-      return true;
+      if (this.mode !== 'reward') return false;
+      return VoidPickup.collect(this, {
+        distance: dist,
+        heal: PLAYER_ABILITIES.health.supplyHeal,
+        onCollect: () => {
+          this.mode = 'upgrade';
+          this.makeOffer();
+        }
+      });
     }
     prompt() {
-      return this.mode === 'reward' ? `Walk into the health kit: +${PLAYER_ABILITIES.health.supplyHeal} hearts, then choose an item.` : '';
+      return this.mode === 'reward' ? `Walk into the health kit: +${PLAYER_ABILITIES.health.supplyHeal} hearts, then choose an upgrade.` : '';
     }
     updateReward(dt, input) {
       this.time += dt;
@@ -494,12 +439,16 @@
       return true;
     }
     hurt() {
-      if (this.debugInvincible || this.mode !== 'play' || this.player.inv > 0 || this.player.jump > 0) return;
+      if (this.debugInvincible || !['play', 'bossPractice'].includes(this.mode) || this.player.inv > 0 || this.player.jump > 0) return;
       this.player.hp -= PLAYER_ABILITIES.health.damagePerHit;
       this.player.inv = PLAYER_ABILITIES.health.hurtProtection;
       this.effect(this.player.x, this.player.y, 40, '#ff876f');
       this.events.push('hurt');
       if (this.player.hp <= 0) {
+        if (this.mode === 'bossPractice') {
+          this.practiceHunterRespawn = 1.1;
+          return;
+        }
         this.landingContacts.clear();
         this.mode = 'dead';
       }
@@ -513,7 +462,7 @@
         const phase = e.hp < e.maxhp * .35 ? 2 : e.hp < e.maxhp * .68 ? 1 : 0;
         if (e.hp > 0 && phase > e.phase) {
           e.phase = phase;
-          if (this.chapter === 3) {
+          if (this.chapter === 3 && this.mode !== 'bossPractice') {
             this.say('MISSION ACCOMPLISHED… AGAIN.', 3);
             for (let i = 0; i < 3 + phase; i++) this.hazard(this.rand(90, 870), this.rand(130, 520), 70, 2.2, 'missile', {
               ownerId: e.id
@@ -636,93 +585,21 @@
       });
     }
     beginSwing(origin, target, clone = false) {
-      if (this.room.melee.some(s => s.origin === origin && s.elapsed < PLAYER_ABILITIES.melee.cycle)) return false;
-      this.room.melee.push({
-        origin,
-        face: Math.atan2(target.y - origin.y, target.x - origin.x),
-        clone,
-        elapsed: 0,
-        hit: false
-      });
-      return true;
+      return this.weapon.beginSwing(this, origin, target, clone);
     }
     updateMelee(dt, aim) {
-      for (const swing of this.room.melee) {
-        if (!swing.clone && aim) {
-          swing.origin.face = Math.atan2(aim.y - swing.origin.y, aim.x - swing.origin.x);
-          // Sample aim up to the windup boundary; the downswing commits this hit.
-          if (swing.elapsed < PLAYER_ABILITIES.melee.windup) swing.face = swing.origin.face;
-        }
-        swing.elapsed += dt;
-        if (swing.clone && swing.origin.life <= 0) {
-          swing.elapsed = 1;
-          continue;
-        }
-        if (!swing.hit && swing.elapsed >= PLAYER_ABILITIES.melee.impact) {
-          swing.hit = true;
-          const o = swing.origin, facing = o.face;
-          this.attack(o, {
-            x: o.x + Math.cos(swing.face) * 100,
-            y: o.y + Math.sin(swing.face) * 100
-          }, swing.clone);
-          if (!swing.clone && aim) o.face = facing;
-        }
-      }
-      this.room.melee = this.room.melee.filter(s => s.elapsed < PLAYER_ABILITIES.melee.cycle);
+      return this.weapon.update(this, dt, aim);
     }
     attack(origin, target, clone = false) {
-      const face = Math.atan2(target.y - origin.y, target.x - origin.x),
-        room = this.room;
-      origin.face = face;
-      room.swings.push({
-        x: origin.x,
-        y: origin.y,
-        face,
-        r: PLAYER_ABILITIES.melee.range,
-        life: PLAYER_ABILITIES.melee.trailDuration,
-        max: PLAYER_ABILITIES.melee.trailDuration,
-        clone
-      });
-      let echoUsed = false;
-      const inCone = p => dist(origin, p) < PLAYER_ABILITIES.melee.range + (p.r || 0) && Math.abs(angleDiff(Math.atan2(p.y - origin.y, p.x - origin.x), face)) < PLAYER_ABILITIES.melee.arc / 2;
-      const candidates = this.targets().filter(e => inCone(e)).sort((a, b) => dist(origin, a) - dist(origin, b));
-      for (const e of candidates) {
-        if (this.shieldBlocks(e, origin)) {
-          this.label(e.x, e.y - 32, 'BLOCK', '#a3e9f0');
-        } else {
-          this.record(e, clone ? 'clone' : 'melee');
-          this.damage(e, PLAYER_ABILITIES.melee.damage, clone ? 'clone' : 'melee');
-        }
-        if (this.has('bounce') && !echoUsed) {
-          this.echo(e, [e.id]);
-          echoUsed = true;
-        }
-      }
-      if (!clone) this.events.push('swing');
+      return this.weapon.attack(this, origin, target, clone);
     }
     hazard(x, y, r, delay, kind = 'blast', extra = {}) {
-      this.room.hazards.push({
-        x: clamp(x, 70, 890),
-        y: clamp(y, 125, 525),
-        r,
-        t: delay,
-        max: delay,
-        kind,
-        done: false,
-        life: .4,
-        ...extra
-      });
+      this.room.hazards.push(VoidProjectile.hazard(
+        clamp(x, 70, 890), clamp(y, 125, 525), r, delay, kind, extra
+      ));
     }
     bullet(origin, a, speed = 175, r = 6, kind = 'bullet') {
-      this.room.bullets.push({
-        x: origin.x,
-        y: origin.y,
-        vx: Math.cos(a) * speed,
-        vy: Math.sin(a) * speed,
-        r,
-        kind,
-        life: 6
-      });
+      this.room.bullets.push(VoidProjectile.bullet(origin, a, speed, r, kind));
     }
     settle(z) {
       if (z.kind !== 'settle') return;
@@ -833,23 +710,7 @@
       this.hurtByContact(b);
     }
     fireOriginalBoss(b, a) {
-      const enraged = b.hp < b.maxhp * .5;
-      if (this.chapter === 1) {
-        for (let i = -2; i <= 2; i++) this.bullet(b, a + i * .28, 135, 8, 'urine');
-        this.bullet(b, a, 105, 11, 'homingPoop');
-        b.cd = enraged ? 1 : 1.5;
-      } else if (this.chapter === 2) {
-        for (let i = 0; i < 12; i++) this.bullet(b, i * Math.PI / 6 + b.age * .42, 150, 6);
-        for (let i = -1; i <= 1; i++) this.bullet(b, a + i * .12, 230);
-        b.cd = enraged ? .9 : 1.3;
-      } else {
-        const n = enraged ? 14 : 10;
-        for (let i = 0; i < n; i++) this.bullet(b, i * TAU / n + b.age * .5, 155);
-        this.hazard(this.player.x, this.player.y, 60, 1.45, 'missile', {
-          ownerId: b.id
-        });
-        b.cd = enraged ? 1 : 1.5;
-      }
+      VoidBossSkills.fire(this, b, this.chapter, a, b.hp < b.maxhp * .5);
     }
     updateProjectiles(dt) {
       for (const s of this.room.shots) {
@@ -879,62 +740,10 @@
         }
       }
       this.room.shots = this.room.shots.filter(s => s.life > 0 && s.x > ARENA.left && s.x < ARENA.right && s.y > ARENA.top && s.y < ARENA.bottom);
-      for (const b of this.room.bullets) {
-        if (b.kind === 'homingPoop') {
-          const speed = Math.hypot(b.vx, b.vy),
-            a = Math.atan2(this.player.y - b.y, this.player.x - b.x),
-            blend = dt * .7;
-          b.vx = b.vx * (1 - blend) + Math.cos(a) * speed * blend;
-          b.vy = b.vy * (1 - blend) + Math.sin(a) * speed * blend;
-        }
-        b.x += b.vx * dt;
-        b.y += b.vy * dt;
-        b.life -= dt;
-        const hitPlayer = dist(b, this.player) < b.r + this.player.r && this.player.jump <= 0;
-        if (hitPlayer) {
-          this.hurt();
-          if (b.kind === 'urine') this.room.effects.push({
-            x: b.x,
-            y: b.y,
-            r: 18,
-            color: '#ffe66b',
-            life: .35,
-            max: .35,
-            splash: true
-          });
-        }
-        if (hitPlayer) b.life = 0;
-        if (b.kind === 'poop' && b.life <= 0 && b.x > 40 && b.x < 920 && b.y > 100 && b.y < 560) this.room.puddles.push({
-          x: b.x,
-          y: b.y,
-          r: 36,
-          life: 3
-        });
-      }
-      this.room.bullets = this.room.bullets.filter(b => b.life > 0 && b.x > ARENA.left && b.x < ARENA.right && b.y > ARENA.top && b.y < ARENA.bottom);
+      VoidProjectile.tickBullets(this, dt, dist, ARENA);
     }
     updateHazards(dt) {
-      for (const h of this.room.hazards) {
-        h.t -= dt;
-        if (h.t <= 0 && !h.done) {
-          h.done = true;
-          this.effect(h.x, h.y, h.r, h.kind === 'poop' ? '#af8c65' : '#ffb17e');
-          {
-            if (dist(h, this.player) < h.r + 14) this.hurt();
-            for (const e of this.targets()) if (e.id !== h.ownerId && dist(h, e) < h.r + e.r) this.damage(e, e.type === 'boss' ? 5 : 9, 'hazard');
-          }
-          if (h.kind === 'poop') this.room.puddles.push({
-            x: h.x,
-            y: h.y,
-            r: h.r,
-            life: 3.5
-          });
-        }
-        if (h.done) h.life -= dt;
-      }
-      this.room.hazards = this.room.hazards.filter(h => !h.done || h.life > 0);
-      this.room.puddles.forEach(p => p.life -= dt);
-      this.room.puddles = this.room.puddles.filter(p => p.life > 0);
+      VoidProjectile.tickHazards(this, dt, dist);
     }
     fragments(e) {
       for (let i = 0; i < 8; i++) {
@@ -996,8 +805,7 @@
       };
     }
     animate(dt) {
-      for (const e of this.room.effects) e.life -= dt;
-      this.room.effects = this.room.effects.filter(e => e.life > 0);
+      VoidEffects.tick(this.room, dt);
       for (const l of this.room.labels) {
         l.life -= dt;
         l.y -= dt * 18;
@@ -1007,11 +815,146 @@
       this.room.swings = this.room.swings.filter(s => s.life > 0);
     }
     applyInputActions(input) {
+      if (this.mode === 'bossPractice' && input.jumpPressed) return this.practiceBossStrike();
       return input.jumpPressed ? this.jump() : false;
+    }
+    startBossPractice() {
+      this.chapter = 3;
+      this.taught = true;
+      this.offer = [];
+      this.events = [];
+      this.setupChapter();
+      this.room.mobs = [];
+      this.player.x = ARENA.centerX - 135;
+      this.player.y = ARENA.centerY;
+      this.player.hp = this.player.maxhp;
+      this.player.inv = 0;
+      this.player.attackCd = 0;
+      this.practiceHunterRespawn = 0;
+      this.practiceResetTimer = 0;
+      this.practiceCooldowns = { volley: 0, strike: 0 };
+      this.createBoss();
+      this.boss.x = ARENA.centerX + 135;
+      this.boss.y = ARENA.centerY;
+      this.boss.grace = 0;
+      this.boss.hp = this.boss.maxhp;
+      this.boss.speed = 180;
+      this.player.inv = 0;
+      this.mode = 'bossPractice';
+      this.say('BOSS PRACTICE / MOVE · VOLLEY · MISSILE STRIKE', 4);
+      return true;
+    }
+    practiceBossVolley() {
+      if (this.mode !== 'bossPractice' || !this.boss || this.boss.dead || this.practiceCooldowns.volley > 0) return false;
+      VoidBossSkills.practiceVolley(this, this.boss);
+      this.practiceCooldowns.volley = 1.5;
+      return true;
+    }
+    practiceBossStrike() {
+      if (this.mode !== 'bossPractice' || !this.boss || this.boss.dead || this.practiceCooldowns.strike > 0) return false;
+      VoidBossSkills.practiceStrike(this, this.boss, this.player);
+      this.practiceCooldowns.strike = 3.8;
+      return true;
+    }
+    updatePracticeHunter(dt) {
+      const hunter = this.player,
+        boss = this.boss;
+      hunter.inv = Math.max(0, hunter.inv - dt);
+      hunter.attackCd = Math.max(0, hunter.attackCd - dt);
+      if (hunter.hp <= 0) {
+        this.practiceHunterRespawn -= dt;
+        if (this.practiceHunterRespawn <= 0) {
+          hunter.hp = hunter.maxhp;
+          hunter.x = ARENA.centerX - 135;
+          hunter.y = ARENA.centerY;
+          hunter.inv = 1.1;
+        }
+        return;
+      }
+      let dx = 0, dy = 0;
+      const danger = this.room.hazards.filter(h => !h.done && h.t < 1.2 && dist(h, hunter) < h.r + 115)
+        .sort((a, b) => dist(a, hunter) - dist(b, hunter))[0];
+      if (danger) {
+        const d = Math.max(1, dist(danger, hunter));
+        if (dist(danger, hunter) < 2) {
+          const away = Math.max(1, dist(boss, hunter));
+          dx = (hunter.x - boss.x) / away;
+          dy = (hunter.y - boss.y) / away;
+        } else {
+          dx = (hunter.x - danger.x) / d;
+          dy = (hunter.y - danger.y) / d;
+        }
+      } else {
+        const d = Math.max(1, dist(hunter, boss));
+        if (d > 112) {
+          dx = (boss.x - hunter.x) / d;
+          dy = (boss.y - hunter.y) / d;
+        } else {
+          dx = -(boss.y - hunter.y) / d;
+          dy = (boss.x - hunter.x) / d;
+        }
+      }
+      const bullet = this.room.bullets.filter(b => b.life > 0 && dist(b, hunter) < 74)
+        .sort((a, b) => dist(a, hunter) - dist(b, hunter))[0];
+      if (bullet) {
+        const d = Math.max(1, dist(bullet, hunter));
+        dx += (hunter.x - bullet.x) / d * 1.5;
+        dy += (hunter.y - bullet.y) / d * 1.5;
+      }
+      const n = Math.max(1, Math.hypot(dx, dy));
+      moveBody(this.room, hunter, dx / n * 125 * dt, dy / n * 125 * dt);
+      hunter.face = Math.atan2(boss.y - hunter.y, boss.x - hunter.x);
+      if (dist(hunter, boss) <= PLAYER_ABILITIES.melee.range + boss.r && hunter.attackCd <= 0) {
+        this.beginSwing(hunter, boss);
+        hunter.attackCd = 1.15;
+      }
+    }
+    stepBossPractice(dt, input) {
+      this.time += dt;
+      this.practiceCooldowns.volley = Math.max(0, this.practiceCooldowns.volley - dt);
+      this.practiceCooldowns.strike = Math.max(0, this.practiceCooldowns.strike - dt);
+      const boss = this.boss;
+      if (boss.dead) {
+        if (this.practiceResetTimer <= 0) this.practiceResetTimer = 1.1;
+        else this.practiceResetTimer -= dt;
+        if (this.practiceResetTimer <= 0) {
+          this.practiceResetTimer = 0;
+          this.createBoss();
+          this.boss.x = ARENA.centerX + 135;
+          this.boss.y = ARENA.centerY;
+          this.boss.grace = 0;
+          this.boss.hp = this.boss.maxhp;
+          this.boss.speed = 180;
+          this.player.inv = 1.1;
+          this.room.bullets = [];
+          this.room.hazards = [];
+          this.room.melee = [];
+          this.room.swings = [];
+        }
+      } else {
+        boss.age += dt;
+        boss.flash = Math.max(0, boss.flash - dt);
+        boss.stun = Math.max(0, boss.stun - dt);
+        boss.face = Math.atan2(this.player.y - boss.y, this.player.x - boss.x);
+        if (boss.stun <= 0) {
+          const mx = input.mx || 0, my = input.my || 0, n = Math.max(1, Math.hypot(mx, my));
+          moveBody(this.room, boss, mx / n * boss.speed * dt, my / n * boss.speed * dt);
+          if (input.attack && this.practiceCooldowns.volley <= 0) this.practiceBossVolley();
+        }
+      }
+      this.updatePracticeHunter(dt);
+      this.updateMelee(dt, { x: this.boss.x, y: this.boss.y });
+      this.updateProjectiles(dt);
+      this.updateHazards(dt);
+      this.animate(dt);
     }
     step(dt, input = {}) {
       dt = clamp(dt, 0, .05);
       this.applyInputActions(input);
+      if (this.mode === 'bossPractice') {
+        this.stepBossPractice(dt, input);
+        return;
+      }
       if (this.mode === 'reward') {
         this.updateReward(dt, input);
         return;
@@ -1084,7 +1027,7 @@
       }
     }
     makeOffer() {
-      let available = ITEMS.filter(u => !this.has(u.id));
+      let available = UPGRADES.filter(u => !this.has(u.id));
       for (let i = available.length - 1; i > 0; i--) {
         const j = Math.floor(this.rand(0, i + 1));
         [available[i], available[j]] = [available[j], available[i]];
@@ -1098,7 +1041,7 @@
     }
     takeOffer(i) {
       if (this.mode !== 'upgrade') return false;
-      const complete = this.offer.length === 0 && ITEMS.every(item => this.has(item.id));
+      const complete = this.offer.length === 0 && UPGRADES.every(item => this.has(item.id));
       if (complete && i !== 0 || !complete && !this.offer[i]) return false;
       if (!complete) this.items.push(this.offer[i].id);
       this.chapter++;
@@ -1128,7 +1071,7 @@
       return true;
     }
     pause() {
-      if (['play', 'reward'].includes(this.mode)) {
+      if (['play', 'reward', 'bossPractice'].includes(this.mode)) {
         this.pausedFrom = this.mode;
         this.mode = 'paused';
         return true;
@@ -1198,7 +1141,7 @@
     TYPES,
     THEMES,
     WAVES,
-    ITEMS,
+    UPGRADES,
     PLAYER_ABILITIES,
     synergy,
     dist,

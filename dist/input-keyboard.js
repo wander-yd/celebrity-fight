@@ -36,7 +36,7 @@ const keyboardController = (() => {
       // Let focused menu controls keep their native Enter/Space activation.
       const tag = e.target?.tagName?.toLowerCase();
       if (['Space', 'Enter'].includes(e.code) && ['button', 'summary', 'input', 'select', 'textarea', 'a'].includes(tag)) return;
-      if (!['play', 'tutorial', 'reward'].includes(game.mode) && e.key.toLowerCase() !== 'p' && e.key !== 'Escape') return;
+      if (!['play', 'tutorial', 'reward', 'bossPractice'].includes(game.mode) && e.key.toLowerCase() !== 'p' && e.key !== 'Escape') return;
       if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault();
       keys[e.key.toLowerCase()] = true;
       if (e.repeat) return;

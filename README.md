@@ -99,3 +99,27 @@ Device adapters emit moveX/moveY, world aim, attackHeld, attackPressed and jumpP
 Normal ATTACK release captures the last direction, including a single pending tap. Idle and released reads never query targets; a new press restores assisted aim. Touch manual/frozen commands carry an optional aimAngle so movement cannot shift facing through stale world coordinates. Mouse aim, damage, cadence and swing locking remain unchanged. Cancellation clears the pending attack without selecting a target.
 
 Five regression groups cover idle combat/tutorial movement, queued release, enemy motion after release, manual movement and cancellation. Full regression passes; physical-phone feel remains pending.
+
+## Modularization first slice (0.3.4 / Build44)
+
+Dollar Stack is the primary weapon, extracted to `dist/weapon.js`; it owns swing timing and hit resolution while Arena remains the authority for targets, damage, effects and build synergies. Arena supply collection lives in `dist/pickup.js`. The former `ITEMS` catalog is named `UPGRADES`; the health kit remains a ground pickup and reward choices remain upgrades. No new gameplay content or combat tuning was added.
+
+Full regression and historical parity pass. Actor-state and boss special-skill/projectile/effect extraction are still subsequent stages; this is the first bounded migration, not the completed modular refactor.
+
+## Actor state and Boss skill slice (0.3.5 / Build45)
+
+`actor-state.js` creates Player, minion and Boss records; the Arena simulation remains their sole owner. `boss-skills.js` contains Xi's existing radial volley and aimed follow-up. `projectile.js` constructs bullet and hazard records; Arena continues to tick them and decide collisions/damage. No new behavior is introduced. Other Boss attack patterns, projectile ticking and visual-effect lifecycle remain queued.
+
+The full test suite and deterministic historical frame-by-frame parity pass.
+
+## Boss skills, projectiles and effects (0.3.6 / Build46)
+
+All three unchanged Boss attack patterns are selected in `boss-skills.js`. `projectile.js` owns bullet/hazard construction and ticking; `effects.js` owns visual effect creation and expiry. `actor-state.js` creates player, minion and Boss records, while Arena remains authoritative for simulation state, collision and damage. Weapon, pickup and Upgrade boundaries from Build44 are retained. No new attacks or tuning.
+
+Full regression and historical frame-by-frame parity pass. The small modularization sequence is complete; future role-specific weapons and additional skills remain content/design decisions.
+
+## Debug Boss Practice (0.3.7 / Build47)
+
+The password-locked Debug tab can start Boss Practice, a standalone Khamenei test room. The player controls the Boss with WASD/arrow keys or the mobile movement stick; hold/click Attack for the radial volley and press Space/Strike for a delayed missile warning. A Hunter opponent moves around the Boss, attacks with the existing melee weapon, and attempts to leave missile warning circles. Defeated Hunters respawn, and a defeated practice Boss resets so the session continues. Pause/resume preserves the practice mode; starting a normal run clears practice state.
+
+The two practice attacks call helpers in `boss-skills.js`, and the normal chapter-three AI composes those same helpers in its original order and cooldown. Practice suppresses only the campaign threshold bombardment; normal-level Boss behavior remains parity-tested. Tests cover attack cooldowns, telegraph dodging, opponent attacks, resets, pause/resume, Debug entry and isolation from normal runs. Physical mobile control feel remains untested.

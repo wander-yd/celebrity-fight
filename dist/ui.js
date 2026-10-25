@@ -60,7 +60,7 @@ function syncOverlay() {
   fitArena();
   release();
   syncTouchControls();
-  if (['play', 'tutorial', 'tutorialSuccess', 'reward', 'debug'].includes(game.mode)) {
+  if (['play', 'bossPractice', 'tutorial', 'tutorialSuccess', 'reward', 'debug'].includes(game.mode)) {
     overlay.classList.add('hidden');
     overlay.innerHTML = '';
     return;
@@ -89,12 +89,12 @@ function syncOverlay() {
       tone(500);
     };
   } else if (game.mode === 'upgrade') {
-    show('<div class="tag">LEVEL ' + game.chapter + ' CLEARED · ALL MINIONS CLEARED</div><h2>Build a<br><em>better bad idea.</em></h2><p>Health kit collected. Choose your next item.<br>Next: ' + THEMES[game.chapter].name + '</p><div class="choices">' + game.offer.map((u, i) => {
+    show('<div class="tag">LEVEL ' + game.chapter + ' CLEARED · ALL MINIONS CLEARED</div><h2>Build a<br><em>better bad idea.</em></h2><p>Health kit collected. Choose your next upgrade.<br>Next: ' + THEMES[game.chapter].name + '</p><div class="choices">' + game.offer.map((u, i) => {
       const partner = game.items.find(id => synergy(id, u.id));
-      return '<button class="choice" id="pick' + i + '"><span>' + u.icon + '</span><b>' + u.name + '</b><small class="choice-action">' + itemAction(u.id) + '</small><small class="choice-detail">' + u.desc + '</small>' + (partner ? '<small class="synergy">SYNERGY WITH ' + ITEMS.find(x => x.id === partner).name + ': ' + synergy(partner, u.id) + '</small>' : '') + '</button>';
+      return '<button class="choice" id="pick' + i + '"><span>' + u.icon + '</span><b>' + u.name + '</b><small class="choice-action">' + itemAction(u.id) + '</small><small class="choice-detail">' + u.desc + '</small>' + (partner ? '<small class="synergy">SYNERGY WITH ' + UPGRADES.find(x => x.id === partner).name + ': ' + synergy(partner, u.id) + '</small>' : '') + '</button>';
     }).join('') + '</div>');
     if (game.offer.length === 0) {
-      show('<div class="tag">ALL ITEMS COLLECTED</div><h2>Build complete.</h2><p>Health kit collected. Continue to ' + THEMES[game.chapter].name + '.</p><button class="primary" id="buildContinue">NEXT LEVEL ↗</button>');
+      show('<div class="tag">ALL UPGRADES COLLECTED</div><h2>Build complete.</h2><p>Health kit collected. Continue to ' + THEMES[game.chapter].name + '.</p><button class="primary" id="buildContinue">NEXT LEVEL ↗</button>');
       button('buildContinue', () => game.takeOffer(0));
     } else game.offer.forEach((_, i) => button('pick' + i, () => game.takeOffer(i)));
   } else if (['dead', 'win'].includes(game.mode)) {
@@ -105,9 +105,9 @@ function syncOverlay() {
 }
 function buildDetails() {
   return '<p class="builddesc">' + controlDescription() + '</p>' + game.items.map(id => {
-    const u = ITEMS.find(u => u.id === id);
+    const u = UPGRADES.find(u => u.id === id);
     return '<div class="pause-item"><b>' + u.icon + ' ' + u.name + '</b><p>' + u.desc + '</p></div>';
-  }).join('') + (game.items.length === 2 && synergy(...game.items) ? '<p class="buildsynergy">SYNERGY: ' + synergy(...game.items) + '</p>' : '') + (game.items.length ? '' : '<p>No items equipped yet.</p>');
+  }).join('') + (game.items.length === 2 && synergy(...game.items) ? '<p class="buildsynergy">SYNERGY: ' + synergy(...game.items) + '</p>' : '') + (game.items.length ? '' : '<p>No upgrades selected yet.</p>');
 }
 function setHudText(id, value) {
   const el = document.getElementById(id);
@@ -118,13 +118,13 @@ function hud() {
     boss = game.boss;
   document.getElementById('debug-status').hidden = !game.debugInvincible;
   document.getElementById('health').style.color = heartFlash > 0 ? '#fff3dd' : '#ff957a';
-  const equipped = game.items.map(id => ITEMS.find(u => u.id === id));
+  const equipped = game.items.map(id => UPGRADES.find(u => u.id === id));
   setHudText('equipped', equipped.length ? equipped.map(u => u.icon).join('  ') : 'DOLLAR STACK');
   document.getElementById('equipped').title = equipped.map(u => u.name).join(', ');
   setHudText('health', game.debugInvincible ? '∞ HEARTS' : '♥ '.repeat(Math.max(0, p.hp)) + '♡ '.repeat(Math.max(0, p.maxhp - p.hp)));
-  setHudText('chapter-label', '0' + game.chapter + ' / ' + game.theme.name);
-  setHudText('wave-label', game.mode === 'reward' ? 'ARENA CLEAR' : boss ? 'MINIONS ' + game.remaining() : 'WAVE ' + game.spawned + ' / ' + game.waveTotal);
-  setHudText('boss-label', game.mode === 'reward' ? 'Collect health → choose an item → next arena' : boss ? boss.dead ? 'BOSS DOWN · ENEMIES LEFT: ' + game.remaining() : boss.name + (boss.hp < boss.maxhp * .5 ? ' / ENRAGED' : '') : 'CLEAR THE WAVE TO FACE THE BOSS');
+  setHudText('chapter-label', game.mode === 'bossPractice' ? 'BOSS PRACTICE' : '0' + game.chapter + ' / ' + game.theme.name);
+  setHudText('wave-label', game.mode === 'bossPractice' ? 'TRAINING HUNTER' : game.mode === 'reward' ? 'ARENA CLEAR' : boss ? 'MINIONS ' + game.remaining() : 'WAVE ' + game.spawned + ' / ' + game.waveTotal);
+  setHudText('boss-label', game.mode === 'bossPractice' ? 'Khamenei · Volley: click / Strike: SPACE' : game.mode === 'reward' ? 'Collect health → choose an upgrade → next arena' : boss ? boss.dead ? 'BOSS DOWN · ENEMIES LEFT: ' + game.remaining() : boss.name + (boss.hp < boss.maxhp * .5 ? ' / ENRAGED' : '') : 'CLEAR THE WAVE TO FACE THE BOSS');
   const meter = document.getElementById('boss-meter'),
     percent = boss ? Math.max(0, boss.hp / boss.maxhp * 100) : 0;
   meter.hidden = !boss || boss.dead;
@@ -133,14 +133,23 @@ function hud() {
   document.getElementById('boss-fill').style.background = game.theme.accent;
   setHudText('jumptext', p.jumpCd > 0 ? 'Jump ready in ' + p.jumpCd.toFixed(1) + ' seconds' : 'Jump ready');
   const jump = document.getElementById('jump');
-  if (jump.textContent !== 'JUMP') jump.textContent = 'JUMP';
-  jump.style.opacity = p.jumpCd > 0 ? '.65' : '1';
-  const charge = Math.round((1 - clamp(p.jumpCd / PLAYER_ABILITIES.jump.cooldown, 0, 1)) * 100);
+  const practice = game.mode === 'bossPractice',
+    jumpCd = practice ? game.practiceCooldowns?.strike || 0 : p.jumpCd,
+    jumpReady = practice ? 3.8 : PLAYER_ABILITIES.jump.cooldown,
+    attackCd = practice ? game.practiceCooldowns?.volley || 0 : 0;
+  if (jump.textContent !== (practice ? 'STRIKE' : 'JUMP')) jump.textContent = practice ? 'STRIKE' : 'JUMP';
+  jump.style.opacity = jumpCd > 0 ? '.65' : '1';
+  const charge = Math.round((1 - clamp(jumpCd / jumpReady, 0, 1)) * 100);
   jump.style.background = `linear-gradient(#213529,#213529) padding-box, conic-gradient(#d9fb76 ${charge}%,#45513d 0) border-box`;
-  jump.setAttribute('aria-label', p.jumpCd > 0 ? 'Jump ready in ' + p.jumpCd.toFixed(1) + ' seconds' : 'Jump ready');
+  jump.setAttribute('aria-label', practice ? jumpCd > 0 ? 'Missile strike ready in ' + jumpCd.toFixed(1) + ' seconds' : 'Missile strike ready' : p.jumpCd > 0 ? 'Jump ready in ' + p.jumpCd.toFixed(1) + ' seconds' : 'Jump ready');
+  const attack = document.getElementById('attack');
+  if (attack.textContent !== (practice ? 'VOLLEY' : 'ATTACK')) attack.textContent = practice ? 'VOLLEY' : 'ATTACK';
+  attack.style.opacity = practice && attackCd > 0 ? '.65' : '1';
+  attack.style.background = practice ? `linear-gradient(#213529,#213529) padding-box, conic-gradient(#d9fb76 ${Math.round((1 - clamp(attackCd / 1.5, 0, 1)) * 100)}%,#45513d 0) border-box` : '';
+  attack.setAttribute('aria-label', practice ? attackCd > 0 ? 'Volley ready in ' + attackCd.toFixed(1) + ' seconds' : 'Fire radial volley' : 'Hold Attack; drag to aim');
   updateTutorialInstruction();
   const message = document.getElementById('arena-message');
-  message.hidden = !(game.messageTime > 0 && game.mode === 'play');
+  message.hidden = !(game.messageTime > 0 && ['play', 'bossPractice'].includes(game.mode));
   if (!message.hidden) setHudText('arena-message', game.message);
   const prompt = document.getElementById('arena-prompt');
   prompt.hidden = game.mode !== 'reward';
@@ -194,20 +203,24 @@ function fitArena() {
 }
 function updateTutorialInstruction() {
   const el = document.getElementById('arena-instruction'),
-    tutorial = ['tutorial', 'tutorialSuccess'].includes(game.mode);
-  const changed = el.hidden === tutorial;
-  el.hidden = !tutorial;
-  if (tutorial) setHudText('arena-instruction', game.mode === 'tutorialSuccess' ? 'HIT! Jump → break shield → swing.' : game.lessonStage === 'attack' ? inputMode === 'touch' ? 'Shield broken! Hold ATTACK near the dummy.' : 'Shield broken! Aim at the dummy and hold left click.' : inputMode === 'touch' ? 'Tap JUMP and land close to the shield dummy.' : 'Press SPACE and land close to the shield dummy.');
+    tutorial = ['tutorial', 'tutorialSuccess'].includes(game.mode),
+    practice = game.mode === 'bossPractice',
+    visible = tutorial || practice;
+  const changed = el.hidden === visible;
+  el.hidden = !visible;
+  if (practice) setHudText('arena-instruction', controlDescription());
+  else if (tutorial) setHudText('arena-instruction', game.mode === 'tutorialSuccess' ? 'HIT! Jump → break shield → swing.' : game.lessonStage === 'attack' ? inputMode === 'touch' ? 'Shield broken! Hold ATTACK near the dummy.' : 'Shield broken! Aim at the dummy and hold left click.' : inputMode === 'touch' ? 'Tap JUMP and land close to the shield dummy.' : 'Press SPACE and land close to the shield dummy.');
   if (changed) fitArena();
 }
 
 function controlDescription() {
+  if (game.mode === 'bossPractice') return inputMode === 'touch' ? 'Left stick: move Boss · VOLLEY: radial shots · STRIKE: warned missile' : 'WASD / arrows: move Boss · Hold click: radial volley · SPACE: warned missile strike · P / ESC: pause';
   return inputMode === 'touch' ? 'Left stick: move · Hold ATTACK: auto aim · Drag ATTACK: manual aim · JUMP: jump' : 'WASD / arrows: move · Mouse: aim + hold click to attack · SPACE: jump · P / ESC: pause';
 }
 function updateControlHints() {
   for (const id of ['control-hint', 'controls-help-text']) {
     const el = document.getElementById(id);
-    if (el) el.textContent = controlDescription() + (id === 'controls-help-text' ? '. After a Boss, walk into the health kit to heal and choose an item.' : '');
+    if (el) el.textContent = controlDescription() + (id === 'controls-help-text' ? '. After a Boss, walk into the health kit to heal and choose an upgrade.' : '');
   }
   canvas.setAttribute('aria-label', controlDescription());
   updateTutorialInstruction();

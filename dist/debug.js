@@ -85,7 +85,7 @@ function createDebugCodex({
     TYPES,
     THEMES,
     WAVES,
-    ITEMS,
+    UPGRADES,
     PLAYER_ABILITIES,
     synergy
   } = VoidArena;
@@ -139,7 +139,7 @@ function createDebugCodex({
     }
   }
   function debugPage() {
-    return '<div class="debug-summary"><span><b>3</b> levels</span><span><b>7</b> enemy types</span><span><b>6</b> build items</span></div><section class="debug-toggle"><div><h3>Infinite hearts</h3></div><button type="button" id="debug-infinite" aria-pressed="' + game.debugInvincible + '" class="debug-switch">' + (game.debugInvincible ? 'ON' : 'OFF') + '</button></section><div class="debug-chapters">' + THEMES.map((theme, i) => '<article class="codex-card"><div class="codex-eyebrow">LEVEL 0' + (i + 1) + '</div><h3>' + theme.name + '</h3>' + facts([['Wave', WAVES[i].count + ' enemies'], ['Boss', theme.hp + ' HP']]) + '<div class="debug-actions"><button type="button" id="debug-wave-' + i + '">Start wave ↗</button><button type="button" id="debug-boss-' + i + '">Start Boss ↗</button></div></article>').join('') + '</div>';
+    return '<div class="debug-summary"><span><b>3</b> levels</span><span><b>7</b> enemy types</span><span><b>6</b> build items</span></div><section class="debug-toggle"><div><h3>Infinite hearts</h3></div><button type="button" id="debug-infinite" aria-pressed="' + game.debugInvincible + '" class="debug-switch">' + (game.debugInvincible ? 'ON' : 'OFF') + '</button></section><section class="codex-card"><div class="codex-eyebrow">CONTROL TEST</div><h3>Boss Practice</h3><p>Control Khamenei against a moving Hunter. Test the radial volley and warned missile strike.</p><div class="debug-actions"><button type="button" id="debug-practice-boss">Start Boss Practice ↗</button></div></section><div class="debug-chapters">' + THEMES.map((theme, i) => '<article class="codex-card"><div class="codex-eyebrow">LEVEL 0' + (i + 1) + '</div><h3>' + theme.name + '</h3>' + facts([['Wave', WAVES[i].count + ' enemies'], ['Boss', theme.hp + ' HP']]) + '<div class="debug-actions"><button type="button" id="debug-wave-' + i + '">Start wave ↗</button><button type="button" id="debug-boss-' + i + '">Start Boss ↗</button></div></article>').join('') + '</div>';
   }
   const number = value => String(Number(value.toFixed(2)));
   const seconds = value => number(value) + 's';
@@ -148,7 +148,7 @@ function createDebugCodex({
   function playerPage() {
     const a = PLAYER_ABILITIES,
       p = game.player,
-      equipped = ITEMS.filter(item => game.has(item.id)),
+      equipped = UPGRADES.filter(item => game.has(item.id)),
       pairs = [];
     for (let i = 0; i < equipped.length; i++) for (let j = i + 1; j < equipped.length; j++) {
       const link = synergy(equipped[i].id, equipped[j].id);
@@ -165,8 +165,8 @@ function createDebugCodex({
     }).join('') + '</div>';
   }
   function itemsPage() {
-    return '<div class="codex-basics"><b>SPACE · JUMP</b><span>Avoid damage in the air. Landing stuns normal enemies, breaks shields, grants ' + PLAYER_ABILITIES.landing.protection + 's protection without pushing the player out of overlapping enemies.</span><b>LANDING ITEMS</b><span>Each item works alone. Seizure Order pulls for ' + PLAYER_ABILITIES.items.pullDuration + 's. Final Settlement detonates after ' + PLAYER_ABILITIES.items.settleDuration + 's for ' + PLAYER_ABILITIES.items.settleBase + ' to ' + (PLAYER_ABILITIES.items.settleBase + PLAYER_ABILITIES.items.settleBonusCap) + ' damage. Default Cascade marks landing targets for ' + PLAYER_ABILITIES.items.markDuration + 's.</span><b>LANDING CLAUSE</b><span>' + PLAYER_ABILITIES.landingZone.duration + 's slowing zone: ' + reduction(PLAYER_ABILITIES.landingZone.normalMoveMultiplier) + ' slower normal movement, ' + Math.round((PLAYER_ABILITIES.landingZone.normalAttackIntervalMultiplier - 1) * 100) + '% longer normal attack intervals, ' + reduction(PLAYER_ABILITIES.landingZone.bossMoveMultiplier) + ' slower Boss movement. Slow lingers ' + PLAYER_ABILITIES.landingZone.linger + 's; Boss firing is unchanged. Overlapping slows and pulls do not stack.</span></div><div class="codex-grid">' + ITEMS.map(item => {
-      const partners = ITEMS.filter(other => synergy(item.id, other.id));
+    return '<div class="codex-basics"><b>SPACE · JUMP</b><span>Avoid damage in the air. Landing stuns normal enemies, breaks shields, grants ' + PLAYER_ABILITIES.landing.protection + 's protection without pushing the player out of overlapping enemies.</span><b>LANDING UPGRADES</b><span>Each item works alone. Seizure Order pulls for ' + PLAYER_ABILITIES.items.pullDuration + 's. Final Settlement detonates after ' + PLAYER_ABILITIES.items.settleDuration + 's for ' + PLAYER_ABILITIES.items.settleBase + ' to ' + (PLAYER_ABILITIES.items.settleBase + PLAYER_ABILITIES.items.settleBonusCap) + ' damage. Default Cascade marks landing targets for ' + PLAYER_ABILITIES.items.markDuration + 's.</span><b>LANDING CLAUSE</b><span>' + PLAYER_ABILITIES.landingZone.duration + 's slowing zone: ' + reduction(PLAYER_ABILITIES.landingZone.normalMoveMultiplier) + ' slower normal movement, ' + Math.round((PLAYER_ABILITIES.landingZone.normalAttackIntervalMultiplier - 1) * 100) + '% longer normal attack intervals, ' + reduction(PLAYER_ABILITIES.landingZone.bossMoveMultiplier) + ' slower Boss movement. Slow lingers ' + PLAYER_ABILITIES.landingZone.linger + 's; Boss firing is unchanged. Overlapping slows and pulls do not stack.</span></div><div class="codex-grid">' + UPGRADES.map(item => {
+      const partners = UPGRADES.filter(other => synergy(item.id, other.id));
       return '<article class="codex-card"><div class="codex-cardhead"><span class="codex-itemart" aria-hidden="true">' + item.icon + '</span><div><div class="codex-eyebrow">' + (game.has(item.id) ? 'IN YOUR BUILD' : 'BUILD ITEM') + '</div><h3>' + item.name + '</h3></div></div><p>' + item.desc + '</p><div class="codex-counter"><b>SUPPORTED SYNERGIES</b><ul>' + partners.map(other => '<li><strong>' + other.name + '</strong> — ' + synergy(item.id, other.id) + '</li>').join('') + '</ul></div></article>';
     }).join('') + '</div>';
   }
@@ -336,6 +336,7 @@ function createDebugCodex({
         bind('debug-wave-' + i, () => jump(i + 1, false));
         bind('debug-boss-' + i, () => jump(i + 1, true));
       }
+      bind('debug-practice-boss', startBossPractice);
     }
     if (tab === 'controls') bindControls();
     paintArt();
@@ -366,6 +367,12 @@ function createDebugCodex({
     if (!opened || !unlocked) return false;
     if (!game.debugJump(chapter, bossFight)) return false;
     returnMode = 'play';
+    close();
+    return true;
+  }
+  function startBossPractice() {
+    if (!opened || !unlocked || !game.startBossPractice()) return false;
+    returnMode = 'bossPractice';
     close();
     return true;
   }

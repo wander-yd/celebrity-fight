@@ -1,8 +1,44 @@
 {
   "projectId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "githubBackupStatus": "verified-through-build43; source-snapshot-and-complete-history-bundle",
+  "githubBackupStatus": "Build47 backup pending; previous complete-history backup through Build46",
   "proposedRepository": "wander-yd/celebrity-fight",
   "versions": [
+    {
+      "build": 47,
+      "displayVersion": "0.3.7",
+      "tag": "v0.3.7-build47",
+      "commitSha": "507e2735bd936fd90e5183eb63d37d0ce5da544f",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_0dd2dab91d1c8191a0ec5172468ee544",
+      "deploymentId": "appgdep_6ade90403e188191b388f91de4d2c00d",
+      "status": "succeeded"
+    },
+    {
+      "build": 46,
+      "displayVersion": "0.3.6",
+      "tag": "v0.3.6-build46",
+      "commitSha": "654397e1f086472e5528f3359ff3dfa7ffae3a83",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_28049ba0876881919764aa991a526e87",
+      "deploymentId": "appgdep_6ade8c1ebf308191a0b1c003bdfe1d31",
+      "status": "succeeded"
+    },
+    {
+      "build": 45,
+      "displayVersion": "0.3.5",
+      "tag": "v0.3.5-build45",
+      "commitSha": "c66b1ceaa0e0417c8307f1cb67cf160d0783b875",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_a55f9ff277c081919d706c9b890c8007",
+      "deploymentId": "appgdep_6ade8b7d4f94819188b87b192f6f5045",
+      "status": "succeeded"
+    },
+    {
+      "build": 44,
+      "displayVersion": "0.3.4",
+      "tag": "v0.3.4-build44",
+      "commitSha": "9606455c7099007ef4c4b540be1f55e2c9d01ec3",
+      "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_293942ac7870819193167efcd405f18e",
+      "deploymentId": "appgdep_6ade89c90c988191ad81b8bb90492968",
+      "status": "succeeded"
+    },
     {
       "build": 43,
       "displayVersion": "0.3.3",

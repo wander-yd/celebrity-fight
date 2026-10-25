@@ -1,7 +1,7 @@
 {
-  "version": 43,
-  "authority": "User approved frozen mobile aim fix; SPEC.md Build43",
-  "productState": "Mobile release freezes aim direction; idle/manual movement preserves facing",
+  "version": 47,
+  "authority": "User approved Debug Boss Practice; SPEC.md Build47",
+  "productState": "Debug-only Boss Practice lets the player control Khamenei against a moving, attacking, telegraph-dodging Hunter opponent.",
   "removed": [
     "multi-room layout",
     "doors",
@@ -31,37 +31,37 @@
   ],
   "verification": {
     "command": "node tests/run.cjs",
-    "result": "Full regression and five frozen-touch-aim groups passed.",
-    "browser": "No new browser or physical-device verification for this logic fix; phone playtest pending."
+    "result": "Full regression, deterministic historical frame-by-frame combat parity, and Boss Practice scenarios passed.",
+    "browser": "DOM/canvas fixtures passed; physical desktop/mobile playtest remains pending."
   },
   "publicationAuthority": "Native Sites saved version/deployment for appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "nextAction": "Phone playtest: release a queued tap, move without Attack, manual aim while moving, press again for assistance. Stop before further refactor.",
-  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_4f1bc686796881918f850b5a7c8595d8",
-  "displayVersion": "0.3.3",
+  "nextAction": "Play Boss Practice on desktop and phone; check Boss movement, volley readability, missile warning, opponent pressure, touch buttons and cooldown feedback.",
+  "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_28049ba0876881919764aa991a526e87",
+  "displayVersion": "0.3.7",
   "githubBackup": {
-    "status": "verified-through-build43; source-snapshot-and-complete-history-bundle",
+    "status": "Build47 backup pending; previous complete-history backup through Build46",
     "repository": "wander-yd/celebrity-fight",
     "references": "planning/published-versions.json",
-    "nextAction": "For exact original history and all tags, restore the Git bundle using docs/backup-and-restore.md. No automatic GitHub sync configured.",
-    "sourceSnapshotCommit": "713eb4d1ac1a26f49175394fe7b1495fe6176918",
-    "bundle": "backups/celebrity-fight-build43.bundle"
+    "nextAction": "Complete Build47 source backup and verify the resulting GitHub tree.",
+    "sourceSnapshotCommit": "507e2735bd936fd90e5183eb63d37d0ce5da544f",
+    "bundle": "pending"
   },
   "priorPublication": {
-    "build": 42,
-    "displayVersion": "0.3.2",
-    "tag": "v0.3.2-build42",
-    "commitSha": "1a06ec9773f52961fbfb71bec72044b4ba4d18ba",
-    "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_4f1bc686796881918f850b5a7c8595d8",
-    "deploymentId": "appgdep_6add2d345bf08191ae55b26ce28d39e8",
+    "build": 46,
+    "displayVersion": "0.3.6",
+    "tag": "v0.3.6-build46",
+    "commitSha": "654397e1f086472e5528f3359ff3dfa7ffae3a83",
+    "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_28049ba0876881919764aa991a526e87",
+    "deploymentId": "appgdep_6ade8c1ebf308191a0b1c003bdfe1d31",
     "status": "succeeded"
   },
   "publication": {
-    "build": 43,
-    "displayVersion": "0.3.3",
-    "tag": "v0.3.3-build43",
-    "commitSha": "7c4cf99c15458cc1926d23bfaac3ec704107575d",
-    "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_48bf603f20bc81919fd07d84cfcf7cfc",
-    "deploymentId": "appgdep_6ade84b404c08191bb83f051095bbba7",
+    "build": 47,
+    "displayVersion": "0.3.7",
+    "tag": "v0.3.7-build47",
+    "commitSha": "507e2735bd936fd90e5183eb63d37d0ce5da544f",
+    "savedVersionId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_0dd2dab91d1c8191a0ec5172468ee544",
+    "deploymentId": "appgdep_6ade90403e188191b388f91de4d2c00d",
     "status": "succeeded"
   }
 }

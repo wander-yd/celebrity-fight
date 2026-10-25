@@ -13,6 +13,12 @@ const core = fs.readFileSync('dist/core.js', 'utf8');
 function engine() {
   const env = {};
   vm.createContext(env);
+  vm.runInContext(fs.readFileSync("dist/weapon.js", "utf8"), env);
+  vm.runInContext(fs.readFileSync("dist/pickup.js", "utf8"), env);
+  vm.runInContext(fs.readFileSync('dist/actor-state.js', 'utf8'), env);
+  vm.runInContext(fs.readFileSync('dist/projectile.js', 'utf8'), env);
+vm.runInContext(fs.readFileSync('dist/effects.js', 'utf8'), env);
+  vm.runInContext(fs.readFileSync('dist/boss-skills.js', 'utf8'), env);
   vm.runInContext(core, env);
   return env.VoidArena;
 }
@@ -116,7 +122,7 @@ test('complete item collection after repeated debug jumps never creates a progre
     g,
     C
   } = fresh();
-  g.items = C.ITEMS.map(x => x.id);
+  g.items = C.UPGRADES.map(x => x.id);
   g.debugJump(1, true);
   g.boss.grace = 0;
   g.damage(g.boss, 999);
@@ -205,6 +211,30 @@ test('UI can start every wave and Boss, retain loadout and toggle the visible in
   h.click('debug-infinite');
   assert.equal(h.el('debug-status').hidden, true);
   h.click('debug-close');
+});
+test('Debug launches Boss Practice, closes into that mode, and shows Boss-specific controls', () => {
+  const h = harness();
+  h.click('debug-open');
+  h.unlock('voiddebug');
+  assert.ok(h.el('debug-body').innerHTML.includes('Boss Practice'));
+  h.click('debug-practice-boss');
+  assert.equal(h.run('game.mode'), 'bossPractice');
+  assert.equal(h.run('game.chapter'), 3);
+  assert.equal(h.run('game.boss.name'), 'MOJTABA KHAMENEI');
+  assert.equal(h.el('debug-window').open, false);
+  assert.equal(h.el('arena-instruction').hidden, false);
+  assert.ok(h.el('arena-instruction').textContent.includes('radial volley'));
+  h.run("setInputMode('touch')");
+  assert.equal(h.el('move-stick').hidden, false);
+  assert.equal(h.el('attack').hidden, false);
+  assert.equal(h.el('jump').hidden, false);
+  h.run('hud()');
+  assert.equal(h.el('attack').textContent, 'VOLLEY');
+  assert.equal(h.el('jump').textContent, 'STRIKE');
+  h.click('pause');
+  assert.equal(h.run('game.mode'), 'paused');
+  h.click('resume');
+  assert.equal(h.run('game.mode'), 'bossPractice');
 });
 test('guide shows all enemies, live stats, all six items, every supported synergy and all Boss portraits', () => {
   const h = harness();
@@ -321,8 +351,8 @@ test('guide and shipped UI stay English and new script assets are present', () =
   assert.ok(html.includes('aria-labelledby="debug-title"'));
   assert.ok(!html.includes('id="interact"'));
   assert.ok(!/E: SUPPLY|<kbd>E<|E to interact/.test(html));
-  assert.ok(html.includes('debug.js?v=43'));
-  assert.ok(html.indexOf('debug.js?v=43') < html.indexOf('game.js?v=43'));
+  assert.ok(html.includes('debug.js?v=47'));
+  assert.ok(html.indexOf('debug.js?v=47') < html.indexOf('game.js?v=47'));
 });
 test('in-arena HUD, cooldown ring and touch readiness agree; pause holds details and Q does nothing', () => {
   const h = harness();
@@ -394,7 +424,7 @@ test('Updates shows the loaded release and ordered rollback milestones without c
   const snapshot = h.run('JSON.stringify({mode:game.mode,time:game.time,player:game.player,room:game.room,items:game.items})');
   h.click('debug-tab-updates');
   const html = h.el('debug-body').innerHTML;
-  for (const value of ['LOADED VERSION', '<h3>0.3.3</h3>', 'Build 43', 'CURRENT', 'Player stays visible after boss defeat', 'Landing-driven item builds', 'device playtest pending']) assert.ok(html.includes(value), value);
+  for (const value of ['LOADED VERSION', '<h3>0.3.7</h3>', 'Build 47', 'CURRENT', 'Boss Practice', 'Player stays visible after boss defeat', 'Landing-driven item builds', 'device playtest pending']) assert.ok(html.includes(value), value);
   assert.ok(html.indexOf('v31 ·') < html.indexOf('v30 ·'));
   assert.ok(!html.includes('appgver_'));
   assert.ok(!html.includes('debug-wave-'));
@@ -405,7 +435,7 @@ test('Updates shows the loaded release and ordered rollback milestones without c
   assert.ok(h.el('debug-wave-0'));
   h.click('debug-close');
   assert.equal(h.run('game.mode'), 'play');
-  const changed = fs.readFileSync('dist/releases.js', 'utf8').replace('"currentVersion": 43', '"currentVersion": 99');
+  const changed = fs.readFileSync('dist/releases.js', 'utf8').replace('"currentVersion": 47', '"currentVersion": 99');
   const oldTab = harness(undefined, {sources: {'releases.js': changed}});
   oldTab.click('debug-open');
   oldTab.unlock('voiddebug');

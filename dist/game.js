@@ -7,7 +7,7 @@ function loop(t) {
   keyboardController.refreshAim();
   const cameraDt = cameraStamp === null ? 0 : Math.max(0, Math.min(.25, (t - cameraStamp) / 1000));
   cameraStamp = t;
-  frameClock.advance(t, game.room, !document.hidden && ['play', 'tutorial', 'tutorialSuccess', 'reward'].includes(game.mode), dt => {
+  frameClock.advance(t, game.room, !document.hidden && ['play', 'bossPractice', 'tutorial', 'tutorialSuccess', 'reward'].includes(game.mode), dt => {
     const mode = game.mode,
       room = game.room;
     const command = playerController.read(), previousSwing = game.room.melee.find(swing => swing.origin === game.player);
@@ -22,7 +22,7 @@ function loop(t) {
     return game.mode === mode && game.room === room;
   });
   syncCameraRoom();
-  if (!document.hidden && ['play', 'tutorial', 'tutorialSuccess', 'reward'].includes(game.mode)) camera.follow(game.player, cameraDt);
+  if (!document.hidden && ['play', 'bossPractice', 'tutorial', 'tutorialSuccess', 'reward'].includes(game.mode)) camera.follow(game.mode === 'bossPractice' ? game.boss : game.player, cameraDt);
   keyboardController.refreshAim();
   syncOverlay();
   hud();
