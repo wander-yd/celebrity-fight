@@ -39,13 +39,14 @@
   "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_0dd2dab91d1c8191a0ec5172468ee544",
   "displayVersion": "0.4.0",
   "githubBackup": {
-    "status": "published Build48; private GitHub backup sync pending",
+    "status": "verified through Build48; private GitHub main and release checkpoint branch",
     "repository": "wander-yd/celebrity-fight",
     "references": "planning/published-versions.json",
-    "nextAction": "Back up the exact published Build48 source and release tag to the private GitHub repository, then verify the branch and tag.",
-    "sourceSnapshotCommit": "507e2735bd936fd90e5183eb63d37d0ce5da544f",
-    "githubCommitSha": "73f538d834580bd581e82de738ce008349d7d456",
-    "bundle": "GitHub source tree; prior complete-history bundle retained through Build46"
+    "nextAction": "Two-device playtest: host as Boss, join as Hunter, verify movement/attack/health/death and leave after disconnect.",
+    "sourceSnapshotCommit": "2b708bbb6cfa0116dac8bbf8c5f40eef6e6c5df8",
+    "githubCommitSha": "0794e06e6616d64a1b14eb0ce47e8a008b24ed9e",
+    "releaseCheckpointBranch": "release/v0.4.0-build48",
+    "bundle": "GitHub source-tree snapshot; original Git bundle retains history/tags through Build46"
   },
   "priorPublication": {
     "build": 47,

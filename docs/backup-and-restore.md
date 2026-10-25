@@ -2,66 +2,37 @@
 
 ## Status
 
-Repository: private `wander-yd/celebrity-fight`. Game publication remains on Sites at 0.3.3 / Build43.
+Repository: private `wander-yd/celebrity-fight`. Sites remains the live publishing source. Build48 is published as0.4.0.
 
-The connector sync uploads the current tracked source and a full Git bundle at `backups/celebrity-fight-build43.bundle`. The bundle retains exact original commits and all release tags through Build43. GitHub main keeps its pre-existing history and gains a source-backup commit; newer original commits/tags are inside the bundle, not native GitHub refs. This is a complete restorable history backup, not an ordinary Git push. Verified: all 51 tracked source files and the bundle blob match GitHub; GitHub main points to backup commit 713eb4d1ac1a26f49175394fe7b1495fe6176918; independent bundle restore passes the full regression suite. See `backups/manifest.json`.
+The GitHub connector mirrors source files into a backup commit; this creates a different Git commit SHA from the exact Sites source SHA. For Build48, GitHub `main` and `release/v0.4.0-build48` contain the same source tree. The published source SHA, Site saved-version ID and deployment ID are recorded in `planning/published-versions.json`. The original Git bundle in GitHub retains the historical commit/tag graph through Build46. Builds47–48 are backed up as source-tree snapshots, not copied Git history or native remote Git tags. The local Sites source history contains the exact `v0.4.0-build48` tag.
 
-Restore the exact history after cloning/downloading the bundle:
+The original Git bundle `backups/celebrity-fight-build46.bundle` retains the exact source history/tags through Build46. Keep GitHub's connector-created snapshot commits separate from the exact Sites source history. The connector does not create remote Git tag refs. Build48 has a `release/v0.4.0-build48` GitHub checkpoint branch with the matching source tree; the local Site source tag points to the exact published source commit. For an exact live rollback, use the saved Site version ID; a GitHub source snapshot alone does not redeploy the Site.
 
-```sh
-git clone backups/celebrity-fight-build43.bundle ../celebrity-fight-restored
-cd ../celebrity-fight-restored
-git tag --list
-node tests/run.cjs
-```
+## Current workflow
 
-Keep GitHub native branch history separate from the restored Sites history until an authenticated Git migration is chosen. Do not force-push either history.
+The private repository already exists. Sites publishes the game; GitHub is a one-way source backup. For each update:
 
-## Initial setup
+1. Implement within approved scope and run the full regression suite.
+2. Publish through the existing Sites workflow; record the exact Site source SHA, saved version ID and deployment ID.
+3. Create and verify the local release tag at the exact Site source SHA.
+4. Mirror changed source files to GitHub `main` with an expected-head check. Create a `release/<version>` checkpoint branch at that GitHub snapshot commit.
+5. Verify the public/private setting, remote commit and branch tree. Record both the Sites source SHA and GitHub snapshot SHA because they identify different commits with the same source tree.
 
-1. Create an empty private repository under the intended account. Do not initialize it with a README, license or ignore file; the existing project already has history.
-2. Use an authenticated Git environment with access to that repository. Keep credentials in the platform's credential mechanism, never in source, remote URLs or chat.
-3. Keep the Sites source remote/workflow unchanged. Configure a separate `github-backup` remote, checking any existing value first:
-
-   ```sh
-   git remote get-url github-backup
-   git remote add github-backup https://github.com/wander-yd/celebrity-fight.git
-   ```
-
-   Run the add command only if that remote is absent. An unexpected existing URL requires inspection, not replacement.
-
-4. From the clean, verified checkout, push the source history and prepared release tags without force:
-
-   ```sh
-   node scripts/prepare-release-tags.mjs
-   git push --atomic github-backup main --tags
-   git ls-remote github-backup refs/heads/main 'refs/tags/*'
-   ```
-
-5. Compare the remote main SHA to local main. Compare every release tag to `planning/published-versions.json`, and independently confirm the repository is private. Only then record backup status as synced.
-
-Tags for original builds use v1–v32. New-style tags use names such as `v0.1.3-build35`. Each tag must point to the exact published source SHA; later documentation commits on main must not move an existing release tag.
+Tags for original builds use v1–v32. New-style local source tags use names such as `v0.4.0-build48` and point to the exact published source SHA. A GitHub checkpoint branch points to the matching source tree but has a GitHub-created commit SHA.
 
 ## Each future game update
 
 1. Implement within the approved scope and run appropriate checks.
 2. Update the release history; publish through the existing Sites workflow.
-3. After successful publication, record the returned Build, saved version ID and exact source SHA in the release mapping. This bookkeeping can be a following documentation commit; the release tag always targets the published SHA.
-4. Create the matching version tag only if absent. If it exists, verify the target; never move it to a different commit.
-5. Push main and tags to `github-backup` without force. Verify remote refs before reporting success.
+3. After successful publication, record the returned Build, saved version ID and exact source SHA in the release mapping.
+4. Create the matching local version tag only if absent. If it exists, verify the target; never move it to a different commit.
+5. Mirror the new source tree into GitHub `main` with a concurrency check. Add a `release/<version>` checkpoint branch at the backup commit and verify both refs before reporting success.
 
 No CI, Vercel deployment or background synchronization is configured. If backup fails, report the game publication and backup results separately. Do not overwrite divergent GitHub work; investigate it. Keep Sites as the source of edits until a different workflow is explicitly approved.
 
 ## Restore or inspect
 
-To inspect an old version without overwriting current work:
-
-```sh
-git fetch github-backup --tags
-git worktree add --detach ../donald-build35 v0.1.3-build35
-```
-
-Run checks from that checkout. Historical parity tests require the retained Git history, so a source ZIP alone is insufficient.
+Use the matching Site saved version ID to recover an exact published build. Use a GitHub `release/<version>` checkpoint branch to inspect its source snapshot; use the Build46 bundle only when the original historical commit graph is needed.
 
 For a live rollback, identify the exact Sites saved version ID from `planning/published-versions.json` or current Sites version discovery, then deploy that saved version through Sites after the user requests rollback. Checking out a Git tag does not change the live site. Do not reset or force-push main to perform a rollback.
 

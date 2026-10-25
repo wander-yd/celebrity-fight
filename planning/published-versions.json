@@ -1,6 +1,6 @@
 {
   "projectId": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f",
-  "githubBackupStatus": "Build48 source is published; private GitHub backup sync pending",
+  "githubBackupStatus": "verified-through-build48; GitHub main and release/v0.4.0-build48 source tree",
   "proposedRepository": "wander-yd/celebrity-fight",
   "versions": [
     {

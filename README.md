@@ -57,9 +57,9 @@ From Build33 onward, displayVersion uses 0.feature.patch: small fixes/UI cleanup
 
 ## GitHub backup workflow
 
-Sites remains the publishing source. GitHub is a one-way private backup of the same Git history, not a second editable game or a second deployment. See [backup and restore](docs/backup-and-restore.md). Exact published SHAs, Sites saved IDs and tag names are recorded in `planning/published-versions.json`.
+Sites remains the publishing source. GitHub is a one-way private source backup, not a second deployment. The connector mirrors the source tree into GitHub commits, so its commit SHA differs from the exact Site source SHA. See [backup and restore](docs/backup-and-restore.md); Site rollback IDs and source tags are recorded in `planning/published-versions.json`.
 
-Private repository `wander-yd/celebrity-fight` is verified through Build47; Build48 backup is pending this release. Do not report it as complete until the Build48 branch and release tag are independently verified.
+Private repository `wander-yd/celebrity-fight` is verified through Build48. GitHub `main` and `release/v0.4.0-build48` contain the Build48 source tree; the exact published source commit and Site rollback version remain in `planning/published-versions.json`.
 # Mobile controls (0.2.1 / Build37)
 
 Touch uses a visible left floating stick and an inset 84px Jump button. Hold/drag on the left to move with the existing auto aim/attack; use the other thumb to jump. A small neutral zone filters finger jitter; maximum movement speed is unchanged. Controls follow touch versus mouse/keyboard input, not screen width. Mouse/keyboard keeps WASD/arrows, mouse aiming/hold attack and Space to jump. Rotate or open Pause/Debug to safely release held touch.
