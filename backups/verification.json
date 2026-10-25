@@ -1,9 +1,9 @@
 {
-  "build": 44,
-  "displayVersion": "0.3.4",
-  "publishedSource": "9606455c7099007ef4c4b540be1f55e2c9d01ec3",
-  "bundleSha256": "88e43c1248105c1ca46321a09a16c75a335ef3330e4a32c299e9433e7d999450",
-  "completeHistory": "Exact original commit history and all version tags through Build44 included in bundle.",
+  "build": 45,
+  "displayVersion": "0.3.5",
+  "publishedSource": "c66b1ceaa0e0417c8307f1cb67cf160d0783b875",
+  "bundleSha256": "26e0baa980ac04b26edd4c2178f20260a80c1460344bbcf539edf76ba9a27e18",
+  "completeHistory": "Exact original commits and all tags through Build45.",
   "restore": "Cloned bundle and ran node tests/run.cjs successfully.",
   "repositoryVisibility": "private"
 }
