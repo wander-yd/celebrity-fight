@@ -1,9 +1,9 @@
 {
-  "build": 43,
-  "sourceSnapshotCommit": "713eb4d1ac1a26f49175394fe7b1495fe6176918",
-  "trackedSourceFilesVerified": 51,
-  "bundleBlob": "10fe54cfa0c3e27da80574291dc5451e19eee989",
-  "bundleRestoreTests": "node tests/run.cjs passed",
-  "privacy": "private",
-  "nativeTags": "Newer exact tags and original commits are inside the bundle."
+  "build": 44,
+  "displayVersion": "0.3.4",
+  "publishedSource": "9606455c7099007ef4c4b540be1f55e2c9d01ec3",
+  "bundleSha256": "88e43c1248105c1ca46321a09a16c75a335ef3330e4a32c299e9433e7d999450",
+  "completeHistory": "Exact original commit history and all version tags through Build44 included in bundle.",
+  "restore": "Cloned bundle and ran node tests/run.cjs successfully.",
+  "repositoryVisibility": "private"
 }
