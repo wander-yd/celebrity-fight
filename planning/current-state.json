@@ -39,12 +39,13 @@
   "priorPublishedVersionForRollback": "appgprj_6ad740f9f07081918e87fce2aa1f3a9f~appgver_28049ba0876881919764aa991a526e87",
   "displayVersion": "0.3.7",
   "githubBackup": {
-    "status": "Build47 backup pending; previous complete-history backup through Build46",
+    "status": "verified-through-build47; GitHub main source tree",
     "repository": "wander-yd/celebrity-fight",
     "references": "planning/published-versions.json",
-    "nextAction": "Complete Build47 source backup and verify the resulting GitHub tree.",
+    "nextAction": "GitHub main was updated with Build47 files and verified against the pushed practice test.",
     "sourceSnapshotCommit": "507e2735bd936fd90e5183eb63d37d0ce5da544f",
-    "bundle": "pending"
+    "githubCommitSha": "73f538d834580bd581e82de738ce008349d7d456",
+    "bundle": "GitHub source tree; prior complete-history bundle retained through Build46"
   },
   "priorPublication": {
     "build": 46,
